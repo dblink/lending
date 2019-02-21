@@ -1,0 +1,35 @@
+*{
+    padding: 0;
+    margin: 0;
+    zoom: 1;
+    color: #333;
+}
+/*.section{
+    min-width: 320px;
+    margin: auto;
+}*/
+.section, .section *{
+    display: flex;
+    flex-basis: content;
+    flex-direction: column;
+}
+.intro-ul{
+    margin: 10px;
+    width: 90%;
+    max-width: 320px;
+    margin: auto;
+    height: 60%;
+    justify-content: space-between;
+    list-style-type: none;
+    position: relative;
+}
+.intro-ul::before{
+    content: '';
+    width: 6px;
+    height: 90%;
+    position: absolute;
+    top: 5%;
+    left: 15px;
+    z-index: -1;
+    background: rgb(255, 222, 0);
+}
