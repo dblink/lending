@@ -1,5 +1,5 @@
 # build file
-dist/
+# dist/
 # Logs
 logs
 *.log

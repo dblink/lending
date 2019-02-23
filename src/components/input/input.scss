@@ -1,0 +1,28 @@
+
+
+.bank-card{
+    //border: 1px solid #ccc;
+    display: flex;
+    border-radius: 5px;
+    //padding: 15px;    
+}
+.bank-card-icon{
+    margin: 15px 0;
+    padding: 0 15px;
+    border-right: 1px solid #ccc;
+}
+.bank-card-input{
+    color: #444;
+    padding: 15px 20px;
+    font-size: 14px;
+    border: none;
+    width: 100%;
+    border-radius: 5px;
+}
+.apply-input{
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 14px;
+}

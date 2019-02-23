@@ -1,0 +1,42 @@
+$primaryColor: #1B8DEF;
+
+span[role=button]{
+    cursor: pointer;
+    border: none;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Chrome/Safari/Opera */
+    -khtml-user-select: none; /* Konqueror */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently*/
+}
+.primary-button{
+    background: $primaryColor;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    color: #fff;
+}
+.cancel-button:hover::before,
+.primary-button:hover::before{
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    opacity: .5;
+    background: #fff;
+    cursor: pointer;
+}
+.cancel-button{
+    position: relative;
+    border-radius: 5px;
+    border: 1px solid #{$primaryColor} !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $primaryColor;
+}

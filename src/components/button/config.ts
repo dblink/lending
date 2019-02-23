@@ -1,5 +1,5 @@
 import { BaseButtonProps } from './base/button';
-import './button.css';
+//import './button.css';
 export type config = {
     windPrimaryButton ?: BaseButtonProps;
     icon ?: BaseButtonProps;

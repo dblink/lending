@@ -3,6 +3,7 @@
     margin: 0;
     zoom: 1;
     color: #333;
+    box-sizing: border-box;
 }
 /*.section{
     min-width: 320px;

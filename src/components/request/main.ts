@@ -1,4 +1,4 @@
-import {Callback, interfaceSetting, Key, Parameter, RequestParameter} from "./setting";
+import {Callback, interfaceSetting} from "./setting";
 
 const formatParams = function (jsonParams: any): string {
     let array: Array<any> = [];
@@ -13,11 +13,11 @@ const formatParams = function (jsonParams: any): string {
 export interface OptionType<T extends Key> {
     type ?: string;
     dataType ?: string;
-    data ?: Parameter<T>;
+    data ?: RequestParameter[T];
     url ?: string;
     succeed ?: (data: any, xml?: any) => void;
     fail ?: (errorText ?:any, xml ?: any) => void;
-    error ?: Parameter<T>;
+    error ?: any;
     [index: string] : any;
 }
 
@@ -37,7 +37,8 @@ class AjaxRequest {
             console.error("nodata");
             return;
         }
-        let _baseUrl = 0 ? 'http://lotusapi.hehuadata.com' : '';
+        //let _baseUrl = 0 ? 'http://lotusapi.hehuadata.com' : '';
+        let _baseUrl = '	http://192.168.1.121:7000';
         let _url = [_baseUrl, this.options.url].join('');
         let params: any = formatParams(this.options.data);
         if (this.options.type === "GET" || this.options.type === 'get') {
@@ -153,7 +154,7 @@ class Ajax extends AjaxRequest {
         _options = Object.assign(interfaceSetting[type], options);
 
         //错误信息
-        names = _options.error ? Object.keys(_options.error) as RequestParameter[Key][] : [];
+        names = _options.error ? Object.keys(_options.error) : [];
         let _getDataFunc = this.getData(_options.data);
 
         
@@ -233,10 +234,8 @@ class Ajax extends AjaxRequest {
 }
 
 export function main() {
-    //console.log(options);
     let _request = new Ajax();
-    return function (type: Key, options: CommonOptionType) {
-        //console.log(this);
+    return function (type: Key, options: OptionType<Key>) {
         _request.type = type;
         _request.options = options;
         _request.options.fail = _request.failure(options.fail);
@@ -245,6 +244,4 @@ export function main() {
         _request.main();
         return _request;
     }
-    //new Ajax(type, options).main();
-    //return _req;
 }

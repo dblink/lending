@@ -1,10 +1,10 @@
 import {main} from "./main";
-import {Key, Parameter} from "./setting";
+import {Key, RequestParameter} from "./setting";
 
 
-export interface ReqOption <T extends Key> {
+export interface ReqOption <T extends RequestParameter[Key]> {
     type ?: string;
-    data ?: Parameter<T>;
+    data ?: T;
     succeed ?: (data: any, xml?: any) => void;
     fail ?: (errorText ?:any, xml ?: any) => void;
     [index: string] : any;
@@ -14,4 +14,4 @@ export interface ReqOption <T extends Key> {
     return main()(reqName, option);
 };*/
 
-export const req: (reqName: Key, option: ReqOption<Key>)=>any = main();
+export const req: (reqName: Key, option: ReqOption<RequestParameter[Key]>)=>any = main();
