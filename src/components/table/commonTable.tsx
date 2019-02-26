@@ -5,7 +5,12 @@ import { TableComponent } from './baseTableElement';
 export namespace Table {
     type TableProps = {
         list: {[index: string]: any}[];
-        head: {[index: string]: any};
+        //head: {[index: string]: any};
+        setting: {
+            head: string;
+            attr: string;
+            format: any;
+        }[]
         title ?: string;
         className ?: string;
     }
@@ -22,7 +27,11 @@ export namespace Table {
                 TableBody: TableBody,
                 TableRow: TableRow
             } = new TableComponent('commonTable') ;
-            return <TableMain className={this.props.className} style={{borderCollapse: 'collapse', textAlign:'center'}}>
+            return <TableMain 
+                className={this.props.className} 
+                style={{borderCollapse: 'collapse', 
+                    fontSize: '14px',
+                    textAlign:'center', width: '100%'}}>
                 {
                     this.props.title &&
                     <caption>
@@ -32,11 +41,11 @@ export namespace Table {
                     </caption>
                 }
     
-                <TableHead>
+                <TableHead style={{background: '#eee'}}>
                     {
-                        Object.keys(this.props.head).map((value, index)=>{
-                                return <TableCell key={index} style={{padding:'10px',border: '1px solid #333'}}>
-                                    {this.props.head[value]}
+                        this.props.setting.map((value, index)=>{
+                                return <TableCell key={index} style={{padding:'10px'}}>
+                                    {value.head}
                                 </TableCell>
                             }
                         )
@@ -45,16 +54,15 @@ export namespace Table {
                 <TableBody>
                     {
                         this.props.list.map((listLine:any, sub: any)=>{
-                            return <TableRow key={sub}>
+                            return <TableRow key={sub} style={{borderBottom: '1px solid #eee'}}>
                                 {
-                                    Object.keys(this.props.head).map((value, index)=>{
-                                        let _value = listLine[value];
-                                        if(value.toLowerCase().indexOf('time') !== -1){
-                                            _value = new Date(_value).toLocaleDateString();
-                                        }
-                                        return <TableCell key={index} style={{padding:'10px', border: '1px solid #333'}}>
+                                    this.props.setting.map((value, index)=>{
+                                        let _value = listLine[value.attr];
+                                        return <TableCell key={index} style={{padding:'10px'}}>
                                             {
-                                                _value
+                                                 value.format 
+                                                    ? value.format(listLine, value.attr, sub)
+                                                    : _value
                                             }
                                         </TableCell>
                                     })

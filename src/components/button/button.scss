@@ -18,6 +18,7 @@ span[role=button]{
     align-items: center;
     border-radius: 5px;
     color: #fff;
+    width: 100%;
 }
 .cancel-button:hover::before,
 .primary-button:hover::before{
@@ -39,4 +40,30 @@ span[role=button]{
     justify-content: center;
     align-items: center;
     color: $primaryColor;
+    width: 100%;
+}
+.tab-button{
+    width: 100%;
+    padding: 15px 0;
+    font-size: 14px;
+    display: inline-block;
+    text-align: center;
+    color: inherit;
+}
+.tab{
+    flex: 1;
+    color: #ccc;
+    border-bottom: 1px solid #ccc;
+}
+.tab-clicked{
+    flex: 1;
+    color: $primaryColor;
+    border-bottom: 1px solid #{$primaryColor};
+}
+.href-button{
+    color: $primaryColor;
+    width: 100px;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
 }

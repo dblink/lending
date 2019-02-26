@@ -1,12 +1,12 @@
 import {main} from "./main";
-import {Key, RequestParameter} from "./setting";
+import { ParameterName, Parameter, Callback } from "./setting";
 
 
-export interface ReqOption <T extends RequestParameter[Key]> {
+export interface ReqOption <T extends ParameterName> {
     type ?: string;
-    data ?: T;
-    succeed ?: (data: any, xml?: any) => void;
-    fail ?: (errorText ?:any, xml ?: any) => void;
+    data ?: Parameter<T>;
+    succeed ?: (data: Callback, xml?: any) => void;
+    fail ?: (errorText ?:Callback, xml ?: any) => void;
     [index: string] : any;
 }
 
@@ -14,4 +14,4 @@ export interface ReqOption <T extends RequestParameter[Key]> {
     return main()(reqName, option);
 };*/
 
-export const req: (reqName: Key, option: ReqOption<RequestParameter[Key]>)=>any = main();
+export const req: (reqName: ParameterName, option: ReqOption<ParameterName>)=>any = main();

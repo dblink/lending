@@ -17,7 +17,7 @@ export class BaseModal extends React.Component<Props, State> {
     render() {
         let {isOpen, ...other} = this.props;
         return isOpen ? <div className='curtain'>
-            <div {...other} />
+            {...this.props.children}
         </div> : ''
     }
 }

@@ -1,4 +1,4 @@
-import {Callback, interfaceSetting} from "./setting";
+import {Callback, interfaceSetting, ParameterName, Parameter} from "./setting";
 
 const formatParams = function (jsonParams: any): string {
     let array: Array<any> = [];
@@ -10,27 +10,25 @@ const formatParams = function (jsonParams: any): string {
     return array.join("&");
 };
 
-export interface OptionType<T extends Key> {
+export interface OptionType<T extends ParameterName> {
     type ?: string;
     dataType ?: string;
-    data ?: RequestParameter[T];
+    data ?: Parameter<T>;
     url ?: string;
     succeed ?: (data: any, xml?: any) => void;
-    fail ?: (errorText ?:any, xml ?: any) => void;
-    error ?: any;
+    fail ?: (errorText ?: Callback, xml?: any) => void;
+    error ?: Parameter<T>;
     [index: string] : any;
 }
 
 export interface ErrorCallback {
     Status: 'FAILURE' | 'SUCCESS';
-    ErrMsg: string;
+    ErrMsg: any;
     Value : any;
 }
 
-export type CommonOptionType = OptionType<Key>;
-
 class AjaxRequest {
-    options: OptionType<Key>;
+    options: OptionType<ParameterName>;
     private xhr: XMLHttpRequest = new XMLHttpRequest();
     sendMessage() {
         if (!this.options.data) {
@@ -96,8 +94,8 @@ class AjaxRequest {
 }
 
 class Ajax extends AjaxRequest {
-    options: OptionType<Key>;
-    type: Key;
+    options: OptionType<ParameterName>;
+    type: ParameterName;
     date: Date = new Date();
     startTime: number;
     closeArray: any[] = [];
@@ -108,7 +106,17 @@ class Ajax extends AjaxRequest {
             dataType: 'json', 
             contentType: "application/x-www-form-urlencoded"
         },options);
-        this.sendMessage();
+        //console.log(this.options, 109);
+
+        //测试用例
+        let _data:Callback = {
+            ErrMsg: '',
+            Status:'SUCCESS',
+            Value : {}
+        }
+        this.succeed(this.options.succeed)(_data);
+        
+        //this.sendMessage();
     }
 
     /**
@@ -144,28 +152,25 @@ class Ajax extends AjaxRequest {
         return
     }
     _main() {
-        let type: Key,
+        let type: ParameterName,
             options,
-            _options: OptionType<Key>,
+            _options: OptionType<ParameterName.login>,
             names;
         type = this.type;
         options = this.options;
         //合并
         _options = Object.assign(interfaceSetting[type], options);
-
         //错误信息
         names = _options.error ? Object.keys(_options.error) : [];
         let _getDataFunc = this.getData(_options.data);
-
         
         for(let i = 0; i< names.length; i++){
             let _name = names[i];
-            
             //错误检测
             if(!_getDataFunc(_name)){
                 let _error: ErrorCallback = {
                     Status: "FAILURE",
-                    ErrMsg: _options.error[_name] ,//错误信息
+                    ErrMsg: _options.error[_name as 'MerchantNo'],//错误信息
                     Value : ""
                 };
                 options.fail(_error);
@@ -235,7 +240,7 @@ class Ajax extends AjaxRequest {
 
 export function main() {
     let _request = new Ajax();
-    return function (type: Key, options: OptionType<Key>) {
+    return function (type: ParameterName, options: OptionType<ParameterName>) {
         _request.type = type;
         _request.options = options;
         _request.options.fail = _request.failure(options.fail);

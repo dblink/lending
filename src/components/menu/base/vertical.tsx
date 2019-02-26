@@ -23,7 +23,7 @@ export class Vertical extends React.Component<Props, State> {
             <div>
                 {
                     this.props.iconName 
-                    && <Icon>{this.props.iconName}</Icon>
+                    && <Icon style={{color: '#1B8DEF'}}>{this.props.iconName}</Icon>
                 }
                 <span style={{marginLeft: '20px', color: '#444'}}>
                     {this.props.text}

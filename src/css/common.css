@@ -34,3 +34,9 @@
     z-index: -1;
     background: rgb(255, 222, 0);
 }
+.z-index-1{
+    z-index: 1;
+}
+.z-index-100{
+    z-index: 100;
+}

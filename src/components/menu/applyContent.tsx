@@ -12,37 +12,53 @@ export class ApplyContent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {};
+        this.stateDom = this.stateDom.bind(this);
     }
     arr: {
         text: string,
         iconName: string,
+        name: string,
         isMust ?: boolean
     }[] = [{
         text: '申请借款信息',
-        iconName: '1',
+        name: 'ISApply',
+        iconName: 'borrowInfo',
         isMust: true,
     },{
         text: '借款人信息',
-        iconName: '2',
+        iconName: 'personInfo',
+        name: 'ISExsitBorrower',
         isMust: true
     },{
         text: '实名认证',
-        iconName: '3',
+        iconName: 'authentication',
+        name: 'ISUploadPersonCardState',
         isMust: true
     },{
         text: '借款人详细信息',
-        iconName: '4'
+        iconName: 'detailInfo',
+        name: 'ISExsitBorrowerDetail'
     },{
         text: '蜜罐',
-        iconName: '5'
+        iconName: 'miguanReport',
+        name: 'HoneypotStatus'
     },{
         text: '蜜蜂',
-        iconName: '6'
+        name: 'HoneyBeeStatus',
+        iconName: 'juxinliReport'
     },{
         text: '支付宝',
-        iconName: '7'
+        name: 'Alipay',
+        iconName: 'zhifubaoReport'
     }]
-    stateDom(){
+    stateDom(name: any){
+        if(
+            this.props.dataState[name]
+        ){
+            return  <span style={{color: 'green'}}>已完成</span>
+        }else{
+            return <span style={{color: 'red'}}>未填写</span>
+        }
         
     }
     render() {
@@ -50,9 +66,9 @@ export class ApplyContent extends React.Component<Props, State> {
             {
                  this.arr.map((value)=>{
                     return <Vertical 
-                    onClick={()=>this.props.onChangeStep('applyListDetail')}
+                    onClick={()=>this.props.onChangeStep('applyListDetail', value.name)}
                     isMust={value.isMust} text={value.text} 
-                    iconName={value.iconName} default={<span style={{color: 'green'}}>已完成</span>}/>
+                    iconName={value.iconName} default={this.stateDom(value.name)}/>
                 }) 
             }
         </div> 
