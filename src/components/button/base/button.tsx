@@ -50,10 +50,18 @@ export class BaseButton extends OperateTemp<BaseButtonProps, any> {
         let {
             style: style,
             className: className,
+            type: type,
             ...other
-        } = this.props;
-        return <span role='button' {...this.mouseEvent} className={this.state.className} style={this.state.style} {...other}>
-            {this.props.children}
-        </span>
+        } = this.props; 
+        if(type !== 'button'){
+            return <span role='button' {...this.mouseEvent} className={this.state.className} style={this.state.style} {...other}>
+                {this.props.children}
+            </span>
+        }else{
+            return <button role='button' {...this.mouseEvent} className={this.state.className} style={this.state.style} {...other}>
+                {this.props.children}
+            </button>
+        }
+        
     }
 }

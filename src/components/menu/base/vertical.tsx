@@ -6,7 +6,9 @@ interface Props {
     iconName ?: string;
     text: string;
     isMust ?: boolean;
-    default ?: any;
+    //default ?: any;
+    style ?: React.CSSProperties;
+    className ?: string;
     onClick ?: any;
 }
 
@@ -19,23 +21,20 @@ export class Vertical extends React.Component<Props, State> {
     }
 
     render() {
-        return <div className='vertical' style={{fontSize: '14px'}} onClick={this.props.onClick}>
-            <div>
+        return <div className={`vertical ${this.props.className || ''}`} style={this.props.style} onClick={this.props.onClick}>
+            <div style={{color: 'inherit'}}>
                 {
                     this.props.iconName 
                     && <Icon style={{color: '#1B8DEF'}}>{this.props.iconName}</Icon>
                 }
-                <span style={{marginLeft: '20px', color: '#444'}}>
+                <span style={{marginLeft: '20px', color: 'inherit', verticalAlign: 'middle'}}>
                     {this.props.text}
                     {this.props.isMust && <span style={{color: 'red'}}>&lowast;</span>}
                 </span>
             </div>
-            <div>
-                {
-                    this.props.default || ''
-                }
-                <Icon style={{marginLeft: '15px', color: '#ccc'}}>></Icon>
-            </div>
+            {
+                this.props.children
+            }
         </div>
     }
 }

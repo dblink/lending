@@ -1,5 +1,9 @@
 $primaryColor: #1B8DEF;
 
+button{
+    font-size: 14px;
+}
+button[role=button],
 span[role=button]{
     cursor: pointer;
     border: none;
@@ -16,7 +20,7 @@ span[role=button]{
     position: relative;
     justify-content: center;
     align-items: center;
-    border-radius: 5px;
+    //border-radius: 5px;
     color: #fff;
     width: 100%;
 }
@@ -34,7 +38,7 @@ span[role=button]{
 }
 .cancel-button{
     position: relative;
-    border-radius: 5px;
+    //@at-rootborder-radius: 5px;
     border: 1px solid #{$primaryColor} !important;
     display: flex;
     justify-content: center;
@@ -66,4 +70,28 @@ span[role=button]{
     display: flex; 
     justify-content: center;
     align-items: center;
+}
+.paging-button{
+    padding: 10px;
+    position: relative;
+}
+.paging-button:hover{
+    background: rgba(70, 70, 70, 0.09);
+    
+}
+.paging-button:hover::after{
+    display: inherit;
+}
+
+.paging-button::after{
+    content: attr(data-content);
+    position: absolute;
+    left: 0;
+    top: 100%;
+    text-align: center;
+    width: 100%;
+    color: #fff;
+    background: rgba(70, 70, 70, 0.5);
+    font-size: 12px;
+    display: none;
 }

@@ -12,6 +12,17 @@
     position: absolute
 }
 
+.page-loading{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height:  100%;
+}
+.page-loading.animate{
+    animation: page-loading .5s both;
+}
+
 @keyframes loading {
     0%, 100%{
         transition-timing-function: cubic-bezier(1, 0, 0.65, 0.85);
@@ -44,5 +55,14 @@
         -moz-transform: scaleY(1);
         -o-transform: scaleY(1);
         transform: scaleY(1);
+    }
+}
+@keyframes page-loading{
+    0%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+        display: none;
     }
 }

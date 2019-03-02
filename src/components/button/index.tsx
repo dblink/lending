@@ -2,14 +2,16 @@ import * as React from 'react';
 import { config } from './config';
 import './button.scss';
 import {BaseButton } from './base/button';
+import { Icon } from '../icon/icon';
 
-interface IconProps extends React.HTMLAttributes<HTMLSpanElement> {
-    width: string
-}
 interface ButtonProps extends React.HTMLAttributes<HTMLSpanElement>{
+    type ?: 'button'
 }
 interface TabButtonProps extends React.HtmlHTMLAttributes<HTMLSpanElement>{
     clicked ?: boolean
+}
+interface PagingButtonProps extends React.HTMLAttributes<HTMLSpanElement>{
+    intro : string;
 }
 
 export const PrimaryButton = (props: ButtonProps) =>{
@@ -28,4 +30,13 @@ export const TabButton = (props: TabButtonProps) => {
 }
 export const HrefButton = (props: ButtonProps) => {
     return <BaseButton className='href-button' {...props} />
+}
+
+export const PagingButton = (props: PagingButtonProps) =>{
+    return <BaseButton className='paging-button' data-content={props.intro}>
+        <Icon>
+            {props.children}
+        </Icon>
+    </BaseButton>
+        
 }

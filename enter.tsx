@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {Index} from './src/page'
 import './src/css/common.css';
+import {IndexRoute} from './src/router/index';
 ReactDOM.render(
-   <Index /> , document.getElementById("example"));
+   <IndexRoute /> , document.getElementById("example"));

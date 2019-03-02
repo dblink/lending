@@ -34,3 +34,12 @@ export const InnerProgress = (props: InnerProgressProps) => {
         
     </div>
 }
+type PageLoadingProps = {
+    
+}
+//页面loading图
+export const PageLoading = (props: PageLoadingProps) => {
+    return <div className={'loading'}>
+
+    </div>
+}

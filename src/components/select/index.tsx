@@ -15,7 +15,7 @@ export const ApplySelect = (props: ApplySelect) => {
         </div>
         <BaseSelect className='apply-select' {...other} 
             value={value} style={{color: value ? '#777' : '#ccc'}} >
-            <option selected={true} disabled={true}>
+            <option selected={true} value={''} disabled={true}>
                 请选择{text}
             </option>
             {list.map((value, key)=>{

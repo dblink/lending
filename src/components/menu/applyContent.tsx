@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Vertical } from './base/vertical';
+import { Icon } from '../icon/icon';
 
 interface Props {
     onChangeStep: any;
     dataState : any;
+    name : string;
 }
 
 interface State {}
@@ -66,9 +68,18 @@ export class ApplyContent extends React.Component<Props, State> {
             {
                  this.arr.map((value)=>{
                     return <Vertical 
-                    onClick={()=>this.props.onChangeStep('applyListDetail', value.name)}
-                    isMust={value.isMust} text={value.text} 
-                    iconName={value.iconName} default={this.stateDom(value.name)}/>
+                        onClick={()=>this.props.onChangeStep('applyListDetail', value.name)}
+                        isMust={value.isMust} text={value.text} className={this.props.name === value.name ? 'click' : ''}
+                        iconName={value.iconName} >
+                        <div>
+                            {
+                                this.stateDom(value.name) || ''
+                            }
+                            <Icon style={{marginLeft: '15px', color: '#ccc'}}>
+                                arrowRight
+                            </Icon>
+                        </div>
+                    </Vertical>
                 }) 
             }
         </div> 

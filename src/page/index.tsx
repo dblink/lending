@@ -5,7 +5,7 @@ interface Props {}
 
 interface State {}
 
-export class Index extends React.Component<Props, State> {
+/*export class Index extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {};
@@ -14,4 +14,4 @@ export class Index extends React.Component<Props, State> {
     render() {
         return <ApplyModal />
     }
-}
+}*/

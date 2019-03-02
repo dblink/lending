@@ -4,6 +4,9 @@ import { OperateTemp, OperateTempState, BaseOperateProps } from '../../template/
 export interface BaseInputProps extends BaseOperateProps { 
     type: React.HTMLAttributes<'HTMLInputElement'>['itemType'];
     mouseFocus ?: string | React.CSSProperties;
+    updateStyle ?: {
+        run: any
+    }
     [index: string]: any;
 }
 
@@ -21,6 +24,12 @@ export class BaseInput extends OperateTemp<BaseInputProps, State> {
         };
         this.getMouseEvent = this.getMouseEvent.bind(this);
         this.mouseEvent = this.getMouseEvent();
+        if(this.props.updateStyle){
+            this.props.updateStyle.run = (style: React.CSSProperties)=>{
+                this.updateStyle(style);
+            }
+        }
+        
     }
     mouseEvent: React.DOMAttributes<HTMLInputElement>
     getMouseEvent(): React.DOMAttributes<HTMLInputElement>{
@@ -45,12 +54,18 @@ export class BaseInput extends OperateTemp<BaseInputProps, State> {
         }
     }
     shouldComponentUpdate(nextProps: any, nextState: State){
-        return nextState.shouldUpdate || this.props.value !== nextProps.value
+        return nextState.shouldUpdate 
+            || this.props.value !== nextProps.value
     }
     componentDidUpdate(){
         this.setState({
             shouldUpdate: false
         })
+    }
+    componentWillUnmount(){
+        if(this.props.updateStyle){
+            this.props.updateStyle.run = null;
+        }   
     }
     
     render() {

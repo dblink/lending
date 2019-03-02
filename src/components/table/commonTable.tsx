@@ -9,7 +9,7 @@ export namespace Table {
         setting: {
             head: string;
             attr: string;
-            format: any;
+            format ?: any;
         }[]
         title ?: string;
         className ?: string;

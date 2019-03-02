@@ -10,8 +10,9 @@ interface Props extends React.InputHTMLAttributes<any>{
 interface BankCardInput extends React.InputHTMLAttributes<any>{
     borderNone ?: boolean;
 }
-interface ApplyInput extends React.InputHTMLAttributes<any>{
+interface ApplyInputProps extends React.InputHTMLAttributes<any>{
     text: string;
+    error ?: string;
 }
 
 export const BankCardInput = (props: BankCardInput) =>{
@@ -24,12 +25,36 @@ export const BankCardInput = (props: BankCardInput) =>{
     </div>
 };
 
-export const ApplyInput = (props: ApplyInput)=>{
-    let {text, type, ...other} = props;
-    return <div>
-        <div style={{fontSize: '14px', marginBottom: '10px', color: '#777'}}>
-            {text}
+export class ApplyInput extends React.Component <ApplyInputProps, any>{
+    updateStyle: any = {
+        run: ''
+    }
+    render(){
+        let {text, type, error, style = {}, ...other} = this.props;
+        if(error){
+            style.border = '1px solid red';
+        }else{
+            style.border = '1px solid #ccc';
+        }
+        if(this.updateStyle.run){
+            this.updateStyle.run(style);
+        }
+        
+        return <div>
+            <div style={{fontSize: '14px', marginBottom: '10px', color: '#777'}}>
+                {text}
+            </div>
+            {
+                type === 'textarea' 
+                ? <textarea className='apply-input textarea' {...other} style={style}>
+                  </textarea>
+                : <BaseInput type={type} updateStyle={this.updateStyle} className='apply-input' {...other} />
+            }
+            {
+                error && <div style={{color: 'red'}}>
+                    {error}
+                </div>
+            }
         </div>
-        <BaseInput type={type} className='apply-input' {...other} />
-    </div>
+    }
 }

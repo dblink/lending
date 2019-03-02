@@ -5,10 +5,6 @@
     color: #333;
     box-sizing: border-box;
 }
-/*.section{
-    min-width: 320px;
-    margin: auto;
-}*/
 .section, .section *{
     display: flex;
     flex-basis: content;
@@ -39,4 +35,12 @@
 }
 .z-index-100{
     z-index: 100;
+}
+.flex-space-between{
+    display: flex;
+    justify-content: space-between;
+}
+.flex-space-around{
+    display: flex;
+    justify-content: space-around;
 }

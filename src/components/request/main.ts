@@ -36,7 +36,7 @@ class AjaxRequest {
             return;
         }
         //let _baseUrl = 0 ? 'http://lotusapi.hehuadata.com' : '';
-        let _baseUrl = '	http://192.168.1.121:7000';
+        let _baseUrl = 0?'http://192.168.1.121:7000':'';
         let _url = [_baseUrl, this.options.url].join('');
         let params: any = formatParams(this.options.data);
         if (this.options.type === "GET" || this.options.type === 'get') {
@@ -109,14 +109,14 @@ class Ajax extends AjaxRequest {
         //console.log(this.options, 109);
 
         //测试用例
-        let _data:Callback = {
+        /*let _data:Callback = {
             ErrMsg: '',
             Status:'SUCCESS',
             Value : {}
         }
-        this.succeed(this.options.succeed)(_data);
+        this.succeed(this.options.succeed)(_data);*/
         
-        //this.sendMessage();
+        this.sendMessage();
     }
 
     /**
@@ -171,7 +171,7 @@ class Ajax extends AjaxRequest {
                 let _error: ErrorCallback = {
                     Status: "FAILURE",
                     ErrMsg: _options.error[_name as 'MerchantNo'],//错误信息
-                    Value : ""
+                    Value : _name
                 };
                 options.fail(_error);
                 return;
@@ -206,12 +206,6 @@ class Ajax extends AjaxRequest {
             let time = 2;
             let duration =  time * 1000 - (new Date().getTime() - this.startTime);
             let _arr = setTimeout(()=>{
-                if(data.ErrMsg === '令牌失效！'){
-                    alert('登录失效！');
-                    //localData.clear();
-                    //history.push('/');
-                    return false;
-                }
                 func(data);
             }, duration < 0 ? 0 : duration);
             this.closeArray.push({name: 'failTime' , value: _arr});
