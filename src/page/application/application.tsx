@@ -1,37 +1,54 @@
 import * as React from 'react';
 import { Table } from '../../components/table/commonTable';
-import { RequestCallback, ParameterName, CallbackSummary, Parameter, PageInfo } from '../../components/request/setting';
-import { HrefButton, PrimaryButton, PagingButton } from '../../components/button';
+import { RequestCallback, ParameterName, CallbackSummary, Parameter, PageInfo, Callback } from '../../components/request/setting';
+import { HrefButton, PrimaryButton, PagingButton, CancelButton } from '../../components/button';
 import { Icon } from '../../components/icon/icon';
 import { ReqOption, req } from '../../components/request';
 import { ApplyModal } from '../../components/modal/applyModal';
 import { Paging } from '../../components/paging/paging';
 import { View } from '../../module/pageModule/view';
 import { sessionData } from '../../components/sessionData/sessionData';
+import { PageLoading, InnerProgress } from '../../components/progress/progress';
+import { load } from '../../components/loading/loading';
+import { logOut } from '../../components/fail/logOut';
+import { SearchInput, CalendarInput } from '../../components/input';
+import { SearchSelect } from '../../components/select';
+import { FilterList, Filter } from '../../module/filter/filter';
+import { getIntervalDate } from '../../components/calendar/dateFunction';
 
-interface Props {}
+interface Props {
+    location:any;
+}
 
 interface State {
     callbackData: RequestCallback<ParameterName.getApplyItems>[];
     data : Parameter<ParameterName.getApplyItems>;
     pageInfo ?: PageInfo;
+    isLoading : boolean;
+    isPageLoading: boolean;
 }
-
+class Watcher{
+    getData: any;
+    setData: any;
+}
 export class Application extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
+        let _date = new Date(),
+            _intervalObj: {endTime: string, startTime: string};
+         _intervalObj = getIntervalDate(_date, 1);
         this.state = {
             callbackData: [],
             data: {
                 BorrowerName: '',
                 EmployeeId: '',
-                EndTime: '',
+                StartTime: _intervalObj.startTime,
+                EndTime: _intervalObj.endTime,
                 MerchantNo: '',
                 Mobile: '',
                 PageIndex: '1',
-                PageSize: '10',
-                StartTime: '',
-                Status: '',
+                PageSize: '10',               
+                Status: '-1',
                 Token: sessionData.getData('Token')
             },
             pageInfo: {
@@ -39,26 +56,47 @@ export class Application extends React.Component<Props, State> {
                 PageIndex: '',
                 PageSize: 0,
                 TotalCount: 0
-            }
+            },
+            isLoading: true,
+            isPageLoading: false
         };
         this.setShowModal = this.setShowModal.bind(this);
-        this.getList = this.getList.bind(this);
+        this.getList = load.run.call(this, this.getList, 'isPageLoading');
         this.changePage = this.changePage.bind(this);
+        this.inputChange = this.inputChange.bind(this);
+        this.searchList = this.searchListFunc.call(this);
+        this.search  = this.search.bind(this);
     }
-
+    searchList: FilterList;
     componentDidMount(){
         this.getList();
     }
+    search(data: any){
+        if(this.state.isPageLoading){
+            return;
+        }
+        let _data = this.state.data,
+            newParameterData,
+            searchData = data;
+        _data.PageIndex = 1;
+        newParameterData = Object.assign({}, _data, searchData);
+        this.setState({
+            data: newParameterData
+        }, this.getList)
+    }
     getList(){
-        let _options: ReqOption<ParameterName.getApplyItems> = {
+        let _options: ReqOption<ParameterName.getApplyItems>;
+        _options = {
             data: this.state.data,
-            fail: (e)=>{
+            fail: logOut((e:Callback)=>{
                 alert(e.ErrMsg);
-            },
+            }, this.props.location.pathname),
             succeed: (e)=>{
                 this.setState({
                     callbackData: e.Value.PagedList,
-                    pageInfo: e.Value.PageInfo
+                    pageInfo: e.Value.PageInfo,
+                    isLoading: false,
+                    isPageLoading: false
                 })
             }
         }
@@ -71,32 +109,97 @@ export class Application extends React.Component<Props, State> {
     }
     changeModal: any = {}
     changePage(num: number){
+        if(this.state.isPageLoading){
+            return;
+        }
         let _data =this.state.data;
         _data.PageIndex = num;
         this.setState({
             data: _data
+        }, this.getList)
+    }
+    inputChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>){
+        if(this.state.isPageLoading){
+            return;
+        }
+        let value = e.target.value,
+            name = e.target.name,
+            _data = this.state.data;
+        _data[name as 'EmployeeId'] = value;
+        this.setState({
+            data: _data
         })
     }
+    applyStatus = {
+        '1': '通过',
+        '2': '拒绝',
+        '3': '审核中'
+    }
+    searchListFunc: ()=>FilterList = ()=>[{
+        name : 'BorrowerName',
+        text : '借款人',
+        type : 'input',
+        value: this.state.data.BorrowerName
+    }, {
+        name : 'Status',
+        text : '状态',
+        type : 'select',
+        value: this.state.data.Status,
+        list : [
+            {
+                value: '-1',
+                text : '全部'
+            },
+            {
+                value: '1',
+                text : '通过'
+            },{
+                value: '2',
+                text : '拒绝'
+            },{
+                value: '3',
+                text : '审核中'
+            }]
+    }, {
+        name : 'StartTime',
+        text : '开始日',
+        type : 'date',
+        value: this.state.data.StartTime
+    }, {
+        name : 'EndTime',
+        text : '结束日',
+        type : 'date',
+        value: this.state.data.EndTime
+    }, {
+        name : 'Mobile',
+        text : '手机号',
+        type : 'input',
+        value: this.state.data.Mobile
+    }]
     render() {
         return <View>
-            <div style={{height: '40px', display: 'flex', marginBottom: '30px'}}>
-                <PrimaryButton style={{width: '150px',
-                    marginRight: '20px',
-                    fontSize: '14px',
-                    borderRadius: '0'}} onClick={this.setShowModal}>
-                    添加申请
-                </PrimaryButton>
-                <div style={{background: '#fff', width: '100%'}}>
-                    
+            <div style={{display: 'flex', height: '100%', flexDirection: 'column'}}>
+                <div style={{position: 'relative',display: 'flex', marginBottom: '30px'}}>
+                    <PrimaryButton style={{width: '150px',
+                        marginRight: '20px',
+                        fontSize: '14px',
+                        borderRadius: '0'}} onClick={this.setShowModal}>
+                        添加申请
+                    </PrimaryButton>
+                    <Filter filterList={this.searchList} filter={this.search} />
+                    <Paging 
+                        lastPage ={this.state.pageInfo.PageCount}
+                        totalSize={this.state.pageInfo.TotalCount}
+                        changePage={this.changePage}
+                        index={this.state.pageInfo.PageIndex}  />
+                    <PageLoading show={this.state.isLoading} hideContent={true} />
                 </div>
-                <Paging 
-                    lastPage ={this.state.pageInfo.PageCount}
-                    totalSize={this.state.pageInfo.TotalCount}
-                    changePage={this.changePage}
-                    index={this.state.pageInfo.PageIndex}  />
+                <div style={{flex:'auto', position: 'relative'}}>
+                    <PageLoading show={this.state.isPageLoading} />
+                    <ApplicationTable data={this.state.callbackData} />
+                </div>
             </div>
-            <ApplicationTable data={this.state.callbackData} />
-            <ApplyModal changeModal={this.changeModal} />
+            <ApplyModal getList={this.getList} changeModal={this.changeModal} />
         </View>
     }
 }
@@ -130,10 +233,10 @@ class ApplicationTable extends React.Component<ApplicationTableProps, any>{
         head: '申请期数'
     }, {
         attr: 'AuditMoney',
-        head: '申请金额'
+        head: '审核金额'
     }, {
         attr: 'AuditPeriod',
-        head: '申请期数'
+        head: '审核期数'
     }, {
         attr: 'ConfirmPersonName',
         head: '业务员'
@@ -141,11 +244,10 @@ class ApplicationTable extends React.Component<ApplicationTableProps, any>{
         attr: 'Status',
         head: '状态',
         format: (data, attr)=>{
-            console.log(data, attr)
             switch(data[attr]){
                 case  1 :
                 case '1':{
-                    return '同意'
+                    return '通过'
                 }
                 case  2 :
                 case '2': {

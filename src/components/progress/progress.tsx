@@ -1,5 +1,6 @@
 import * as React from 'react';
 import './progress.css';
+import { Icon } from '../icon/icon';
 
 export const Progress = (props: {hidden: boolean}) => (
     <div className="progress" 
@@ -11,7 +12,7 @@ export const Progress = (props: {hidden: boolean}) => (
     </div>
 );
 type InnerProgressProps = {
-    hidden : boolean;
+    hidden ?: boolean;
     width  ?: string;
     height : string;
     color  ?: string;
@@ -23,7 +24,7 @@ export const InnerProgress = (props: InnerProgressProps) => {
     return <div className='inner-progress' style={{ height: props.height || '100%'}}>
         {
             _arr.map((value, key)=>{
-                return <div className='inner-loading' style={{
+                return <div className='inner-loading' key={key} style={{
                     background: props.color || '#fff',
                     width: props.width || '3px',
                     height: '100%',
@@ -35,11 +36,47 @@ export const InnerProgress = (props: InnerProgressProps) => {
     </div>
 }
 type PageLoadingProps = {
-    
+    show : boolean; 
+    icon ?: any;
+    hideIcon ?: boolean;
+    hideContent ?: boolean;
 }
 //页面loading图
-export const PageLoading = (props: PageLoadingProps) => {
-    return <div className={'loading'}>
 
-    </div>
+export class PageLoading extends React.Component <PageLoadingProps, any>{
+    constructor(props: PageLoadingProps){
+        super(props);
+        this.state ={
+            end: false
+        }
+        this.end = this.end.bind(this);
+    }
+    isEnd: boolean;
+    componentDidUpdate(nextProps: PageLoadingProps){
+        if(this.props.show && this.state.end){
+            this.setState({
+                end: false
+            })
+        }
+    }
+    end(){
+        this.setState({
+            end: true
+        })
+    }
+    render(){
+        let props = this.props;
+        return !this.state.end ? <div onAnimationEnd={this.end} className={`page-loading ${props.show ? '' : 'hidden'}`}>
+             { 
+               !this.props.hideIcon && (this.props.icon || <Icon style={{fontSize: '40px',color: '#ccc', marginRight:'10px'}} className='rotating'>
+                    loading
+                </Icon>)}
+            <div>
+                {
+                    !this.props.hideContent && (this.props.children || '读取中...')
+                }
+                
+            </div>
+        </div> : ''
+    }
 }

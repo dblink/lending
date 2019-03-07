@@ -6,6 +6,7 @@ import { BankCardInput } from '../../components/input';
 import { PrimaryButton, CancelButton } from '../../components/button';
 import { InnerProgress } from '../../components/progress/progress';
 import { sessionData } from '../../components/sessionData/sessionData';
+import { ErrorMessage } from '../../components/error/errorMessage';
 interface InputCardProps {
     onChangeStep: (str: string)=>void;
     setDataState: (data: any) =>void;
@@ -74,9 +75,9 @@ export class InputCard extends React.Component<InputCardProps, InputCardState> {
             style={{
                 background: '#fff', padding: '35px', width: '330px'
             }}>           
-            {this.state.error && <div style={{color: 'red'}}>
+            <ErrorMessage > 
                 {this.state.error}    
-            </div>}
+            </ErrorMessage>
             <BankCardInput
                 placeholder='请输入身份证' name='card' 
                 value={this.state.data.card}

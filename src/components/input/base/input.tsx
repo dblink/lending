@@ -4,14 +4,14 @@ import { OperateTemp, OperateTempState, BaseOperateProps } from '../../template/
 export interface BaseInputProps extends BaseOperateProps { 
     type: React.HTMLAttributes<'HTMLInputElement'>['itemType'];
     mouseFocus ?: string | React.CSSProperties;
-    updateStyle ?: {
+    updatestyle ?: {
         run: any
     }
     [index: string]: any;
 }
 
 interface State extends OperateTempState{
-
+    data: any,
 }
 
 export class BaseInput extends OperateTemp<BaseInputProps, State> {
@@ -21,11 +21,12 @@ export class BaseInput extends OperateTemp<BaseInputProps, State> {
             shouldUpdate: true,
             className: this.props.className,
             style: this.props.style,
+            data: '' //将此组件设置为受控组件
         };
         this.getMouseEvent = this.getMouseEvent.bind(this);
         this.mouseEvent = this.getMouseEvent();
-        if(this.props.updateStyle){
-            this.props.updateStyle.run = (style: React.CSSProperties)=>{
+        if(this.props.updatestyle){
+            this.props.updatestyle.run = (style: React.CSSProperties)=>{
                 this.updateStyle(style);
             }
         }
@@ -76,10 +77,12 @@ export class BaseInput extends OperateTemp<BaseInputProps, State> {
             mouseFocus: mouseFocus,
             style: style,
             type: type,
+            value: value,
             ...other
         } = this.props;
-        return <input style={this.state.style} {...this.mouseEvent}
-        className={this.state.className} type={this.props.type || 'text'}  
+        return <input style={this.state.style} {...this.mouseEvent} 
+            value={value || this.state.data}
+            className={this.state.className} type={this.props.type || 'text'}  
         {...other} />
     }
 }

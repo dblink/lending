@@ -41,7 +41,7 @@ export class BankCard extends React.Component<Props, State> {
                 <div style={{padding: '6px',background: '#FFF',
                     borderRadius:'50%'}}>
                     <Icon style={{color: cardColor[this.props.bankCode as 'CCB']}}>
-                        home
+                        {this.props.bankCode}
                     </Icon>
                 </div>
                 <div style={{color: '#fff', 

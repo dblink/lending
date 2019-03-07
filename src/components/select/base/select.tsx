@@ -9,6 +9,7 @@ export class BaseSelect extends React.Component<BaseSelectProps, State> {
     }
 
     render() {
-        return <select {...this.props} />
+        let {onChange, value, ...other} = this.props;
+        return <select {...other} value={value || ''} onChange={onChange}/>
     }
 }

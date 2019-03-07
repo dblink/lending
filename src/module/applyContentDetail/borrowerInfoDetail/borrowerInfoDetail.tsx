@@ -5,7 +5,7 @@ import { CompanyInfo } from './conpanyInfo/compantInfo';
 import { OtherInfo } from './otherInfo/otherInfo';
 import { ReqOption, req } from '../../../components/request';
 import { TabButton, CancelButton, PrimaryButton } from '../../../components/button';
-import { InnerProgress } from '../../../components/progress/progress';
+import { InnerProgress, PageLoading } from '../../../components/progress/progress';
 import { load } from '../../../components/loading/loading';
 import { sessionData } from '../../../components/sessionData/sessionData';
 
@@ -13,6 +13,7 @@ type BorrowerInfoDetailState = {
     type: 'contactInfo' | 'otherInfo' | 'companyInfo';
     data?: Parameter<ParameterName.addBorrowerDetailInfo>;
     isLoading: boolean;
+    pageLoading: boolean;
 };
 type BorrowerInfoDetailProps = {
     name: string;
@@ -31,24 +32,22 @@ export class BorrowerInfoDetail extends React.Component<BorrowerInfoDetailProps,
                 Token: sessionData.getData('Token'),
                 BorrowerId: this.props.borrowerId
             },
-            isLoading: false
+            isLoading: false,
+            pageLoading: false
         };
         this.getDom = this.getDom.bind(this);
         this.changeType = this.changeType.bind(this);
         this.confirm = load.run.call(this, this.confirm);
-        this.getInfo = this.getInfo.bind(this);
+        this.getInfo = load.run.call(this, this.getInfo.bind(this), 'pageLoading') ;
     }
     changeType(type: BorrowerInfoDetailState['type']) {
         if (this.state.type === type) {
             return;
         }
-        console.log(type, this.setData[this.state.type].run);
         if (this.setData[this.state.type].run) {
             let data = this.setData[this.state.type].run();
-            //console.log(data);
             let _data = this.state.data;
             let _d = Object.assign({},_data, data);
-            //console.log(_d);
             this.setState({
                 data: _d,
                 type: type
@@ -81,7 +80,6 @@ export class BorrowerInfoDetail extends React.Component<BorrowerInfoDetailProps,
     };
     request: any;
     getDom() {
-        //console.log(this.state.data.BorrowerRelation, 'BorrowerRelation')
         switch (this.state.type) {
             case 'contactInfo':
                 return <ContactInfo name={'BorrowerRelation'} watcher={this.setData.contactInfo} data={this.state.data.BorrowerRelation} />;
@@ -100,9 +98,7 @@ export class BorrowerInfoDetail extends React.Component<BorrowerInfoDetailProps,
         let _data = this.state.data;
         if (this.setData[this.state.type].run) {
             let data = this.setData[this.state.type].run();
-            //console.log(data);
             _data =  Object.assign({}, _data, data);
-            
         }
         let _options: ReqOption<ParameterName.addBorrowerDetailInfo> = {
             data: _data,
@@ -130,12 +126,13 @@ export class BorrowerInfoDetail extends React.Component<BorrowerInfoDetailProps,
             },
             fail: (e) => {
                 alert(e.ErrMsg);
+                this.setState({
+                    pageLoading: false
+                })
             },
             succeed: (e) => {
                 let _data = this.state.data;
-                //console.log(e.Value,1);
                 if(this.state.type === 'contactInfo'){
-                    //console.log(this.setData.contactInfo)
                     this.setData.contactInfo.setData(e.Value['BorrowerRelation'])
                 }else if(this.state.type === 'companyInfo'){
                     this.setData.companyInfo.setData(e.Value['BorrowerCompany'])
@@ -149,14 +146,14 @@ export class BorrowerInfoDetail extends React.Component<BorrowerInfoDetailProps,
                 
                 _data = Object.assign({}, _data, e.Value);
                 this.setState({
-                    data: _data
+                    data: _data,
+                    pageLoading: false
                 });
             }
         };
         req(ParameterName.getBorrowerDetailInfo, _options);
     }
     componentWillUnmount(){
-        //this.request.closeXHR();
     }
     render() {
         return <div style={{
@@ -165,6 +162,7 @@ export class BorrowerInfoDetail extends React.Component<BorrowerInfoDetailProps,
             position: 'relative',
             justifyContent: 'space-between', height: '100%'
         }}>
+            <PageLoading show={this.state.pageLoading} />
             <div style={{ display: 'flex' }}>
                 <TabButton onClick={() => this.changeType('contactInfo')} clicked={this.state.type === 'contactInfo'}>
                     联系人信息

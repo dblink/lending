@@ -3,11 +3,13 @@ import { BaseModal } from './base/baseModal';
 import { ApplyInput } from '../input';
 import { ModalTitle } from './title';
 import { PrimaryButton, CancelButton } from '../button';
-import { Parameter, ParameterName } from '../request/setting';
+import { Parameter, ParameterName, Callback } from '../request/setting';
 import { ReqOption, req } from '../request';
 import { load } from '../loading/loading';
 import { InnerProgress } from '../progress/progress';
 import { sessionData } from '../sessionData/sessionData';
+import { ApplySelect } from '../select';
+import { logOut } from '../fail/logOut';
 
 export class Input {
     state: any;
@@ -27,7 +29,7 @@ export class Input {
 interface Props {
     status: 'Approved' | 'Denied';
     isShowModal: boolean;
-    cancelModal: ()=>void;
+    cancelModal: (refresh ?: boolean)=>void;
     id: string;
 }
 
@@ -41,12 +43,11 @@ interface State {
 export class AuditModal extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        //console.log(this.props.id);
         this.state = {
             data: {
                 Token: sessionData.getData('Token'),
                 AuditApplyId: '',
-                Status: this.props.status === 'Approved' ? '1' : '2',
+                Status: '',
                 ApplyMoney: '',
                 Period: '',
                 Remark: ''
@@ -73,7 +74,7 @@ export class AuditModal extends React.Component<Props, State> {
     inputChange: any;
     getDom(){
         if(this.props.status === 'Approved'){
-            return <Approved 
+            return <Approved isLoading={this.state.isLoading}
                 clearError={this.clearError}
                 getData={this.getData} error={this.state.error} />
         }else{
@@ -81,45 +82,44 @@ export class AuditModal extends React.Component<Props, State> {
         }
     }
     cancelModal(){
-        //console.log(this.init.error, 1);
         this.setState({
             error: {},
-        },this.props.cancelModal);
-        //this.props.cancelModal();
+        },()=>this.props.cancelModal());
     }
     confirm(){
         let _data = this.getData.run();
         let data = this.state.data;
         data.AuditApplyId = this.props.id;
         _data = Object.assign({}, data, _data);
-        if(this.state.data.Status === '2'){
-            _data.Period = 0;
-            _data.ApplyMoney = 0;
+        _data.Status = this.props.status === 'Approved' ? '1' : '2';
+        if(this.props.status === 'Denied'){
+            _data.Period = '0';
+            _data.ApplyMoney = '0';
         }
-        console.log(_data);
         let options: ReqOption<ParameterName.auditLoanApply> = {
             data: _data,
-            fail: (e)=>{
-                if(e.Value){
-                    let _error = this.state.error;
-                    _error[e.Value] = e.ErrMsg;
-                    this.setState({
-                        error: _error
-                    })
-                }
-                this.setState({
-                    isLoading: false
-                })
-            },
+            fail: logOut(this.fail),
             succeed: (e)=>{
                 alert('提交成功！');
                 this.setState({
                     isLoading: false
                 })
-                this.cancelModal()
+                this.props.cancelModal(true)
             }
         }
         req(ParameterName.auditLoanApply, options)
+    }
+    fail = (e: Callback)=>{
+        if(e.Value){
+            let _error = this.state.error;
+            _error[e.Value] = e.ErrMsg;
+            this.setState({
+                error: _error
+            })
+        }
+        this.setState({
+            isLoading: false
+        })
     }
     render() {
         return <BaseModal isOpen={this.props.isShowModal}>
@@ -147,23 +147,29 @@ type ApprovedProps = {
     };
     error: any;
     clearError: any;
+    isLoading: boolean;
 }
 type ApprovedState = {
-    data: any;
+    data: Parameter<ParameterName.auditLoanApply>;
 }
 
 class Approved extends React.Component <ApprovedProps, ApprovedState>{
     constructor(props: any){
         super(props);
         this.state = {
-            data:{}
+            data:{
+                ApplyType: ''
+            }
         }
         this.input =  new Input().inputChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
         this.props.getData.run = ()=>this.state.data;
     }
     input: any
-    inputChange: (e: React.ChangeEvent<HTMLInputElement>) => void = (e)=> {
+    inputChange: (e: React.ChangeEvent<HTMLInputElement | any>) => void = (e)=> {
+        if(this.props.isLoading){
+            return;
+        }
         this.props.clearError();
         this.input(e);
     };
@@ -175,18 +181,39 @@ class Approved extends React.Component <ApprovedProps, ApprovedState>{
             <div style={{marginTop: '20px'}}>
                 <ApplyInput text='审批金额' 
                     name='ApplyMoney'
+                    value={this.state.data.ApplyMoney}
                     error={this.props.error.ApplyMoney}
                     onChange={this.inputChange}  />
             </div>
             <div style={{marginTop: '20px'}}>
                 <ApplyInput text='审批周期' 
                     name='Period'
+                    value={this.state.data.Period}
                     error={this.props.error.Period}
                     onChange={this.inputChange}/>
             </div>
             <div style={{marginTop: '20px'}}>
+                <ApplySelect text='周期类型' 
+                    name='ApplyType'
+                    value={this.state.data.ApplyType}
+                    onChange={this.inputChange}
+                    list={[{
+                            value: '1',
+                            text: '按月还款'
+                        },{
+                            value: '2',
+                            text: '按周还款'
+                        },{
+                            value: '3',
+                            text: '按天还款'
+                        }
+                    ]}
+                />
+            </div>
+            <div style={{marginTop: '20px'}}>
                 <ApplyInput type='textarea' 
                     name='Remark'
+                    value={this.state.data.Remark}
                     onChange={this.inputChange}
                     style={{
                         height: '160px'
@@ -202,10 +229,14 @@ class Denied extends React.Component <any, any>{
         this.state = {
             data: {}
         }
-        this.inputChange = new Input().inputChange.bind(this);
+        this.input = new Input().inputChange.bind(this);
+        this.inputChange = this.inputChange.bind(this);
         this.props.getData.run = ()=>this.state.data;
     }
-    inputChange: (e:React.ChangeEvent<any>)=>void;
+    input: (e:React.ChangeEvent<any>)=>void;
+    inputChange(e:React.ChangeEvent<any>){
+        !this.props.isLoading && this.input(e);
+    }
     render(){
         return <div style={{padding: '0 70px'}}>
             <ModalTitle >

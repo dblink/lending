@@ -54,20 +54,34 @@ export class ApplyContent extends React.Component<Props, State> {
         iconName: 'zhifubaoReport'
     }]
     stateDom(name: any){
-        if(
-            this.props.dataState[name]
-        ){
-            return  <span style={{color: 'green'}}>已完成</span>
-        }else{
-            return <span style={{color: 'red'}}>未填写</span>
+        if(typeof this.props.dataState[name] === 'boolean') {
+            if(
+                this.props.dataState[name]
+            ){
+                return  <span style={{color: 'green'}}>已完成</span>
+            }else{
+                return <span style={{color: 'red'}}>未填写</span>
+            }
+        }else {
+            switch(this.props.dataState[name].toString()){
+                case '1':
+                case '4':{
+                    return  <span style={{color: 'red'}}>未获取</span>
+                }
+                case '2':{
+                    return <span style={{color: 'blue'}}>获取中</span>
+                }
+                case '3': {
+                    return <span style={{color: 'green'}}>已获取</span>
+                }
+            }
         }
-        
     }
     render() {
         return <div style={{borderTop: '10px solid #F6F6F6'}}>
             {
-                 this.arr.map((value)=>{
-                    return <Vertical 
+                 this.arr.map((value, key)=>{
+                    return <Vertical key={key}
                         onClick={()=>this.props.onChangeStep('applyListDetail', value.name)}
                         isMust={value.isMust} text={value.text} className={this.props.name === value.name ? 'click' : ''}
                         iconName={value.iconName} >

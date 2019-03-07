@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CancelButton, PrimaryButton } from '../../../components/button';
-import { InnerProgress } from '../../../components/progress/progress';
+import { InnerProgress, PageLoading } from '../../../components/progress/progress';
 import { ApplyInput } from '../../../components/input';
 import { req, ReqOption } from '../../../components/request';
 import { ParameterName, ParameterSummary, Parameter } from '../../../components/request/setting';
@@ -20,6 +20,7 @@ type BorrowerInfoState = {
     data: Parameter<ParameterName.updateBorrowPersonInfo>;
     isLoading: boolean;
     error: string;
+    pageLoading: boolean;
 }
 
 //借款人信息
@@ -29,11 +30,12 @@ export class BorrowerInfo extends React.Component <BorrowerInfoProps, BorrowerIn
         this.state = {
             data: {},
             isLoading: false,
-            error: ''
+            error: '',
+            pageLoading: false
         }
         this.inputChange = this.inputChange.bind(this);
         this.confirm = load.run.call(this, this.confirm);
-        this.getInfo = load.run.call(this, this.getInfo);
+        this.getInfo = load.run.call(this, this.getInfo, 'pageLoading');
     }
     componentDidMount(){
         if(this.props.isExit){
@@ -52,7 +54,7 @@ export class BorrowerInfo extends React.Component <BorrowerInfoProps, BorrowerIn
             succeed: (e)=>{
                 this.setState({
                     data: e.Value,
-                    isLoading: false
+                    pageLoading: false
                 })
             }
         }
@@ -84,6 +86,7 @@ export class BorrowerInfo extends React.Component <BorrowerInfoProps, BorrowerIn
         _data.Sex = _birthAndSex.sex;
         _data.IDCardNo = this.props.card;
         _data.Token = sessionData.getData('Token');
+        _data.Id = this.props.userId
         let _options: ReqOption<ParameterName.updateBorrowPersonInfo> = {
             data: _data,
             fail: (e)=>{
@@ -100,7 +103,9 @@ export class BorrowerInfo extends React.Component <BorrowerInfoProps, BorrowerIn
         req(ParameterName.updateBorrowPersonInfo, _options)
     }
     render(){
-        return <div style={{display: 'flex', height: '100%', flexDirection: 'column', justifyContent: 'space-between'}}>
+        return <div style={{display: 'flex', position: 'relative',
+                height: '100%', flexDirection: 'column', justifyContent: 'space-between'}}>
+            <PageLoading show={this.state.pageLoading} />
             <div style={{width: '360px', margin: '0 auto'}}>
                 <ModalTitle >
                     借款人信息

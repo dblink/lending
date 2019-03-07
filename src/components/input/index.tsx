@@ -3,6 +3,7 @@ import { BaseInput } from "./base/input";
 import { config } from "./config";
 import './input.scss';
 import { Icon } from '../icon/icon';
+import { CalendarScreen } from '../calendar/calendarScreen';
 
 interface Props extends React.InputHTMLAttributes<any>{
     
@@ -26,20 +27,31 @@ export const BankCardInput = (props: BankCardInput) =>{
 };
 
 export class ApplyInput extends React.Component <ApplyInputProps, any>{
-    updateStyle: any = {
+    constructor(props: ApplyInputProps){
+        super(props);
+        this.changeInputStyle = this.changeInputStyle.bind(this);
+    }
+    updatestyle: any = {
         run: ''
+    }
+    changeInputStyle(style: React.CSSProperties){
+        if(this.updatestyle.run){
+            this.updatestyle.run(style);
+        }
+    }
+    componentWillUpdate(nextProps: ApplyInputProps){
+        let style = nextProps.style || {};
+        if(nextProps.error){
+            style.border = '1px solid red';
+            this.changeInputStyle(style);
+        }
+        if(this.props.error){
+            style.border = '1px solid #ccc';
+            this.changeInputStyle(style);
+        }
     }
     render(){
         let {text, type, error, style = {}, ...other} = this.props;
-        if(error){
-            style.border = '1px solid red';
-        }else{
-            style.border = '1px solid #ccc';
-        }
-        if(this.updateStyle.run){
-            this.updateStyle.run(style);
-        }
-        
         return <div>
             <div style={{fontSize: '14px', marginBottom: '10px', color: '#777'}}>
                 {text}
@@ -48,7 +60,7 @@ export class ApplyInput extends React.Component <ApplyInputProps, any>{
                 type === 'textarea' 
                 ? <textarea className='apply-input textarea' {...other} style={style}>
                   </textarea>
-                : <BaseInput type={type} updateStyle={this.updateStyle} className='apply-input' {...other} />
+                : <BaseInput type={type} updatestyle={this.updatestyle} className='apply-input' {...other} />
             }
             {
                 error && <div style={{color: 'red'}}>
@@ -57,4 +69,72 @@ export class ApplyInput extends React.Component <ApplyInputProps, any>{
             }
         </div>
     }
+}
+
+interface SearchInputProps extends Props {
+    text: string;
+}
+
+export const SearchInput = (props: SearchInputProps) =>{
+    let {text, type, style, ...other} = props;
+    return <span style={{display: 'inline-flex', alignItems:'center', padding: '1px', fontSize: '14px', justifyContent: 'center', ...style}}>
+        <span style={{flex: '1'}}>{props.text}:</span> 
+        <BaseInput className='search-input' 
+            style={{flex: '2', fontSize: '14px', display:'inline-block'}} type={type} {...other} />
+    </span>
+}
+
+export class CalendarInput extends React.Component<SearchInputProps, any> {
+    constructor(props: SearchInputProps){
+        super(props);
+        this.state ={
+            show: false
+        }
+        
+        this.showModal = this.showModal.bind(this);
+        this.closeModal = this.closeModal.bind(this);
+        this.getCalendar = this.getCalendar.bind(this);
+    }
+    componentDidMount(){
+        document.body.addEventListener('click', this.closeModal);
+    }
+    closeModal(){
+        this.setState({
+            show: false
+        })
+    }
+    showModal(e: React.ChangeEvent<HTMLInputElement>){
+        e.nativeEvent.stopImmediatePropagation();
+        this.setState({
+            show: true
+        });
+    }
+    componentWillUnmount(){
+        document.body.removeEventListener('click', this.closeModal);
+    }
+    getCalendar(name: string, value: any){
+        let data:any = {
+            target:{
+                name: name,
+                value: value
+            }
+        };
+        this.props.onChange(data);
+    }
+    render(){
+        let {value, name,text, onChange, style, ...other} = this.props;
+        return <div style={{display: 'flex', 
+            alignItems: 'center',...style,}}>
+            <span style={{flex: 1,fontSize: '14px'}}>{text}:</span>
+            <div  style={{flex: 2}}>
+                <BaseInput type='text' readOnly
+                    style={{width: '100%', fontSize: '14px', height: '100%',border: 'none'}} {...other} onClick={this.showModal} value={value} />
+                {this.state.show && <CalendarScreen name={name} 
+                    date={value} close={this.closeModal}
+                    getCalendar={this.getCalendar} />}
+            </div>
+            
+        </div>
+    }
+    
 }

@@ -25,7 +25,13 @@ export class ApplyContentDetail extends React.Component <ApplyContentDetailProps
         super(props);
         this.changeStep = this.changeStep.bind(this);
     }
-    changeStep(step: ApplyModalState['step'], name: string){
+    changeStep(step: ApplyModalState['step'], name: string){ 
+        if(name === 'Alipay' || name === 'HoneypotStatus' || name === 'HoneyBeeStatus'){
+            if(this.props.dataState.ApplyId === '0'){
+                alert('请先填写申请借款信息！');
+                name = 'ISApply';
+            }
+        }
         this.props.setType(name);
         this.props.onChangeStep(step);
     }
@@ -33,6 +39,7 @@ export class ApplyContentDetail extends React.Component <ApplyContentDetailProps
         switch(this.props.type){
             case 'ISApply': return (
                 <ApplyInfo name={this.props.type} 
+                    isExist={this.props.dataState[this.props.type]}
                     onChangeDataState={this.props.onChangeDataState} 
                     id={this.props.dataState.BorrowerId} 
                     onChangeStep={this.changeStep}/>  );
@@ -65,10 +72,15 @@ export class ApplyContentDetail extends React.Component <ApplyContentDetailProps
                     skip={this.props.onChangeStep} applyId={this.props.dataState.ApplyId} />
             )
             case 'Alipay': return (
-                <Gongxinbao  idCardNo={this.props.card} applyId={this.props.dataState.ApplyId} />
+                <Gongxinbao state={this.props.dataState[this.props.type]} 
+                    changeState={this.props.onChangeDataState}
+                    type={this.props.type} changePage={this.props.onChangeStep}
+                    idCardNo={this.props.card} applyId={this.props.dataState.ApplyId} />
             )
             case 'HoneyBeeStatus': return (
-                <Juxinli idCardNo={this.props.card} borrowerId={this.props.dataState.BorrowerId} applyId={this.props.dataState.ApplyId} />
+                <Juxinli state={this.props.dataState[this.props.type]}
+                    type={this.props.type} changePage={this.props.onChangeStep} changeState={this.props.onChangeDataState}
+                    idCardNo={this.props.card} borrowerId={this.props.dataState.BorrowerId} applyId={this.props.dataState.ApplyId} />
             )
             default: {
                 return <div>测试阶段</div>
@@ -76,7 +88,7 @@ export class ApplyContentDetail extends React.Component <ApplyContentDetailProps
         }
     }
     render(){
-        return <div style={{height: '660px',
+        return <div style={{height: '600px',
                 display:'flex',
                 background: '#fff'
             }}>

@@ -6,9 +6,11 @@ import { ApplyContentDetail } from '../../module/applyContentDetail/applyContenc
 import { ApplyContentList } from '../../module/applyContentList/applyContentList';
 import { InputCard } from '../../module/inputCard/inputCard';
 import { sessionData } from '../sessionData/sessionData';
+import { PageLoading } from '../progress/progress';
 
 interface Props {
-    changeModal ?: any;
+    changeModal : any;
+    getList : any;
 }
 
 export interface ApplyModalState {
@@ -36,20 +38,21 @@ export class ApplyModal extends React.Component<Props, ApplyModalState> {
         this.setType = this.setType.bind(this);
         this.changeShow = this.changeShow.bind(this);
         this.props.changeModal.show = this.changeShow;
-        this.confirmApply = this.confirmApply.bind(this);
     }
     changeStep(step: 'inputCard' | 'applyList' | 'applyListDetail'){
         this.setState({
             step: step
         })
     }
-    changeShow(status: boolean){
+    changeShow(status: boolean, refresh ?: boolean){
         this.setState({
             showModal: status,
             step: 'inputCard',
             dataState: {},
             card: '',
             type: '',
+        },()=>{
+            if(refresh) this.props.getList()
         })
     }
     //设置数据状态
@@ -70,34 +73,6 @@ export class ApplyModal extends React.Component<Props, ApplyModalState> {
             card: card
         })
     }
-    confirmApply(){
-        if(!this.state.dataState.ISUploadPersonCardState){
-            alert('实名认证必填！');
-            return;
-        }
-        if(!this.state.dataState.ISApply){
-            alert('申请信息必填！');
-            return;
-        }
-        if(!this.state.dataState.ISExsitBorrower){
-            alert('借款信息必填！');
-            return;
-        }
-        let _options: ReqOption<ParameterName.confirmApply> = {
-            data: {
-                BorrowerId: this.state.dataState.BorrowerId,
-                Token: sessionData.getData('Token')
-            },
-            fail:(e)=>{
-                alert(e.ErrMsg)
-            },
-            succeed:(e)=>{
-                alert('提交成功！');
-                this.changeShow(false);
-            }
-        }
-        req(ParameterName.confirmApply, _options)
-    }
     getStep(){
         switch(this.state.step){
             case 'inputCard':{
@@ -112,7 +87,7 @@ export class ApplyModal extends React.Component<Props, ApplyModalState> {
                     dataState={this.state.dataState}
                     card={this.state.card}
                     setType={this.setType}
-                    confirm= {this.confirmApply}
+                    changeShow={this.changeShow}
                     name = {this.state.type}
                     close={()=>this.changeShow(false)}
                     onChangeStep={this.changeStep}/>
@@ -135,7 +110,7 @@ export class ApplyModal extends React.Component<Props, ApplyModalState> {
     }
     render() {
         return <BaseModal isOpen={this.state.showModal}>
-            {this.getStep()}
+                {this.getStep()}
         </BaseModal>
     }
 } 

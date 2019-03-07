@@ -5,6 +5,8 @@ import { ReqOption, req } from '../../components/request';
 import { ParameterName, CallbackSummary } from '../../components/request/setting';
 import { sessionData } from '../../components/sessionData/sessionData';
 import { ApplyModalState } from '../../components/modal/applyModal';
+import { load } from '../../components/loading/loading';
+import { InnerProgress } from '../../components/progress/progress';
 
 
 interface Props {
@@ -15,13 +17,17 @@ interface Props {
     setDataState: (e: CallbackSummary[ParameterName.getBorrowerStatus], status: boolean)=>void;
 }
 
-interface State {}
+interface State {
+    isLoading: boolean;
+}
 
 export class Honeypot extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        this.state = {};
-        this.getHoneyPot = this.getHoneyPot.bind(this);
+        this.state = {
+            isLoading: false
+        };
+        this.getHoneyPot = load.run.call(this, this.getHoneyPot);
     }
     getHoneyPot(){
         let _getHoneyPot: ReqOption<ParameterName.getMiGuan>;
@@ -32,9 +38,15 @@ export class Honeypot extends React.Component<Props, State> {
                 Token: sessionData.getData('Token')
             },
             fail:(e)=>{
-                console.log(e.ErrMsg);
+                alert(e.ErrMsg);
+                this.setState({
+                    isLoading: false
+                })
             },
             succeed: ()=>{
+                this.setState({
+                    isLoading: false
+                })
                 this.props.setDataState('HoneypotStatus', true);
                 this.props.skip('applyList');
             }
@@ -51,7 +63,7 @@ export class Honeypot extends React.Component<Props, State> {
                         取消
                     </CancelButton>
                     <PrimaryButton onClick={this.getHoneyPot}>
-                        获取蜜罐
+                        {this.state.isLoading ? <InnerProgress height='32px' /> : '获取蜜罐' } 
                     </PrimaryButton>
                 </div>
             </div>

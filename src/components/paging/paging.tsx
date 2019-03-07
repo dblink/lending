@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { PagingButton } from '../button';
 import './paging.css';
+import { InnerProgress } from '../progress/progress';
 interface Props {
     changePage: (index: number)=>void;
     index: string;
     lastPage: string;
     totalSize: number;
+    isLoading ?: boolean
 }
 
 interface State {}
@@ -17,7 +19,10 @@ export class Paging extends React.Component<Props, State> {
         this.changePage = this.changePage.bind(this);
     }
     changePage(num : number){
-        if(num < 0 || num >  parseInt(this.props.lastPage)){
+        //alert(1);
+        if(num <= 0 
+            || num === parseInt(this.props.index)
+            || num >  parseInt(this.props.lastPage)){
             return;
         }
         this.props.changePage(num);
@@ -30,14 +35,14 @@ export class Paging extends React.Component<Props, State> {
             <span style={{fontSize: '14px'}}>
                 当前{this.props.index}-共{this.props.lastPage}页/{this.props.totalSize}条
             </span>
-            <PagingButton intro='首页' onClick={()=>this.props.changePage(1)}>
+            <PagingButton intro='首页' onClick={()=>this.changePage(1)}>
                 firstPage
             </PagingButton>
-            <PagingButton intro='上一页' onClick={()=>this.props.changePage(_index - 1)}>
+            <PagingButton intro='上一页' onClick={()=>this.changePage(_index - 1)}>
                 prevPage
             </PagingButton>
-            <PagingButton intro='下一页' onClick={()=>this.props.changePage(_index + 1)} >nextPage</PagingButton>
-            <PagingButton intro='末页' onClick={()=>this.props.changePage(_lastPage)}>lastPage</PagingButton>
+            <PagingButton intro='下一页' onClick={()=>this.changePage(_index + 1)} >nextPage</PagingButton>
+            <PagingButton intro='末页' onClick={()=>this.changePage(_lastPage)}>lastPage</PagingButton>
         </div>
     }
 }

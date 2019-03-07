@@ -3,8 +3,11 @@ import { Vertical } from './base/vertical';
 import { Icon } from '../icon/icon';
 import { browserHistory } from '../../router';
 import { sessionData } from '../sessionData/sessionData';
+import { HrefButton } from '../button';
 
-interface Props {}
+interface Props {
+    location ?:any;
+}
 
 interface State {}
 
@@ -26,27 +29,37 @@ export class Menu extends React.Component<Props, State> {
             "Url": string,//路由地址
             "ParentId": string,//父id 0表示没有父级
         }[]//子菜单列表
-    }[] = sessionData.getData('UserMenuItems');
+    }[] = sessionData.getData('UserMenuItems') || [];
     render() {
         return <div style={{width: '260px', display:'flex', flexDirection: 'column'}}>
+            
             <img src='img/logoTitle.png' 
                 style={{
                     width: '100%'
                     }} />
+            <div style={{display: 'flex',padding: '10px 20px', alignItems: 'center', justifyContent: 'space-between'}}>
+                <div style={{fontSize: '14px', width: '100%'}}>
+                    你好，{sessionData.getData('UserInfo').Name}
+                </div>
+                <HrefButton onClick={()=>{
+                    sessionData.clear();
+                    browserHistory.replace('/', {from: location.pathname});
+                }}  style={{fontSize: '14px'}} >注销</HrefButton>
+            </div>
             <div style={{height: '100%', 
                 overflow:'auto',
                 display:'flex', flexDirection: 'column'}}>
                 {
-                    this.list.map((value)=>{
-                        return <div style={{height: '100%'}}>
+                    this.list.map((value, key)=>{
+                        return <div style={{height: '100%'}} key={key}>
                             <MenuItem text={value.MenuName} 
                                 url={value.Url}
                                 className={location.pathname === value.Url ? 'click' : ''}
                                 iconName={value.Icon}>
                                 {
                                     value.Items.length > 0 
-                                    && value.Items.map((value)=>{
-                                        return <MenuItem text={value.MenuName} 
+                                    && value.Items.map((value,key)=>{
+                                        return <MenuItem key={key+1} text={value.MenuName} 
                                         url={value.Url}
                                         className={location.pathname === value.Url ? 'click' : ''}
                                         style={{paddingLeft: '50px'}}
@@ -91,7 +104,7 @@ class MenuItem extends React.Component<MenuItemProps, MenuItemState>{
     }
     render(){
         return [
-        <Vertical text={this.props.text}
+        <Vertical key={0} text={this.props.text}
             className={this.props.className}
             iconName={this.props.iconName}
             style= {this.props.style}

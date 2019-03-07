@@ -22,6 +22,23 @@ export enum ParameterName {
     getGxbToken = '获取公信宝',
     getJxlUrl = '获取聚信立',
     getMiGuan = '获取蜜罐',
+    getReportState = '获取报告状态',
+    getApplyInfo = '查询申请借款信息',
+    modifyContractCard = '合同关联银行卡',
+    signature = '电子签章',
+    selectLoanRecord = '放款明细表',
+    selectRepayPlanDetail = '还款计划明细列表',
+    selectRepayRecord = '回款明细',
+    getContractState = '获取合同状态',
+    selectRechargeLoanBalance = '商户查询充值放款金额记录',
+    applyRechargeLoanBalance  = '商户申请充值放款金额',
+    applyLoan = '放款',
+    uploadCertificateImage = '上传凭证',
+    getMerchantBalance = '商户查看放款金额',
+    getReportChargeItems = '查询报告费用',
+    getMongoApplyInfoData = '获取借款人信息',
+    getReportInfo = '获取生成的数据报告',
+    selectBorrowerImage = '查询实名认证图片'
 }
 type PagingParamter = 'PageIndex' | 'PageSize';
 type TimeSelectParamter = 'StartTime' | 'EndTime';
@@ -52,13 +69,38 @@ export interface ParameterSummary{
         | 'Status' | 'Token' | 'EmpName' | 'StoreId';
     [ParameterName.getContractItems] : RequestListParameter;
     [ParameterName.auditLoanApply] : 'AuditApplyId' | 'Status' | 'ApplyMoney' 
-        | 'Period' | 'Remark' | 'Token';
+        | 'Period' | 'ApplyType' | 'Remark' | 'Token';
     [ParameterName.bindBankCard] : 'BankCardNo' | 'Mobile' | 'BankCode'
         | 'BankName' | 'BorrowerBaseInfoId' | 'ReturnUrl' | 'Token';
     [ParameterName.getBankCardInfo] : 'BorrowerId' | 'Token'; 
     [ParameterName.getGxbToken] : 'ApplyId' | 'IdCardNo' | 'Token';
     [ParameterName.getJxlUrl] : 'ApplyId' | 'IdCardNo' | 'Token';
     [ParameterName.getMiGuan] : 'ApplyId' | 'IdCardNo' | 'Token';
+    [ParameterName.getReportState] : 'ApplyId' | 'Token' | 'ReportType';
+    [ParameterName.getApplyInfo] : 'BorrowerId' | 'Token';
+    [ParameterName.modifyContractCard] : 'ContractId' | 'BankCardId' | 'Token';
+    [ParameterName.signature] : 'ContractId' | 'ReturnUrl' | 'Token';
+    [ParameterName.selectLoanRecord] : PagingParamter | TimeSelectParamter 
+        | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile'
+        | 'Token';
+    [ParameterName.selectRepayPlanDetail] : PagingParamter | TimeSelectParamter
+        | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile'
+        | 'Token';
+    [ParameterName.selectRepayRecord] : PagingParamter | TimeSelectParamter
+        | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile'
+        | 'Token';
+    [ParameterName.getContractState] : 'ContractId' | 'Token',
+    [ParameterName.selectRechargeLoanBalance] : PagingParamter | TimeSelectParamter
+        | 'Status' | 'Token',
+    [ParameterName.applyRechargeLoanBalance] : 'Money' | 'Token',
+    [ParameterName.applyLoan] : 'LoanContractId' | 'ServiceMoney' | 'Token',
+    [ParameterName.uploadCertificateImage] : 'RechargeId' | 'Token' | 'certificate.jpg'
+    [ParameterName.getMerchantBalance] : 'Token';
+    [ParameterName.getReportChargeItems]: PagingParamter | TimeSelectParamter 
+        | 'BorrowerName' | 'ReportType' | 'Status' | 'MerchantNo' | 'Token';
+    [ParameterName.getMongoApplyInfoData] : 'ApplyId' | 'Token';
+    [ParameterName.getReportInfo] : 'ApplyId' | 'ReportType' | 'Token';
+    [ParameterName.selectBorrowerImage] : 'IDCardNo' | 'Token';
 }
 export type Parameter<T extends ParameterName> = {
     [i in ParameterSummary[T]] ?: any;
@@ -85,6 +127,19 @@ export interface CallbackSummary{
     [ParameterName.getBankCardInfo] : 'Id' | 'BankCardNo' | 'Mobile'
         | 'BankCode' | 'BankName' | 'BorrowerBaseInfoId' | 'Status' 
         | 'ErrorMessage' | 'MoneymoremoreId';
+    [ParameterName.getUserAllInfo] : 'Name' | 'RoleName' | 'StoreName' | 'Superior'
+        | 'State' | 'Mobile' | 'CreateTime';
+    [ParameterName.selectLoanRecord] : 'OrderNo' | 'BorrowerMobile' | 'BankCardNo' | 'LoanMoney' | 'Principal' | 'Period'
+        | 'Interest' | 'LoanTime' | 'BorrowerName' | 'AvgMoney'
+        | 'MerchantName' | 'ConfirmPersonName' | 'LoanChannelCost';
+    [ParameterName.selectRepayPlanDetail] : 'OrderNo' | 'Money' | 'RepayMoney' | 'Period'
+        | 'RepayTime' | '';
+    [ParameterName.selectRepayRecord] : 'OrderNo' | 'RepayMoney' | 'Period' 
+        | 'RepayTime' | 'Type' | 'BorrowerName' | 'BorrowerMobile' | 'MerchantName'
+        | 'OperationEmployeeName' | 'BankCardNo' | 'RepayChannelCost';
+    [ParameterName.selectRechargeLoanBalance] : 'Id' | 'RechargeCode' | 'TradeNo'
+        | 'RechargeMoney' | 'State' | 'CreateTime' | 'ConfirmTime';
+    [ParameterName.getReportChargeItems] : '';
     [index: string] : any;
 }
 export type RequestCallback<T extends ParameterName> = {
@@ -94,10 +149,10 @@ export type RequestCallback<T extends ParameterName> = {
  * 分页
  */
 export interface PageInfo {
-    PageCount: string;
-    PageIndex: string;
-    PageSize: number;
-    TotalCount: number;
+    PageCount ?: string;
+    PageIndex ?: string;
+    PageSize ?: number;
+    TotalCount ?: number;
 }
 
 export interface Callback {
@@ -226,5 +281,80 @@ export const interfaceSetting: interfaceSettingType = {
     [ParameterName.getMiGuan]: {
         url: '/api/Report/GetMiGuan',
         type: 'post'
+    },
+    [ParameterName.getReportState]: {
+        url: '/api/Report/GetReportState',
+        type: 'get'
+    },
+    [ParameterName.getApplyInfo]: {
+        url: '/api/Apply/GetApplyInfo',
+        type: 'get'
+    },
+    [ParameterName.modifyContractCard]: {
+        url: '/api/LoanContract/ModifyContractCard',
+        type: 'post',
+        error: {
+            BankCardId: '请选择银行卡',
+        }
+    },
+    [ParameterName.signature]: {
+        url: '/api/LoanContract/Signature',
+        type: 'get',
+    },
+    [ParameterName.selectLoanRecord]: {
+        url: '/api/LoanDetail/SelectLoanRecord',
+        type: 'get',
+    },
+    [ParameterName.selectRepayPlanDetail]: {
+        url: '/api/Repay/SelectRepayPlanDetail',
+        type: 'get'
+    },
+    [ParameterName.selectRepayRecord]: {
+        url: '/api/Repay/SelectRepayRecord',
+        type: 'get'
+    },
+    [ParameterName.getContractState]: {
+        url: '/api/LoanContract/GetContractState',
+        type: 'get'
+    },
+    [ParameterName.selectRechargeLoanBalance]:{
+        url: '/api/Merchant/SelectRechargeLoanBalance',
+        type: 'get'
+    },
+    [ParameterName.applyRechargeLoanBalance]: {
+        url: '/api/Merchant/ApplyRechargeLoanBalance',
+        type: 'post'
+    },
+    [ParameterName.applyLoan]: {
+        url: '/api/LoanDetail/ApplyLoan',
+        type: 'post'
+    },
+    [ParameterName.uploadCertificateImage]:{
+        url: '/api/Merchant/UploadCertificateImage',
+        type: 'post',
+        contentType: 'multipart/form-data',
+        error: {
+            "certificate.jpg" : '凭证不能为空！'
+        }
+    },
+    [ParameterName.getMerchantBalance]:{
+        url: '/api/Merchant/GetMerchantBalance',
+        type: 'get'
+    },
+    [ParameterName.getReportChargeItems]: {
+        url: '/api/Report/GetRoportChargeItems',
+        type: 'get'
+    },
+    [ParameterName.getMongoApplyInfoData]: {
+        url: '/api/Report/GetMongoApplyInfoData',
+        type: 'get'
+    },
+    [ParameterName.getReportInfo]: {
+        url: '/api/Report/GetReportInfo',
+        type: 'get'
+    },
+    [ParameterName.selectBorrowerImage]: {
+        url: '/api/Borrower/SelectBorrowerImage',
+        type: 'get'
     }
 };

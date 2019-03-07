@@ -4,17 +4,19 @@ import { ParameterSummary, ParameterName, Parameter } from '../../../components/
 import { ReqOption, req } from '../../../components/request';
 import { ApplyInput } from '../../../components/input';
 import { CancelButton, PrimaryButton } from '../../../components/button';
-import { InnerProgress } from '../../../components/progress/progress';
+import { InnerProgress, PageLoading } from '../../../components/progress/progress';
 import { ModalTitle } from '../../../components/modal/title';
 import { sessionData } from '../../../components/sessionData/sessionData';
 type ApplyInfoState = {
     data: Parameter<ParameterName.addLoanApplyRecord>;
     isLoading: boolean;
+    pageLoading: boolean;
     error: string;
 }
 type ApplyInfoProps = {
     id: string;
     name: string;
+    isExist: boolean;
     onChangeDataState: (str: string, status: boolean)=> void;
     onChangeStep: (str: string, name ?: string)=>void;
 }
@@ -31,10 +33,42 @@ export class ApplyInfo extends React.Component <ApplyInfoProps, ApplyInfoState>{
                 Purpose: '家庭消费'
             },
             isLoading: false,
+            pageLoading: false,
             error: ''
         }
         this.inputChange = this.inputChange.bind(this);
         this.confirm = load.run.call(this, this.confirm);
+        this.getInfo = load.run.call(this, this.getInfo, 'pageLoading');
+    }
+    componentDidMount(){
+        if(this.props.isExist){
+            this.getInfo();
+        }
+    }
+    getInfo(){
+        let _getApplyInfo: ReqOption<ParameterName.getApplyInfo>;
+        _getApplyInfo = {
+            data: {
+                BorrowerId: this.props.id,
+                Token: sessionData.getData('Token')
+            },
+            fail: (e)=>{
+                alert(e.ErrMsg);
+                this.setState({
+                    pageLoading: false
+                })
+            },
+            succeed: (e)=>{
+                let _data = this.state.data;
+                _data.ApplyMoney = e.Value.ApplyMoney;
+                _data.Period = e.Value.Period;
+                this.setState({
+                    data: _data,
+                    pageLoading: false
+                })
+            }
+        }
+        req(ParameterName.getApplyInfo, _getApplyInfo);
     }
     inputChange(name:ParameterSummary[ParameterName.addLoanApplyRecord], value: any){
         let _data = this.state.data;
@@ -51,7 +85,8 @@ export class ApplyInfo extends React.Component <ApplyInfoProps, ApplyInfoState>{
                     error: error.ErrMsg
                 })
             },
-            succeed: ()=>{
+            succeed: (e)=>{
+                this.props.onChangeDataState('ApplyId',e.Value)
                 this.props.onChangeDataState(this.props.name, true);
                 this.props.onChangeStep('applyList', '');
             }
@@ -59,7 +94,10 @@ export class ApplyInfo extends React.Component <ApplyInfoProps, ApplyInfoState>{
         req(ParameterName.addLoanApplyRecord, _options);
     }
     render(){
-        return <div style={{height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
+        return <div style={{height: '100%', 
+            position:'relative',
+            display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
+            <PageLoading show={this.state.pageLoading} />
             <div>
                 {this.state.error && <div style={{color: 'red'}}>
                     {this.state.error}

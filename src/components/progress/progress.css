@@ -16,13 +16,20 @@
     position: absolute;
     left: 0;
     top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     height:  100%;
+    background: #fff;
+    z-index: 1;
 }
-.page-loading.animate{
-    animation: page-loading .5s both;
+.page-loading.hidden{
+    animation: fadeOut .5s both;
 }
-
+.rotating {
+    animation: rotating 1s infinite;
+}
 @keyframes loading {
     0%, 100%{
         transition-timing-function: cubic-bezier(1, 0, 0.65, 0.85);
@@ -57,12 +64,39 @@
         transform: scaleY(1);
     }
 }
-@keyframes page-loading{
+@keyframes fadeOut{
     0%{
         opacity: 1;
     }
     100%{
         opacity: 0;
-        display: none;
+        z-index: -1;
     }
 }
+@-webkit-keyframes fadeOut{
+    0%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+        z-index: -1;
+    }
+}
+@keyframes rotating{
+    0%{
+        transform: rotate(0);
+    }
+    100%{
+        transform: rotate(1turn);
+    }
+    
+}
+@-webkit-keyframes rotating{
+    0%{
+        transform: rotate(0);
+    }
+    100%{
+        transform: rotate(1turn);
+    }
+}
+

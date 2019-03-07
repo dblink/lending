@@ -33,7 +33,9 @@ export const HrefButton = (props: ButtonProps) => {
 }
 
 export const PagingButton = (props: PagingButtonProps) =>{
-    return <BaseButton className='paging-button' data-content={props.intro}>
+    let {intro, children, ...other} = props;
+    return <BaseButton className='paging-button' {...other}
+            data-content={intro}>
         <Icon>
             {props.children}
         </Icon>

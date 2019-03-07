@@ -18,7 +18,7 @@ type CertificationState = {
     data: Parameter<ParameterName.uploadBorrowerImage>;
     error: string;
 }
-function getBlobFile(_canvas: HTMLCanvasElement) {
+export function getBlobFile(_canvas: HTMLCanvasElement) {
     let _url = _canvas.toDataURL("image/jpeg", 0.8);
     _url = _url.replace('data:image/jpeg;base64,','');
     let byteString = atob(_url);
@@ -62,7 +62,8 @@ export class Certification extends React.Component <CertificationProps, Certific
             data: _form,
             fail: (e)=>{
                 this.setState({
-                    error: e.ErrMsg
+                    error: e.ErrMsg,
+                    isLoading: false
                 })
             },
             succeed: (e)=>{
@@ -74,7 +75,7 @@ export class Certification extends React.Component <CertificationProps, Certific
         req(ParameterName.uploadBorrowerImage, _options);
     }
     render(){
-        return <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
+        return <div style={{display: 'flex', height: '100%', flexDirection: 'column', justifyContent: 'space-between'}}>
             {this.state.error 
                 && <div className='z-index-100' style={{color: 'red', position:'absolute', 
                 width: '490px', textAlign: 'center', background: 'rgba(255, 255, 255, 0.49)'}}>{this.state.error}</div>}

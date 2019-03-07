@@ -15,7 +15,7 @@ export const ApplySelect = (props: ApplySelect) => {
         </div>
         <BaseSelect className='apply-select' {...other} 
             value={value} style={{color: value ? '#777' : '#ccc'}} >
-            <option selected={true} value={''} disabled={true}>
+            <option value={''} disabled={true}>
                 请选择{text}
             </option>
             {list.map((value, key)=>{
@@ -25,4 +25,30 @@ export const ApplySelect = (props: ApplySelect) => {
             })}
         </BaseSelect>
     </div>
+}
+
+interface SearchSelectProps extends BaseSelectProps {
+    text: string;
+    list: {value: string, text: string}[];
+}
+
+export const SearchSelect = (props: SearchSelectProps) => {
+    let {value, text, list, style, ...other} = props
+    return <div style={{display: 'flex', alignItems: 'center' , ...style}}>
+        <span style={{fontSize: '14px', flex:1}}>
+            {text}：
+        </span>
+        <BaseSelect className='search-select' {...other} 
+            value={typeof value === 'undefined' ? '' : value} 
+                style={{color: value ? 'inherit' : 'rgb(124, 124, 124)', flex:2}} >
+            <option value={''} disabled={true}>
+                请选择{text}
+            </option>
+            {list.map((value, key)=>{
+                return <option value={value.value} key={key}>
+                    {value.text}
+                </option>
+            })}
+        </BaseSelect>
+    </div> 
 }

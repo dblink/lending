@@ -1,0 +1,9 @@
+.error-message{
+    transition: .5s; 
+    color: red;
+    text-align: left;
+    word-break: keep-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

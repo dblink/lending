@@ -1,0 +1,95 @@
+.display-flex-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.display-flex-start{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.display-flex-end{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.flex-direction-column{
+    flex-direction: column;
+}
+.flex-direction-row{
+    flex-direction: row;
+}
+.flex-1{
+    flex: 1;
+}
+.flex-2{
+    flex: 2;
+}
+.flex-3{
+    flex: 3;
+}
+.flex-4{
+    flex: 4;
+}
+.flex-5{
+    flex: 5;
+}
+.font-12{
+    font-size: 12px;
+}
+.font-14{
+    font-size: 14px;
+}
+.font-16{
+    font-size: 16px;
+}
+.font-18{
+    font-size: 18px;
+}
+.color-333{
+    color: #333333;
+}
+.color-666{
+    color: #666666;
+}
+.color-999{
+    color: #999999;
+}
+.color-ccc{
+    color: #cccccc;
+}
+.color-eee{
+    color: #eeeeee;
+}
+.color-fff{
+    color: #ffffff;
+}
+.bg-f2{
+    background-color: #f2f2f2;
+}
+.bg-f8{
+    background-color: #f8f8f8;
+}
+.bg-fe{
+    background-color: #fefefe;
+}
+.bg-ee{
+    background-color: #eeeeee;
+}
+.bg-cc{
+    background-color: #cccccc;
+}
+.border-right-1{
+    border-right: 1px solid #eeeeee;
+}
+.border-bottom-1{
+    border-bottom: 1px solid #eeeeee;
+}
+.user-application{
+    margin-bottom: 40px;
+}
+.title-report-title{
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}

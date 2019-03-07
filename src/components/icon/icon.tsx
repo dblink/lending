@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-interface Props {
+interface Props extends React.HTMLAttributes<HTMLSpanElement>{
     [index: string] :any;
 }
 

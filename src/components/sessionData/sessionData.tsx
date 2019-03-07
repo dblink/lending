@@ -35,7 +35,10 @@ class SessionData{
         if(_data){
             session = JSON.parse(_data);
         }
-        return session[str];
+        return session[str] || '';
+    }
+    clear(){
+        this.setData('');
     }
 }
 export const sessionData = new SessionData('lending');
