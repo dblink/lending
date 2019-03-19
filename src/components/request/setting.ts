@@ -2,6 +2,13 @@ import { Parameter } from './setting';
 //import { Index } from './../../page/index';
 import {OptionType} from "./main";
 
+export const requestUrl = {
+    type: 'development',
+    development: '',
+    production: 'http://loutsloanapi.hehuadata.com',
+    //production|development
+}
+
 export enum ParameterName {
     login = 'login',
     getBorrowerStatus = '获取用户状态',
@@ -38,7 +45,29 @@ export enum ParameterName {
     getReportChargeItems = '查询报告费用',
     getMongoApplyInfoData = '获取借款人信息',
     getReportInfo = '获取生成的数据报告',
-    selectBorrowerImage = '查询实名认证图片'
+    selectBorrowerImage = '查询实名认证图片',
+    getSignatureState = '获取签约状态',
+    applyAccount = '添加员工',
+    modifyUserInfo = '修改账号',
+    getStore = '获取门店',
+    getRoleItems = '获取角色',
+    getUserInfo = '获取上级',
+    modifyPassword = '修改密码',
+    selectContractPlan = '根据合同查询还款明细',
+    cancelContract = '取消合同',
+    applyRepayOfflineClearing = '线下结清',
+    applyRepayOnlineClearing = '线上结清',
+    applyRepayOnline = '线上还款',
+    applyRepayOffline = '线下还款',
+    getUserSingleInfo = '查询某个员工信息',
+    getMerchantChargeDetail = '获取商户费用详细信息',
+    selectRepayDetail = '查询线下还款操作',
+    confirmRepayOffline = '线下确认还款',
+    confirmRepayOfflineClearing = '线下确认结清',
+    getBankCardItems = '获取绑卡列表',
+    withdrawBindCard = '提现绑卡',
+    applyWithdraw = '申请提现',
+    getWithdrawItems = '提现明细'
 }
 type PagingParamter = 'PageIndex' | 'PageSize';
 type TimeSelectParamter = 'StartTime' | 'EndTime';
@@ -69,7 +98,7 @@ export interface ParameterSummary{
         | 'Status' | 'Token' | 'EmpName' | 'StoreId';
     [ParameterName.getContractItems] : RequestListParameter;
     [ParameterName.auditLoanApply] : 'AuditApplyId' | 'Status' | 'ApplyMoney' 
-        | 'Period' | 'ApplyType' | 'Remark' | 'Token';
+        | 'Period' | 'ApplyType' | 'Remark' | 'Token' | 'ServiceMoney';
     [ParameterName.bindBankCard] : 'BankCardNo' | 'Mobile' | 'BankCode'
         | 'BankName' | 'BorrowerBaseInfoId' | 'ReturnUrl' | 'Token';
     [ParameterName.getBankCardInfo] : 'BorrowerId' | 'Token'; 
@@ -84,7 +113,7 @@ export interface ParameterSummary{
         | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile'
         | 'Token';
     [ParameterName.selectRepayPlanDetail] : PagingParamter | TimeSelectParamter
-        | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile'
+        | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile' | 'State'
         | 'Token';
     [ParameterName.selectRepayRecord] : PagingParamter | TimeSelectParamter
         | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile'
@@ -93,7 +122,7 @@ export interface ParameterSummary{
     [ParameterName.selectRechargeLoanBalance] : PagingParamter | TimeSelectParamter
         | 'Status' | 'Token',
     [ParameterName.applyRechargeLoanBalance] : 'Money' | 'Token',
-    [ParameterName.applyLoan] : 'LoanContractId' | 'ServiceMoney' | 'Token',
+    [ParameterName.applyLoan] : 'LoanContractId' | 'Token',
     [ParameterName.uploadCertificateImage] : 'RechargeId' | 'Token' | 'certificate.jpg'
     [ParameterName.getMerchantBalance] : 'Token';
     [ParameterName.getReportChargeItems]: PagingParamter | TimeSelectParamter 
@@ -101,15 +130,41 @@ export interface ParameterSummary{
     [ParameterName.getMongoApplyInfoData] : 'ApplyId' | 'Token';
     [ParameterName.getReportInfo] : 'ApplyId' | 'ReportType' | 'Token';
     [ParameterName.selectBorrowerImage] : 'IDCardNo' | 'Token';
+    [ParameterName.getSignatureState] : 'ContractId' | 'Token';
+    [ParameterName.applyAccount] : 'LoginName' | 'ParentId' | 'LoginPass' | 'SecureMobile'
+    | 'UserStatus' | 'RealName' | 'StoreId' | 'RoleId' | 'Token'
+    [ParameterName.modifyUserInfo] : ParameterSummary[ParameterName.applyAccount] | 'Id';
+    [ParameterName.getStore] : 'Token';
+    [ParameterName.getRoleItems] : 'Token';
+    [ParameterName.modifyPassword]: 'UserId' | 'Password' | 'Token';
+    [ParameterName.getUserInfo] : 'Token';
+    [ParameterName.selectContractPlan]: 'LoanContractId' | 'Token';
+    [ParameterName.cancelContract]: 'ContractId' | 'Token';
+    [ParameterName.applyRepayOfflineClearing]: 'LoanContractId' | 'RepayMoney' | 'Token',
+    [ParameterName.applyRepayOnlineClearing]: 'LoanContractId' | 'RepayMoney' | 'Token'
+    [ParameterName.getUserSingleInfo]: 'EmployeeId' | 'Token';
+    [ParameterName.applyRepayOnline] : 'RepayPlanDetailId' | 'Token';
+    [ParameterName.getMerchantChargeDetail]: 'Token';
+    [ParameterName.selectRepayDetail]: PagingParamter | TimeSelectParamter | 'MerchantNo' 
+        | 'EmployeeId' | 'BorrowerName' | 'Mobile' | 'Token';
+    [ParameterName.confirmRepayOffline]: 'RepayPlanDetailId' | 'State' | 'Token';
+    [ParameterName.confirmRepayOfflineClearing]: 'RepayPlanDetailId' | 'State' | 'Token';
+    [ParameterName.getBankCardItems] : 'Token';
+    [ParameterName.withdrawBindCard] : 'BankCardNo' | 'IdCardNo' | 'Mobile' | 'BankCode'
+        | 'BankName' | 'Remark' | 'RealName' | 'Token';
+    [ParameterName.applyWithdraw] : 'WithdrawBankCardId' | 'WithdrawAmount' 
+        | 'Remark' | 'Token';
+    [ParameterName.applyRepayOffline] : 'RepayPlanDetailId' | 'Token';
+    [ParameterName.getWithdrawItems] : 'Status' | 'PageIndex' | 'PageSize' | 'Token'
 }
 export type Parameter<T extends ParameterName> = {
     [i in ParameterSummary[T]] ?: any;
 }
 
 type CallbackListParameter = 'Id' | 'BorrowerMobile' 
-| 'ApplyMoney' | 'Period' | 'Status' | 'ApplyTime'
-| 'BorrowerRealName' | 'MerchantNo' | 'ConfirmPersonName'
-| 'Remark' | 'MerchantName';
+    | 'ApplyMoney' | 'Period' | 'Status' | 'ApplyTime'
+    | 'BorrowerRealName' | 'MerchantNo' | 'ConfirmPersonName'
+    | 'Remark' | 'MerchantName';
 /**
  * 返回值汇总
  */
@@ -118,8 +173,8 @@ export interface CallbackSummary{
         | 'BorrowerDetailInfoId' | 'ISExsitBorrower' | 'ISApply'
         | 'ISExsitBorrowerDetail' | 'ISUploadPersonCardState'
         | 'HoneypotStatus' | 'HoneyBeeStatus' | 'Alipay' ;
-    [ParameterName.getAuditItems] : CallbackListParameter ;
-    [ParameterName.getApplyItems] : CallbackListParameter | 'AuditMoney' | 'AuditPeriod';
+    [ParameterName.getAuditItems] : CallbackListParameter | 'AuditId' | 'ApplyId' | 'IdCardNo' | 'BorrowPersonBaseInfoId';
+    [ParameterName.getApplyItems] : CallbackListParameter | 'AuditMoney' | 'AuditPeriod' | 'IdCardNo' | 'ApplyId';
     [ParameterName.getContractItems] : 'Id' | 'BorrowerBankCardId' | 'BorrowPersonBaseInfoId'
         | 'LoanApplyRecordId' | 'Mobile' | 'Purpose' | 'Money' | 'PeriodType' | 'Period'
         | 'State' | 'MerchantNo' | 'StoreId' | 'OrderNo' | 'CreateTime' 
@@ -128,18 +183,29 @@ export interface CallbackSummary{
         | 'BankCode' | 'BankName' | 'BorrowerBaseInfoId' | 'Status' 
         | 'ErrorMessage' | 'MoneymoremoreId';
     [ParameterName.getUserAllInfo] : 'Name' | 'RoleName' | 'StoreName' | 'Superior'
-        | 'State' | 'Mobile' | 'CreateTime';
+        | 'State' | 'SecureMobile' | 'CreateTime' | 'Id';
     [ParameterName.selectLoanRecord] : 'OrderNo' | 'BorrowerMobile' | 'BankCardNo' | 'LoanMoney' | 'Principal' | 'Period'
-        | 'Interest' | 'LoanTime' | 'BorrowerName' | 'AvgMoney'
-        | 'MerchantName' | 'ConfirmPersonName' | 'LoanChannelCost';
-    [ParameterName.selectRepayPlanDetail] : 'OrderNo' | 'Money' | 'RepayMoney' | 'Period'
-        | 'RepayTime' | '';
-    [ParameterName.selectRepayRecord] : 'OrderNo' | 'RepayMoney' | 'Period' 
+        | 'Interest' | 'LoanTime' | 'BorrowerName' | 'AvgMoney' | 'MerchantNo' | 'OtherCharge'
+        | 'QueryCharge' | 'MerchantName' | 'ConfirmPersonName' | 'LoanChannelCost';
+    [ParameterName.selectRepayPlanDetail] : 'OrderNo' | 'Money' | 'RepayMoney' | 'Period' | 'Id'
+        | 'RepayTime' | 'State' | 'BorrowerName' | 'BorrowerMobile' | 'OperationEmployeeName';
+    [ParameterName.selectRepayRecord] : 'OrderNo' | 'RepayMoney' | 'Period'
         | 'RepayTime' | 'Type' | 'BorrowerName' | 'BorrowerMobile' | 'MerchantName'
         | 'OperationEmployeeName' | 'BankCardNo' | 'RepayChannelCost';
     [ParameterName.selectRechargeLoanBalance] : 'Id' | 'RechargeCode' | 'TradeNo'
         | 'RechargeMoney' | 'State' | 'CreateTime' | 'ConfirmTime';
-    [ParameterName.getReportChargeItems] : '';
+    [ParameterName.getReportChargeItems] : 'Id' | 'MerchantNo' | 'CreateTime'
+        | 'Status' | 'ReportType' | 'BorrowerName' | 'MIGuanCharge' 
+        | 'MiFengCharge' | 'AlipayCharge' | 'Total';
+    [ParameterName.selectContractPlan] : 'Principal' | 'Interest' | 'Period'
+        | 'Money' | 'RepayMoney' | 'Status' | 'RepayTime' | 'ServiceMoney';
+    [ParameterName.getMerchantChargeDetail]: 'MerchantNo' | 'MerchantName' 
+        | 'TinyLoanChannelRate' | 'DeductionChannelRate' | 'Honeypot' 
+        | 'HoneyBee' | 'Alipay' | 'ServiceCharge' | 'FrozenServiceCharge'
+        | 'LoanBalance' | 'FrozenLoanBalance' | 'BalanceAmount'
+        | 'FrozenAmount';
+    [ParameterName.selectRepayDetail]: 'CreateTime' | 'BorrowerName' | 'RepayMoney' | 'Period' 
+        | 'Type' | 'Id';
     [index: string] : any;
 }
 export type RequestCallback<T extends ParameterName> = {
@@ -342,7 +408,7 @@ export const interfaceSetting: interfaceSettingType = {
         type: 'get'
     },
     [ParameterName.getReportChargeItems]: {
-        url: '/api/Report/GetRoportChargeItems',
+        url: '/api/Report/GetReportChargeItems',
         type: 'get'
     },
     [ParameterName.getMongoApplyInfoData]: {
@@ -355,6 +421,97 @@ export const interfaceSetting: interfaceSettingType = {
     },
     [ParameterName.selectBorrowerImage]: {
         url: '/api/Borrower/SelectBorrowerImage',
+        type: 'get'
+    },
+    [ParameterName.getSignatureState] : {
+        url: '/api/LoanContract/GetSignatureState',
+        type: 'get'
+    },
+    [ParameterName.applyAccount]: {
+        url : '/api/SysUser/ApplyAccount',
+        type: 'post'
+    },
+    [ParameterName.getStore]: {
+        url : '/api/Permission/GetStore',
+        type: 'get'
+    },
+    [ParameterName.getRoleItems]: {
+        url : '/api/Permission/GetRoleItems',
+        type: 'get'
+    },
+    [ParameterName.modifyPassword]: {
+        url : '/api/SysUser/ModifyPassword',
+        type : 'post'
+    },
+    [ParameterName.getUserInfo]: {
+        url : '/api/SysUser/GetUserInfo',
+        type : 'get'
+    },
+    [ParameterName.selectContractPlan]: {
+        url: '/api/Repay/SelectContractPlan',
+        type: 'get'
+    },
+    [ParameterName.cancelContract]: {
+        url: '/api/LoanContract/CancelContract',
+        type: 'GET'
+    },
+    [ParameterName.applyRepayOfflineClearing]: {
+        url: '/api/Repay/ApplyRepayOfflineClearing',
+        type: 'post'
+    },
+    [ParameterName.applyRepayOnlineClearing]:{
+        url: '/api/Repay/ApplyRepayOnlineClearing',
+        type: 'post'
+    },
+    [ParameterName.getUserSingleInfo]: {
+        url: '/api/SysUser/GetUserSingleInfo',
+        type: 'get'
+    },
+    [ParameterName.modifyUserInfo]: {
+        url: '/api/SysUser/ModifyUserInfo',
+        type: 'post'
+    },
+    [ParameterName.applyRepayOnline]: {
+        url: '/api/Repay/ApplyRepayOnline',
+        type: 'post'
+    },
+    [ParameterName.getMerchantChargeDetail]: {
+        url: '/api/Merchant/GetMerchantChargeDetail',
+        type: 'get'
+    },
+    [ParameterName.selectRepayDetail]: {
+        url: '/api/Repay/SelectRepayDetail',
+        type: 'get'
+    },
+    [ParameterName.confirmRepayOffline]: {
+        url: '/api/Repay/ConfirmRepayOffline',
+        type: 'post'
+    },
+    [ParameterName.confirmRepayOfflineClearing]: {
+        url: '/api/Repay/ConfirmRepayOfflineClearing',
+        type: 'post'
+    },
+    [ParameterName.getBankCardItems]: {
+        url: '/api/Withdraw/GetBankCardItems',
+        type: 'get'
+    },
+    [ParameterName.withdrawBindCard]: {
+        url: '/api/Withdraw/BindBankCard',
+        type: 'post'
+    },
+    [ParameterName.applyWithdraw]: {
+        url: '/api/Withdraw/ApplyWithdraw',
+        type: 'post',
+        error: {
+            WithdrawAmount: '金额不能为空'
+        }
+    },
+    [ParameterName.applyRepayOffline]: {
+        url: '/api/Repay/ApplyRepayOffline',
+        type: 'post'
+    },
+    [ParameterName.getWithdrawItems]: {
+        url: '/api/Withdraw/GetWithdrawItems',
         type: 'get'
     }
 };

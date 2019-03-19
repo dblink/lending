@@ -153,6 +153,7 @@ interface Config {
         "2": string;
     }
     marriageStatus: {
+        "0": string;
         "1": string;
         "2": string;
         "3": string;
@@ -916,6 +917,15 @@ export const config:Config ={
         Mobile: '银行预留手机号'
     },
 
+    //报告数据借款人公司信息
+    reportCompanyInfo: {
+        CompanyName: '公司名称',
+        CompanyAddress: '公司地址',
+        Department: '部门',
+        Position: '职位',
+        Salary: '薪水'
+    },
+
     //报告数据借款人借款信息
     reportBorrowInfo: {
         Money: '借款金额',
@@ -933,6 +943,7 @@ export const config:Config ={
 
     //卡类型
     marriageStatus: {
+        "0": "[未填写]",
         "1": "已婚",
         "2": "未婚",
         "3": "离异",

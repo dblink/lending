@@ -51,14 +51,23 @@ export class ApplyContentList extends React.Component <ApplyContentListProps ,Ap
         let _props = this.props;
         if(!_props.dataState.ISUploadPersonCardState){
             alert('实名认证必填！');
+            this.setState({
+                isLoading: false
+            })
             return;
         }
         if(!_props.dataState.ISApply){
             alert('申请信息必填！');
+            this.setState({
+                isLoading: false
+            })
             return;
         }
         if(!_props.dataState.ISExsitBorrower){
             alert('借款信息必填！');
+            this.setState({
+                isLoading: false
+            })
             return;
         }
         let _options: ReqOption<ParameterName.confirmApply> = {

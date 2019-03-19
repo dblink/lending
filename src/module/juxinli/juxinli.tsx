@@ -53,12 +53,7 @@ export class Juxinli extends React.Component<Props, State> {
         3: '亲戚'
     }
     componentDidMount(){
-        if(this.props.state === '2'){
-            this.confirm();
-        }else{
-            this.getInfo();
-        }
-        
+        this.confirm();     
     }
     getInfo(){
         let _getBorrowerBaseInfo: ReqOption<ParameterName.getBorrowerBaseInfo>,
@@ -145,7 +140,8 @@ export class Juxinli extends React.Component<Props, State> {
         }
         req(ParameterName.getJxlUrl, _getJxlUrl);
     }
-    confirm(){
+    num = 1;
+    confirm(type ?: 'once'){
         let _option: ReqOption<ParameterName.getReportState> = {
             data: {
                 ApplyId: this.props.applyId,
@@ -155,9 +151,9 @@ export class Juxinli extends React.Component<Props, State> {
             succeed:(e)=>{
                 if(e.Value.toString() === '1'){
                     this.setState({
-                        error: '请获取蜜蜂',
+                        //error: '请获取蜜蜂',
                         pageLoading: false
-                    })
+                    }, this.getInfo)
                 }else if(e.Value.toString() === '2'){
                     this.setState({
                         error: <span style={{color: 'orange'}}>
@@ -165,18 +161,51 @@ export class Juxinli extends React.Component<Props, State> {
                         </span>
                     }, ()=>setTimeout(this.confirm, 30000))
                 }else if(e.Value.toString() === '3'){
+                    alert('已获取成功！')
                     this.props.changePage('applyList');
                     this.props.changeState(this.props.type, true);
                 }else if(e.Value.toString() === '4'){
-                    this.setState({
-                        error: <span style={{color: 'orange'}}>
-                            拉取失败，正在重新加载，请稍后
-                        </span>
-                    }, this.getInfo)
+                    if(type && type === 'once'){
+                        this.setState({
+                            error: <span style={{color: 'orange'}}>
+                                加载中，请稍后
+                            </span>,
+                            //pageLoading: false
+                        }, this.getInfo)
+                    }else if(!type){
+                        if(this.num === 0){
+                            this.num = 1
+                            this.setState({
+                                error: <span style={{color: 'orange'}}>
+                                    获取中。。。
+                                </span>
+                            }, ()=>{
+                                setTimeout(()=>{
+                                    this.setState({
+                                        isLoading: false
+                                    }, this.getInfo)
+                                }, 15000) 
+                            })
+                        }else if(this.num === 1){
+                            this.num = 0;
+                            this.setState({
+                                error: '获取失败',
+                                isLoading: false
+                            })
+                        }
+                    }
                 }
             },
             fail: (e)=>{
-                alert(e.ErrMsg);
+                if(e.Value && e.Value.toString() === '1'){
+                    this.setState({
+                        isLoading: false,
+                        pageLoading: false
+                    }, this.getInfo)
+                }else{
+                    alert(e.ErrMsg);
+                }
+                
             }
         }
         req(ParameterName.getReportState, _option)
@@ -184,7 +213,9 @@ export class Juxinli extends React.Component<Props, State> {
     render() {
         return <View>
             <div style={{height: '100%', display: 'flex', position: 'relative', flexDirection: 'column'}}>
-                <PageLoading show={this.state.pageLoading} />
+                <PageLoading show={this.state.pageLoading} >
+                    {this.state.error}
+                </PageLoading>
                 <ErrorMessage >{this.state.error}</ErrorMessage>
                 {
                     this.state.url ? <iframe 
@@ -196,7 +227,7 @@ export class Juxinli extends React.Component<Props, State> {
                     <CancelButton onClick={()=>this.props.changePage('applyList')}>
                         取消
                     </CancelButton>
-                    <PrimaryButton onClick={this.confirm}>
+                    <PrimaryButton onClick={()=>this.confirm()}>
                         确认
                     </PrimaryButton>
                 </div>

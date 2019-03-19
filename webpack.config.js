@@ -3,7 +3,7 @@ const targetPath = path.resolve(__dirname, 'dist');
 
 
 module.exports = {
-    mode: "development", //production|development
+    mode: "production", //production|development
     entry: {
         index:"./enter.tsx"
     },

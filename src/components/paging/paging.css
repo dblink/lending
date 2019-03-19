@@ -1,8 +1,9 @@
 .paging{
-    display: inline-flex;
+    display: flex;
     margin-left: 20px;
     align-items: center;
     background: #fff;
     justify-content:center;
     min-width: 300px;
+    max-width: 300px;
 }

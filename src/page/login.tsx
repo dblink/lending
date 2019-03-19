@@ -56,6 +56,7 @@ export class Login extends React.Component<Props, State> {
                 })
             },
             succeed: (e)=>{
+                
                 sessionData.setData(e.Value);
                 let _location = this.getLocation();
                 browserHistory.push(_location);
@@ -83,15 +84,36 @@ export class Login extends React.Component<Props, State> {
         })
     }
     getLocation(){
-        let _location = '/logged/welcome';
-        console.log(this.props.location)
-        if(this.props.location.state){
-            let {from} = this.props.location.state;
-            _location = from;
+        let _location,
+            _menuList = sessionData.getData('UserMenuItems');
+        if(typeof _menuList === 'object'){
+            _location = _menuList[0].Url || _menuList[0].Items[0].Url;
+            if(this.props.location.state){
+                let {from} = this.props.location.state;
+                for(let menu = 0; menu < _menuList.length; menu++){
+                    //console.log(_menuList[menu].url);
+                    if(typeof _menuList[menu].url === 'undefined' 
+                        || _menuList[menu].url === null){
+                        let _list = _menuList[menu].Items;
+                        for(let innerMenu = 0;innerMenu<_list.length; innerMenu++){
+                            if(_list[innerMenu].Url === from){
+                                _location = from;
+                            }
+                        }
+                    }else{
+                        if(_menuList[menu].Url === from){
+                            _location = from;
+                        }
+                    }
+                }
+            }
+        }else{
+            alert('未配置菜单')
+            _location = '/';
         }
-        console.log(_location);
         return _location;
     }
+    
     render() {
         if (sessionData.getData('Token')) return <Redirect to={this.getLocation()} />;
         return <div style={{display: 'flex',background: '#ccc', 
@@ -127,12 +149,17 @@ export class Login extends React.Component<Props, State> {
                         value={this.state.data.LoginName}/>
                     <ApplyInput text={'密码'} 
                         name='Password'
+                        autoComplete='off'
                         onChange={this.inputChange}
                         error={this.state.error.Password}
                         value={this.state.data.Password} type='password' />
                     <PrimaryButton type={'button'} style={{height: '40px'}}>
                         {!this.state.isLoading ? '登录' : <InnerProgress height='32px' />}
                     </PrimaryButton>
+
+                    <div style={{fontSize: '14px', color: '#ccc', textAlign:'center'}}>
+                        苏ICP备18048568号-1
+                    </div>
                 </form>
             </div> 
         </div> 

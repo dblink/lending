@@ -1,0 +1,17 @@
+.image-protocol .print{
+    margin: 10px 0;
+}
+.image-protocol{
+    max-width: 900px;
+    margin: auto;
+    padding: 0 10px
+}
+.image-protocol input {
+    font-size: 14px;
+}
+.image-protocol .text-right{
+    text-align: right;
+}
+.image-protocol .text-center{
+    text-align: center;
+}

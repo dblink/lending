@@ -51,5 +51,93 @@ export class TableComponent implements TableComponentStyle{
             }
         }
     }
-    
+}
+export const  FlexTable = (props: {style?: React.CSSProperties, [index: string]: any})=>{
+    let {
+        style: _style = {},
+        children: _children,
+        flex: _flex,
+        ...other
+    } = props;
+    _flex ? _style.flex = _flex : '';
+    return <div {...other} style={{display: 'flex', alignItems:'center',..._style}}>
+        {_children}
+    </div>
+}
+export const FlexTableRow = (props: any)=>{
+    let {
+        style: _style,
+        children: _children,
+        ...other
+    } = props;
+
+    return <FlexTable {...other} style={{width: '100%', ..._style}}>
+        {_children}
+    </FlexTable>
+}
+const TableCell = (props: any) => {
+    return <td {...props} >
+        {props.children}
+    </td>
+};
+const TableMain = (props: any) => {
+    return <table {...props}>
+        {props.children}
+    </table>
+};
+const TableRow = (props: any) => {
+    return <tr {...props} >
+        {props.children}
+    </tr>
+};
+const TableHead = (props: any) => {
+    return <thead>
+    <TableRow {...props}>
+        {props.children}
+    </TableRow>
+    </thead>
+};
+const TableBody = (props: any) => {
+    return <tbody>
+    {props.children}
+    </tbody>
+};
+
+const height = 48;
+export const SeemTableMain = (props: any) => {
+    let _style = props.style;
+    return <div className={props.className} style={_style}>
+        {props.children}
+    </div>
+};
+
+export const SeemTableRow = (props: any) => {
+    let {style: _style} = props;
+    return <FlexTableRow style={{flexWrap:'wrap',
+        ..._style}} className='seemTableRow'>
+        {props.children}
+    </FlexTableRow>
+};
+
+export const TableShadow = (props: any)=>{
+    return <div className='tableShadow'>
+        {
+            props.children
+        }
+    </div>
+}
+
+export const SeemTableTd = (props: any) =>{
+    return <FlexTable flex={props.flex || 1} className='seemTableTd' style={{
+        minWidth:'100px', padding: '0 10px' ,wordBreak: 'break-all' , minHeight: `${height}px`, justifyContent: 'center'}}>
+        {props.children}
+    </FlexTable>
+};
+
+export {
+    TableCell,
+    TableRow,
+    TableBody,
+    TableHead,
+    TableMain
 }

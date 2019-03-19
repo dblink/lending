@@ -1,4 +1,4 @@
-import {Callback, interfaceSetting, ParameterName, Parameter} from "./setting";
+import {Callback, interfaceSetting, ParameterName, Parameter, requestUrl} from "./setting";
 
 const formatParams = function (jsonParams: any): string {
     let array: Array<any> = [];
@@ -36,8 +36,8 @@ class AjaxRequest {
             return;
         }
         //let _baseUrl = 0 ? 'http://lotusapi.hehuadata.com' : '';
-        let _baseUrl = 0?'http://192.168.1.121:7000':'';
-        let _url = [_baseUrl, this.options.url].join('');
+        //let _baseUrl = 1?'http://loutsloanapi.hehuadata.com':'';
+        let _url = [requestUrl[requestUrl.type as 'type'], this.options.url].join('');
         let params: any = formatParams(this.options.data);
         if (this.options.type === "GET" || this.options.type === 'get') {
             this
@@ -106,16 +106,6 @@ class Ajax extends AjaxRequest {
             dataType: 'json', 
             contentType: "application/x-www-form-urlencoded"
         },options);
-        //console.log(this.options, 109);
-
-        //测试用例
-        /*let _data:Callback = {
-            ErrMsg: '',
-            Status:'SUCCESS',
-            Value : {}
-        }
-        this.succeed(this.options.succeed)(_data);*/
-        
         this.sendMessage();
     }
 
@@ -233,8 +223,9 @@ class Ajax extends AjaxRequest {
 }
 
 export function main() {
-    let _request = new Ajax();
+    
     return function (type: ParameterName, options: OptionType<ParameterName>) {
+        let _request = new Ajax();
         _request.type = type;
         _request.options = options;
         _request.options.fail = _request.failure(options.fail);

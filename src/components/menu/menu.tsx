@@ -4,6 +4,7 @@ import { Icon } from '../icon/icon';
 import { browserHistory } from '../../router';
 import { sessionData } from '../sessionData/sessionData';
 import { HrefButton } from '../button';
+import { ChangePassword, ShowModal } from '../modal/changePassword';
 
 interface Props {
     location ?:any;
@@ -30,28 +31,33 @@ export class Menu extends React.Component<Props, State> {
             "ParentId": string,//父id 0表示没有父级
         }[]//子菜单列表
     }[] = sessionData.getData('UserMenuItems') || [];
+    modal:ShowModal = {
+        closeModal: ()=>{},
+        showModal: ()=>{}
+    }
     render() {
         return <div style={{width: '260px', display:'flex', flexDirection: 'column'}}>
-            
             <img src='img/logoTitle.png' 
                 style={{
                     width: '100%'
                     }} />
             <div style={{display: 'flex',padding: '10px 20px', alignItems: 'center', justifyContent: 'space-between'}}>
-                <div style={{fontSize: '14px', width: '100%'}}>
+                <div style={{fontSize: '14px'}}>
                     你好，{sessionData.getData('UserInfo').Name}
                 </div>
+                <HrefButton onClick={()=>{this.modal.showModal()}}
+                  style={{fontSize: '14px', width: 'auto'}} >修改密码</HrefButton>
                 <HrefButton onClick={()=>{
                     sessionData.clear();
                     browserHistory.replace('/', {from: location.pathname});
-                }}  style={{fontSize: '14px'}} >注销</HrefButton>
+                }}  style={{fontSize: '14px', width: 'auto'}} >注销</HrefButton>
             </div>
             <div style={{height: '100%', 
                 overflow:'auto',
                 display:'flex', flexDirection: 'column'}}>
                 {
                     this.list.map((value, key)=>{
-                        return <div style={{height: '100%'}} key={key}>
+                        return <div key={key}>
                             <MenuItem text={value.MenuName} 
                                 url={value.Url}
                                 className={location.pathname === value.Url ? 'click' : ''}
@@ -71,7 +77,12 @@ export class Menu extends React.Component<Props, State> {
                     })
                 }
             </div>
-            
+            <div style={{fontSize: '14px', lineHeight: '20px' ,
+                color: '#ccc', textAlign:'center',
+                minHeight: '20px'}}>
+                苏ICP备18048568号-1
+            </div>
+            <ChangePassword modal={this.modal} />
         </div>
     }
 }
@@ -89,7 +100,7 @@ class MenuItem extends React.Component<MenuItemProps, MenuItemState>{
     constructor(props: any){
         super(props);
         this.state = {
-            show: true
+            show: false
         }
         this.clickTrigger = this.clickTrigger.bind(this);
     }

@@ -8,18 +8,18 @@ export enum cardList{
     CITIC = '中信银行',
     CEB = '中国光大银行',
     PAB = '平安银行',
-    PSBC = '中国邮政储蓄银行',
+    //PSBC = '中国邮政储蓄银行',
     SHB = '上海银行',
     SPDB = '浦东发展银行',
     CMBC = '民生银行',
     CMB = '招商银行',
     GDB = '广发银行',
     HXB = '华夏银行',
-    HZB = '杭州银行',
+    // HZB = '杭州银行',
     BOB = '北京银行',
-    NBCB = '宁波银行',
-    JSB = '江苏银行',
-    ZSB = '浙商银行'
+    // NBCB = '宁波银行',
+    // JSB = '江苏银行',
+    // ZSB = '浙商银行'
 }
 export enum cardColor{
     ICBC = '#dd2c30',
@@ -31,18 +31,18 @@ export enum cardColor{
     CITIC = '#dd2c30',
     CEB = '#792399',
     PAB = '#dea014',
-    PSBC = '#329c7e',
+    // PSBC = '#329c7e',
     SHB = '#343c75',
     SPDB = '#343c75',
     CMBC = '#59966e',
     CMB = '#c4282b',
     GDB = '#c4282b',
     HXB = '#c4282b',
-    HZB = '#0097e0',
+    // HZB = '#0097e0',
     BOB = '#c4282b',
-    NBCB = '#f5bf12',
-    JSB = '#005bac',
-    ZSB = '#dd2c30'
+    // NBCB = '#f5bf12',
+    // JSB = '#005bac',
+    // ZSB = '#dd2c30'
 }
 export enum cardBackgroundColor{
     ICBC = '#fe8a71, #fe5262',
@@ -54,16 +54,16 @@ export enum cardBackgroundColor{
     CITIC = '#fe8a71, #fe5262',
     CEB = '#f9c85f, #5a33d8',
     PAB = '#f8c75e, #f98d45',
-    PSBC = '#01b6a5, #038db1',
+    // PSBC = '#01b6a5, #038db1',
     SHB = '#5ca2d6, #4068bf',
     SPDB = '#5ca2d6, #4068bf',
     CMBC = '#01b6a5, #038db1',
     CMB = '#fe8a71, #fe5262',
     GDB = '#fe8a71, #fe5262',
     HXB = '#fe8a71, #fe5262',
-    HZB = '#5ca2d6, #4068bf',
+    // HZB = '#5ca2d6, #4068bf',
     BOB = '#fe8a71, #fe5262',
-    NBCB = '#f8c75e, #f98d45',
-    JSB = '#5ca2d6, #4068bf',
-    ZSB = '#fe8a71, #fe5262'
+    // NBCB = '#f8c75e, #f98d45',
+    // JSB = '#5ca2d6, #4068bf',
+    // ZSB = '#fe8a71, #fe5262'
 }

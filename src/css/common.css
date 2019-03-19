@@ -44,3 +44,13 @@
     display: flex;
     justify-content: space-around;
 }
+@media print{
+    .print-none{
+        display: none
+    }
+}
+.font-omit{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

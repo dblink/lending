@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { View } from '../../module/pageModule/view';
 import { Table } from '../../components/table/commonTable';
-import { CallbackSummary, ParameterName, Parameter, RequestCallback, Callback, PageInfo } from '../../components/request/setting';
+import { CallbackSummary, ParameterName, Parameter, RequestCallback, Callback, PageInfo, ParameterSummary } from '../../components/request/setting';
 import { HrefButton, PrimaryButton, CancelButton } from '../../components/button';
 import { ReqOption, req } from '../../components/request';
 import { Paging } from '../../components/paging/paging';
-import { ModalContract } from '../../components/modal/contract';
+import { ModalContract, ContractModal } from '../../components/modal/contract';
 import { sessionData } from '../../components/sessionData/sessionData';
 import { overdueToken } from '../../components/fail/failJump';
 import { PageLoading, InnerProgress } from '../../components/progress/progress';
@@ -13,6 +13,7 @@ import { load } from '../../components/loading/loading';
 import { logOut } from '../../components/fail/logOut';
 import { getIntervalDate } from '../../components/calendar/dateFunction';
 import { Filter, FilterList } from '../../module/filter/filter';
+import { browserHistory } from '../../router';
 
 interface Props {
     Status: -1 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -30,6 +31,7 @@ interface State {
     isPageLoading: boolean;
     pageInfo : PageInfo;
 }
+type FilterType = FilterList<ParameterSummary[ParameterName.getContractItems]>;
 
 export class ContractList extends React.Component<Props, State> {
     constructor(props: Props) {
@@ -57,9 +59,7 @@ export class ContractList extends React.Component<Props, State> {
             pageInfo :{}
         };
         this.getList =  load.run.call(this, this.getList, 'isPageLoading');
-        this.showModal = this.showModal.bind(this);
-        this.closeModal = this.closeModal.bind(this);
-        this.changePage = this.changePage.bind(this);
+        this.changePage = load.isLoading.call(this, this.changePage);
         this.selectList =  this.selectListFunction();
         this.search = this.search.bind(this);
     }
@@ -83,49 +83,17 @@ export class ContractList extends React.Component<Props, State> {
         }
         req(ParameterName.getContractItems, _option);
     }
-    showModal(page: '' | 'add' | 'list' | 'sign' | 'lending', data: {id: string, contractId: string}){
-        this.setState({
-            page: page,
-            borrowId: data.id,
-            contractId: data.contractId,
-            modalOpen: true
-        })
-    }
-    closeModal(bool?: boolean){
-        if(typeof bool === 'boolean' && bool){
-            let _data = this.state.data;
-            _data.PageIndex = 1;
-            this.setState({
-                data: _data,
-                modalOpen: false,
-                borrowId: '',
-                contractId: '',
-            },()=>{
-                this.getList()
-            });
-            return;
-        }else{
-            this.setState({
-                modalOpen: false,
-                borrowId: '',
-                contractId: '',
-            })
-        }
-    }
+    
     changePage(num: number){
-        //console.log(num);
-        if(this.state.isPageLoading){
-            return;
-        }
         let _data = this.state.data;
         _data.PageIndex = num;
         this.setState({
             data: _data
         }, this.getList)
     }
-    selectList:FilterList;
-    selectListFunction:()=>FilterList = ()=>{
-        let filterSetting: FilterList = [{
+    selectList:FilterType;
+    selectListFunction:()=>FilterType = ()=>{
+        let filterSetting: FilterType = [{
                 name: 'BorrowerName',
                 text: '借款人',
                 value: this.state.data.BorrowerName,
@@ -176,8 +144,17 @@ export class ContractList extends React.Component<Props, State> {
                         value: '6',
                         text: '取消'
                     },{
-                        value: '7',
-                        text:'签约失败'
+                        value: '8',
+                        text:'放款中'
+                    },{
+                        value: '10',
+                        text: '放款失败'
+                    },{
+                        value: '13',
+                        text: '还款失败'
+                    },{
+                        value: '14',
+                        text: '结清中'
                     }
                 ]
             })
@@ -197,6 +174,9 @@ export class ContractList extends React.Component<Props, State> {
             data: _newParameterData
         }, this.getList)        
     }
+    modalOperate: ContractModal.ObjectShowModal = {
+        showModal: ()=>{}
+    }
     render() {
         return <View>
             <div style={{height: '100%', position:'relative', display: 'flex', flexDirection: 'column'}}>
@@ -215,19 +195,17 @@ export class ContractList extends React.Component<Props, State> {
                 </div>
                 <div style={{flex:'auto',position:'relative'}}>
                     <PageLoading show={this.state.isPageLoading} />
-                    <ContractTable showModal={this.showModal} data={this.state.callbackData} />
+                    <ContractTable showModal={this.modalOperate.showModal} data={this.state.callbackData} />
                 </div>   
             </div>
-            <ModalContract contractId={this.state.contractId} closeModal={this.closeModal}
-                    page={this.state.page} isOpen={this.state.modalOpen} 
-                    borrowId={this.state.borrowId}  />
+            <ModalContract getList={()=>this.changePage(1)} contractModal={this.modalOperate} />
         </View>
     }
 }
 
 type ContractTableProps = {
     data: any;
-    showModal: (page: string, data: {id: string, contractId: string}) =>void
+    showModal: ContractModal.ObjectShowModal['showModal']
 }
 class ContractTable extends React.Component<ContractTableProps , any> {
     constructor(props: any){
@@ -248,9 +226,6 @@ class ContractTable extends React.Component<ContractTableProps , any> {
         attr: 'Mobile',
         head: '手机号'
     },{
-        attr: 'StoreId',
-        head: '门店'
-    },{
         attr: 'Money',
         head: '合同金额'
     },{
@@ -263,11 +238,11 @@ class ContractTable extends React.Component<ContractTableProps , any> {
             switch(data[attr]){
                 case  1 : 
                 case '1': {
-                    return '每周'
+                    return '每月'
                 }
                 case  2 :
                 case '2': {
-                    return '每月'
+                    return '每周'
                 }
                 case  3 :
                 case '3': {
@@ -278,43 +253,90 @@ class ContractTable extends React.Component<ContractTableProps , any> {
     },{
         attr: 'Remark',
         head: '备注',
+        format: (data: any)=>{
+            let _data: ContractModal.dataState = {
+                remark: data.Remark
+            }
+            return <HrefButton style={{width: 'auto'}} onClick={()=>this.props.showModal('remark', _data)}>点击查看</HrefButton>
+        }
     },{
         attr: 'State',
         head: '状态',
         format: (data: any, attr: any) =>{
-            switch(data[attr]){
-                case 1:
-                    let _data:any = {};
-                    _data.id = data.BorrowPersonBaseInfoId;
+            switch(data.State.toString()){
+                case '1':
+                    let _data:ContractModal.dataState = {};
+                    _data.borrowId = data.BorrowPersonBaseInfoId;
                     _data.contractId = data.Id;
-                    return <HrefButton style={{width: 'auto'}} onClick={()=>{this.props.showModal('sign', _data)}}>等待签约</HrefButton>;
-                case 2:
-                    let _lending:any = {};
-                    _lending.id = data.Id;
-                    return <HrefButton style={{width: 'auto'}} onClick={()=>{this.props.showModal('lending', _lending)}}>等待放款</HrefButton>;
-                case 3:
+                    _data.name = data.BorrowerName;
+                    _data.cardNo = data.IdCardNo;
+                    return <HrefButton style={{width: 'auto'}} onClick={()=>{this.props.showModal('list', _data)}}>等待签约</HrefButton>;
+                case '10':
+                case '2':
+                    let _lending:ContractModal.dataState = {},
+                        word = '';
+                    _lending.contractId = data.Id;
+                    if(data.State === '10'){
+                        word = '购买失败，再购买'
+                    }else{
+                        word = '等待购买'
+                    }
+                    return sessionData.getData('UserInfo').RoleId.toString() === '10001' ?
+                            <HrefButton style={{width: 'auto'}} onClick={()=>{this.props.showModal('lending', _lending)}}>
+                                {word}
+                            </HrefButton>
+                            : word;
+                case '3':
                     return '履约中';
-                case 4:
+                case '4':
                     return '逾期';
-                case 5:
+                case '5':
                     return '结清';
-                case 6:
+                case '6':
                     return '取消';
-                case 7:
-                    return '签约失败';
-                case 8: 
-                    return '放款中';
+                case '8': 
+                    return '购买中';
+                case '13' :
+                    return '结清失败';
+                case '14':
+                    return '结清中';
             }
         }
     },{
         attr: 'State',
         head: '操作',
-        format: (data: any, attr: any) =>{
-            return <div>
-                <HrefButton style={{margin: 'auto'}}>
-                    操作
-                </HrefButton>
-            </div>
+        format: (data: any) =>{
+            let _dom = [
+                <HrefButton style={{width: 'auto'}} onClick={()=>browserHistory.push('/report', {
+                    ApplyId: data.ApplyId,
+                    CardNo: data.IdCardNo
+                })}>报告</HrefButton>
+            ]
+            if(data.State.toString() < '3' || data.State.toString() === '10'){
+                _dom.push(
+                    <HrefButton style={{width: 'auto'}} onClick={
+                        ()=>this.props.showModal('cancel', {contractId: data.Id})
+                    }>取消合同</HrefButton>
+                )
+            }else if(data.State >= 3 && data.State <= 5){
+                _dom.push(
+                    <HrefButton style={{width: 'auto'}} onClick={
+                        ()=>this.props.showModal('repayment', {contractId: data.Id})
+                    }>还款表</HrefButton>
+                )
+                if(data.State >=3 && data.State < 5 ){
+                    _dom.push(
+                        <HrefButton style={{width: 'auto'}} onClick={
+                            ()=>this.props.showModal('localSettle', {contractId: data.Id})
+                        }>线下结清</HrefButton>,
+                        <HrefButton style={{width: 'auto'}} onClick={
+                            ()=>this.props.showModal('onlineSettle', {contractId: data.Id})
+                        }>线上结清</HrefButton>
+                    )
+                } 
+            }
+            return <div style={{display: 'flex', justifyContent:'space-between'}}>{_dom}</div>
+            
         }
     }];
     render(){

@@ -7,6 +7,8 @@ import { load } from '../../../components/loading/loading';
 import { PageLoading, InnerProgress } from '../../../components/progress/progress';
 import { CancelButton, PrimaryButton } from '../../../components/button';
 import { ErrorMessage } from '../../../components/error/errorMessage';
+import { Icon } from '../../../components/icon/icon';
+import { number } from 'prop-types';
 
 interface Props {
     applyId: string;
@@ -37,15 +39,7 @@ export class Gongxinbao extends React.Component<Props, State> {
         this.confirm = load.run.call(this, this.confirm, 'pageLoading');
     }
     componentDidMount () {
-        if(this.props.state === '2'){
-            this.setState({
-                isLoading: true,
-                error: <span style={{color: 'orange'}}>支付宝拉去中，请稍等。。。</span>
-            }, this.confirm);
-        }else{
-            this.getGXBToken();
-        }
-        
+        this.confirm()
     }
     getGXBToken(){
         let _getGXB: ReqOption<ParameterName.getGxbToken>;
@@ -60,13 +54,16 @@ export class Gongxinbao extends React.Component<Props, State> {
             },
             succeed: (e)=>{
                 this.setState({
+                    error: '',
                     gxb: e.Value,
                     pageLoading: false
-                })
+                });
+                this.number = 0;
             }
         }
         req(ParameterName.getGxbToken, _getGXB);
     }
+    number = 0;
     confirm(){
         let _getReportState: ReqOption<ParameterName.getReportState>;
         _getReportState = {
@@ -76,14 +73,21 @@ export class Gongxinbao extends React.Component<Props, State> {
                 Token: sessionData.getData('Token')
             },
             fail:(e)=>{
-                alert(e.ErrMsg);
+                if(e.Value && e.Value.toString() !== '1'){
+                    alert(e.ErrMsg);
+                }else{
+                    this.setState({
+                        isLoading: false,
+                        pageLoading: false
+                    }, this.getGXBToken)
+                }
             },
             succeed: (e)=>{
                 if(e.Value.toString() === '1'){
                     this.setState({
                         pageLoading: false,
-                        error: '请获取支付宝信息!'
-                    })
+                        //error: '请获取支付宝信息!'
+                    },this.getGXBToken);
                 }
                 if(e.Value.toString() === '2'){
                     this.setState({
@@ -92,14 +96,30 @@ export class Gongxinbao extends React.Component<Props, State> {
                     }, ()=>setTimeout(this.confirm, 3000));
                 }
                 if(e.Value.toString() === '3'){
+                    alert('已拉取成功！');
                     this.props.changePage('applyList');
                     this.props.changeState(this.props.type, '3');
                 }
                 if(e.Value.toString() === '4'){
-                    this.setState({
-                        pageLoading: true,
-                        error: <span style={{color: 'red'}}>获取失败，正在为您重新加载。。。</span>
-                    }, this.getGXBToken)
+                    if(this.number === 0){
+                        this.number = 1;
+                        this.setState({
+                            //pageLoading: false,
+                            error: <span style={{color: 'reoranged'}}>获取中，正在为您重新加载。。。</span>
+                        }, ()=>{
+                            setTimeout(()=>{
+                                this.setState({
+                                    pageLoading: false
+                                },this.confirm)
+                            }, 30000)
+                        })
+                    }else if(this.number === 1){
+                        this.setState({
+                            pageLoading: false,
+                            error: <span style={{color: 'red'}}>获取失败，正在为您重新加载。。。</span>
+                        }, this.getGXBToken)
+                    }
+                    
                 }
             }
         }
@@ -109,7 +129,7 @@ export class Gongxinbao extends React.Component<Props, State> {
         let _gxb = `https://prod.gxb.io/v2/auth?token=${this.state.gxb}&returnUrl=http://lotus.hehuadata.com/contract/success&title=电商认证&style=pc`
         return <View>
             <div style={{height: '100%', position:'relative', display: 'flex', flexDirection: 'column'}}>
-                <PageLoading show={this.state.pageLoading} >
+                <PageLoading show={this.state.pageLoading}>
                     {this.state.error}
                 </PageLoading>
                 <ErrorMessage>{this.state.error}</ErrorMessage>

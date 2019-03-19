@@ -7,22 +7,40 @@ export function getIntervalDate(
     switch(type){
         case 'month':{
             let _month = date.getMonth(),
-                _oldTime = date.toLocaleDateString();
+                _oldTime = getString(date);
             if(dir === 'next')
             {
                 date.setMonth(_month+interval);
                 return {
                     endTime: _oldTime,
-                    startTime: date.toLocaleDateString()
+                    startTime: getString(date)
                 };
             }else{
                 date.setMonth(_month-interval);
                 return {
                     endTime: _oldTime,
-                    startTime: date.toLocaleDateString()
+                    startTime:  getString(date)
                 };
             }
         }
+        case 'date': { 
+            let _date = date.getDate(),
+                _oldTime =  getString(date);
+            if(dir === 'next')
+            {
+                date.setDate(_date + interval);
+                return {
+                    endTime: _oldTime,
+                    startTime: getString(date)
+                };
+            }else{
+                date.setDate(_date - interval);
+                return {
+                    endTime: _oldTime,
+                    startTime:  getString(date)
+                };
+            }
+         }
         default:{
             alert('will ToDo');
             return {
@@ -31,4 +49,7 @@ export function getIntervalDate(
             }
         }
     }
+}
+function getString(date: Date){
+    return `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`
 }

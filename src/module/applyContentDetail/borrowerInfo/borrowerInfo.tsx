@@ -86,7 +86,7 @@ export class BorrowerInfo extends React.Component <BorrowerInfoProps, BorrowerIn
         _data.Sex = _birthAndSex.sex;
         _data.IDCardNo = this.props.card;
         _data.Token = sessionData.getData('Token');
-        _data.Id = this.props.userId
+        _data.Id = this.props.userId;
         let _options: ReqOption<ParameterName.updateBorrowPersonInfo> = {
             data: _data,
             fail: (e)=>{

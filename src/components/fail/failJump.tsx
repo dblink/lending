@@ -7,7 +7,7 @@ class Fail{
         this.src = src;
     }
     skip(from: string){
-        browserHistory.replace(this.src, {from: from});
+        browserHistory.push(this.src, {from: from});
     }
 }
 export const overdueToken = new Fail('/');

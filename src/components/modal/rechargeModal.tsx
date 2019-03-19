@@ -9,8 +9,9 @@ import { logOut } from '../fail/logOut';
 import { ModalTitle } from './title';
 import { ImageFile } from '../showImage';
 import { getBlobFile } from '../../module/applyContentDetail/certification/certification';
-import { PageLoading } from '../progress/progress';
+import { PageLoading, InnerProgress } from '../progress/progress';
 import { any } from 'prop-types';
+import { load } from '../loading/loading';
 
 interface Props {
     controller: {
@@ -81,6 +82,7 @@ type RechargeApplyProps = {
 }
 type RechargeApplyState = {
     data: Parameter<ParameterName.applyRechargeLoanBalance>;
+    isLoading: boolean;
 }
 class RechargeApply extends React.Component <RechargeApplyProps, RechargeApplyState>{
     constructor(props: any){
@@ -89,10 +91,11 @@ class RechargeApply extends React.Component <RechargeApplyProps, RechargeApplySt
             data: {
                 Money: '',
                 Token: sessionData.getData('Token')
-            }
+            },
+            isLoading: false
         }
-        this.inputChange = this.inputChange.bind(this);
-        this.confirm = this.confirm.bind(this);
+        this.confirm = load.run.call(this, this.confirm);
+        this.inputChange = load.isLoading.call(this, this.inputChange);
     }
     inputChange(e: React.ChangeEvent<HTMLInputElement>){
         let name = e.target.name,
@@ -119,21 +122,23 @@ class RechargeApply extends React.Component <RechargeApplyProps, RechargeApplySt
     render(){
         return <div style={{background: '#fff', display: 'flex', 
             flexDirection: 'column', justifyContent: 'space-between',
-            height: '90%', maxWidth: '500px', width: '90%'}}>
+            height: '300px', maxWidth: '500px', width: '90%'}}>
             <ModalTitle>
                 购买债权
             </ModalTitle>
-            <ApplyInput text={'购买金额'} 
-                name='Money'
-                onChange={this.inputChange}
-                value={this.state.data.Money}
-                />
-            <div style={{height: '40px'}}>
+            <div style={{padding: '0 70px'}}>
+                <ApplyInput text={'购买金额'} 
+                    name='Money'
+                    onChange={this.inputChange}
+                    value={this.state.data.Money}
+                    />
+            </div>
+            <div style={{height: '40px', display: 'flex'}}>
                 <CancelButton onClick={()=>this.props.cancelModal()}>
                     取消
                 </CancelButton>
                 <PrimaryButton onClick={this.confirm}>
-                    确认
+                    {this.state.isLoading ? <InnerProgress height='32px' /> : '确认'} 
                 </PrimaryButton>
             </div>
         </div>
@@ -157,8 +162,8 @@ class UploadCredentials extends React.Component <UploadCredentialsProps, UploadC
             },
             isLoading: false
         }
-        this.getImageData = this.getImageData.bind(this);
-        this.confirm = this.confirm.bind(this);
+        this.confirm = load.run.call(this, this.confirm);
+        this.getImageData = load.isLoading.call(this, this.getImageData);
     }
     getImageData(name:ParameterSummary[ParameterName.uploadCertificateImage], value:any){
         let _file = getBlobFile(value),

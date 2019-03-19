@@ -14,4 +14,4 @@ export interface ReqOption <T extends ParameterName> {
     return main()(reqName, option);
 };*/
 
-export const req: (reqName: ParameterName, option: ReqOption<ParameterName>)=>any = main();
+export const req: (reqName: ParameterName, option: ReqOption<ParameterName>)=>{close: ()=>void} = main();

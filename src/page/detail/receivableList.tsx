@@ -6,23 +6,33 @@ import { Paging } from '../../components/paging/paging';
 import { ReqOption, req } from '../../components/request';
 import { logOut } from '../../components/fail/logOut';
 import { View } from '../../module/pageModule/view';
+import { getIntervalDate } from '../../components/calendar/dateFunction';
+import { LendingFilter } from './lendingList';
+import { load } from '../../components/loading/loading';
+import { PageLoading } from '../../components/progress/progress';
 
 interface Props {}
 
+type ListCallback = RequestCallback<ParameterName.selectRepayRecord>[];
+type ReqParameter = Parameter<ParameterName.selectRepayRecord>;
+
 interface State {
-    callbackData: RequestCallback<ParameterName.selectRepayRecord>[];
-    data : Parameter<ParameterName.selectRepayRecord>;
+    callbackData: ListCallback;
+    data : ReqParameter;
     pageInfo: PageInfo;
+    isPageLoading: boolean;
+    isLoading: boolean;
 }
 export class ReceivableList extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
+        let _time = getIntervalDate(new Date(), 1);
         this.state = {
             callbackData: [],
             data: {
                 Token: sessionData.getData('Token'),
-                StartTime: '',
-                EndTime: '',
+                StartTime: _time.startTime,
+                EndTime: _time.endTime,
                 BorrowerName: '',
                 EmployeeId: '',
                 MerchantNo: '',
@@ -30,9 +40,12 @@ export class ReceivableList extends React.Component<Props, State> {
                 PageIndex: '1',
                 PageSize: '10'
             },
+            isLoading: true,
+            isPageLoading: false,
             pageInfo: {}
         };
-        this.getList = this.getList.bind(this);
+        this.getList = load.run.call(this, this.getList, 'isPageLoading');
+        this.search = load.isLoading.call(this, this.search);
     }
 
     componentDidMount(){
@@ -43,27 +56,46 @@ export class ReceivableList extends React.Component<Props, State> {
         let _getList: ReqOption<ParameterName.selectRepayRecord>;
         _getList = {
             data: this.state.data,
-            fail: logOut((e: Callback)=>{
+            fail: logOut((e)=>{
                 alert(e.ErrMsg)
             }),
             succeed: (e)=>{
                 this.setState({
+                    isLoading: false,
+                    isPageLoading: false,
                     callbackData: e.Value.PagedList,
                     pageInfo: e.Value.PageInfo
                 })
             }
         }
         req(ParameterName.selectRepayRecord, _getList);
-    }   
+    }  
+    
+    search(data: ReqParameter){
+        let _data = Object.assign({}, this.state.data, data);
+        _data.PageIndex = 1;
+        this.setState({
+            data: _data
+        }, this.getList)
+    }
 
     render() {
         return <View>
-            <div>
-                <Paging totalSize={this.state.pageInfo.TotalCount} changePage={(e)=>alert(e)}
-                    index={this.state.data.PageIndex}
-                    lastPage={this.state.pageInfo.PageCount}/>
+            <div style={{height: '100%', display: 'flex', 
+                flexDirection: 'column'}}>
+                <div style={{marginBottom: '30px', display:'flex',
+                    position: 'relative'}}>
+                    <LendingFilter data={this.state.data} search={this.search} />
+                    <Paging totalSize={this.state.pageInfo.TotalCount} changePage={(e)=>alert(e)}
+                        index={this.state.data.PageIndex}
+                        lastPage={this.state.pageInfo.PageCount}/>
+                    <PageLoading show={this.state.isLoading} hideContent={true} />
+                </div>
+                <div style={{flex:'auto', position: 'relative'}}>
+                    <PageLoading show={this.state.isPageLoading} />
+                    <ReceivableTable data={this.state.callbackData} />
+                </div>
             </div>
-            <ReceivableTable data={this.state.callbackData} />
         </View>
     }
 }
@@ -81,9 +113,6 @@ class ReceivableTable extends React.Component<ReceivableTableProps, any>{
         head: '回款时间',
         attr: 'RepayTime'
     },{
-        head: '订单号',
-        attr: 'OrderNo'
-    },{
         head: '借款人',
         attr: 'BorrowerName'
     },{
@@ -98,9 +127,6 @@ class ReceivableTable extends React.Component<ReceivableTableProps, any>{
     },{
         head: '回款金额',
         attr: 'RepayMoney'
-    },{
-        head: '通道费',
-        attr: 'RepayChannelCost'
     },{
         head: '操作人',
         attr: 'OperationEmployeeName'

@@ -2,9 +2,10 @@ import * as React from 'react';
 import { CalendarInput, SearchInput } from '../../components/input';
 import { SearchSelect } from '../../components/select';
 import { CancelButton, PrimaryButton } from '../../components/button';
+import { ParameterName, ParameterSummary } from '../../components/request/setting';
 
-export type FilterList = {
-    name : string
+export type FilterList<i> = {
+    name : i;
     value: any,
     text : any,
     type : 'date' | 'input' | 'select',
@@ -12,7 +13,7 @@ export type FilterList = {
 }[];
 
 type FilterProps = {
-    filterList: FilterList;
+    filterList: FilterList<ParameterSummary[ParameterName]>;
     filter: (data:any)=> void
 }
 type FilterState = {
@@ -69,8 +70,11 @@ export class Filter extends React.Component <FilterProps, FilterState>{
             marginTop: '10px',
             flex: '1 1 150px', height: '30px'};
 
-        return <div style={{display: 'flex', alignItems: 'center', background: '#fff'}}>
-            <div style={{display: 'flex', flexWrap: 'wrap',padding: '0 10px'}}>
+        return <div style={{display: 'flex',
+                width: '100%',
+                justifyContent:'space-between',
+                alignItems: 'center', background: '#fff'}}>
+            <div style={{display: 'flex', justifyContent:'space-between', flexWrap: 'wrap',padding: '0 10px'}}>
                 {
                     props.filterList.map((_value, key)=>{
                         let {name, value, text, type, list=[]} = _value;

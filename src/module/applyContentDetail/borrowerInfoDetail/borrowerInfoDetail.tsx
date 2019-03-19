@@ -167,11 +167,11 @@ export class BorrowerInfoDetail extends React.Component<BorrowerInfoDetailProps,
                 <TabButton onClick={() => this.changeType('contactInfo')} clicked={this.state.type === 'contactInfo'}>
                     联系人信息
                 </TabButton>
-                <TabButton onClick={() => this.changeType('otherInfo')} clicked={this.state.type === 'otherInfo'}>
-                    其他信息
-                </TabButton>
                 <TabButton onClick={() => this.changeType('companyInfo')} clicked={this.state.type === 'companyInfo'}>
                     公司信息
+                </TabButton>
+                <TabButton onClick={() => this.changeType('otherInfo')} clicked={this.state.type === 'otherInfo'}>
+                    其他信息
                 </TabButton>
             </div>
             <div style={{ flex: '10', overflow: 'auto' }}>

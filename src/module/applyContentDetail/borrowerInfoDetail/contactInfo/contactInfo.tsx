@@ -21,7 +21,6 @@ type ContactInfoProps = {
 export class ContactInfo extends React.Component <ContactInfoProps, ContactInfoState>{
     constructor(props: ContactInfoProps){
         super(props)
-        //console.log(props.data);
         let _data = props.data ? JSON.parse(props.data) : [];
         this.state = {
             type: '',
@@ -45,7 +44,6 @@ export class ContactInfo extends React.Component <ContactInfoProps, ContactInfoS
                 data: _data
             })
         }
-        console.log(this.props.watcher.run);
     }
     changeType(type: string){
         this.setState({
@@ -105,16 +103,7 @@ export class ContactInfo extends React.Component <ContactInfoProps, ContactInfoS
         head: '地址'
     }, {
         attr: 'contactRelation',
-        head: '关系',
-        format: (data:any, attr: any)=>{
-            let _data = data[attr];
-            let _list = this.list;
-            for(let i=0; i< _list.length; i++){
-                if(_list[i].value === _data){
-                    return _list[i].text
-                }
-            }
-        }
+        head: '关系'
     },{
         attr: 'contactName',
         head: '操作',

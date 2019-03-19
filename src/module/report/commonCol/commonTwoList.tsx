@@ -21,19 +21,8 @@ export class CommonTwoList extends React.Component<any, any>{
     }
     format(value: any){
         let _value = Object.assign({}, value);
-        // if(_value.call110Cnt > 0){
-        //     _value.call110Cnt = <span style={{padding: '5px 10px', backgroundColor: '#ff0000'}}>{_value.call110Cnt}</span>
-        // }
-        // if(_value.call110Duration > 0){
-        //     _value.call110Duration = <span style={{padding: '5px 10px', backgroundColor: '#ff0000'}}>{_value.call110Duration}</span>
-        // }
-        // if(_value.macaoCallCnt > 0){
-        //     _value.macaoCallCnt = <span style={{padding: '5px 10px', backgroundColor: '#ff0000'}}>{_value.macaoCallCnt}</span>
-        // }
-        // if(_value.macaoCallDuration > 0){
-        //     _value.macaoCallDuration = <span style={{padding: '5px 10px', backgroundColor: '#ff0000'}}>{_value.macaoCallDuration}</span>
-        // }
         _value.MaritalStatus = config.marriageStatus[_value.MaritalStatus as '1'];
+        _value.Sex = _value.Sex ? '女' : '男';
         (_value.idCardMatchStatus === 0 || _value.idCardMatchStatus) ? _value.idCardMatchStatus = <i style={{fontStyle: 'normal', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><span className='state-word' style={{color: config.reportColorState[_value.idCardMatchStatus as '0'] }}>{config.reportStateWord[_value.idCardMatchStatus as '0']}</span></i> : '';
         (_value.nameMatchStatus === 0 || _value.nameMatchStatus) ? _value.nameMatchStatus = <i style={{fontStyle: 'normal', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><span className='state-word' style={{color: config.reportColorState[_value.nameMatchStatus as '0'] }}>{config.reportStateWord[_value.nameMatchStatus as '0']}</span></i> : '';
         (_value.familiarityStatus === 0 || _value.familiarityStatus) ? _value.familiarityStatus = <i style={{fontStyle: 'normal', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><span className='state-word' style={{color: config.reportColorState[_value.familiarityStatus as '0'] }}>{config.reportStateWord[_value.familiarityStatus as '0']}</span></i> : '';
@@ -61,6 +50,27 @@ export class CommonTwoList extends React.Component<any, any>{
     }
 
     render(){
+        let _value = Object.assign({}, this.props.data);
+        _value.MaritalStatus = config.marriageStatus[_value.MaritalStatus as '1'];
+        _value.Sex = _value.Sex ? '女' : '男';
+        (_value.idCardMatchStatus === 0 || _value.idCardMatchStatus) ? _value.idCardMatchStatus = <i style={{fontStyle: 'normal', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><span className='state-word' style={{color: config.reportColorState[_value.idCardMatchStatus as '0'] }}>{config.reportStateWord[_value.idCardMatchStatus as '0']}</span></i> : '';
+        (_value.nameMatchStatus === 0 || _value.nameMatchStatus) ? _value.nameMatchStatus = <i style={{fontStyle: 'normal', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><span className='state-word' style={{color: config.reportColorState[_value.nameMatchStatus as '0'] }}>{config.reportStateWord[_value.nameMatchStatus as '0']}</span></i> : '';
+        (_value.familiarityStatus === 0 || _value.familiarityStatus) ? _value.familiarityStatus = <i style={{fontStyle: 'normal', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><span className='state-word' style={{color: config.reportColorState[_value.familiarityStatus as '0'] }}>{config.reportStateWord[_value.familiarityStatus as '0']}</span></i> : '';
+        (_value.familiarityHolderStatus === 0 || _value.familiarityHolderStatus) ? _value.familiarityHolderStatus = <i style={{fontStyle: 'normal', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><span className='state-word' style={{color: config.reportColorState[_value.familiarityHolderStatus as '0'] }}>{config.reportStateWord[_value.familiarityHolderStatus as '0']}</span></i> : '';
+        (_value.mobileMatchIdCardStatus === 0 || _value.mobileMatchIdCardStatus) ? _value.mobileMatchIdCardStatus = <i style={{fontStyle: 'normal', display: 'flex', justifyContent: 'center', alignItems: 'center'}}> <span className='state-word' style={{color: config.reportColorState[_value.mobileMatchIdCardStatus as '0'] }}>{config.reportStateWord[_value.mobileMatchIdCardStatus as '0']}</span></i>: '';
+        (_value.huabeiStatus === 0 || _value.huabeiStatus) ? _value.huabeiStatus = config.HuaBeiStatus[_value.huabeiStatus as '0'] : '';
+        _value.status ? _value.status = config.statusStatus[_value.status as '1'] : '';
+        (_value.balancePaymentEnable === 0 || _value.balancePaymentEnable) ? _value.balancePaymentEnable = config.isState[_value.balancePaymentEnable as '0'] : '';
+        _value.isVerified ? (_value.isVerified = _value.isVerified ? "是": "否") : '';
+        _value.repayAccountType ? _value.repayAccountType = config.repayAccountTypeState[_value.repayAccountType] : '';
+        _value.weBankRepayAccountType ? _value.weBankRepayAccountType = config.repayAccountTypeState[_value.weBankRepayAccountType] : '';
+        (_value.sex === 0 || _value.sex) ? _value.sex = config.sex[_value.sex as '0'] : '';
+        (_value.verifyFlag === 0 || _value.verifyFlag) ? _value.verifyFlag = config.verifyFlag[_value.verifyFlag as '0'] : '';
+        (_value.active===0||_value.active)?_value.active = config.isState[_value.active as '0']:'';
+        (_value.isOverdue===0||_value.isOverdue)?_value.isOverdue = config.isState[_value.isOverdue as '0']:'';
+        (_value.isFirstLoan===0||_value.isFirstLoan)?_value.isFirstLoan = config.isState[_value.isFirstLoan as '0']:'';
+        (_value.isActivated===0||_value.isActivated)?_value.isActivated = config.isState[_value.isOverdue as '0']:'';
+        (_value.loanStatus)?_value.loanStatus = config.loanStatus[_value.loanStatus as '1']:'';
         let _height = window.innerHeight;
         return <div className='report-info-block'>
             <div onClick={this.showBlock} className='report-info-block-title'>
@@ -77,7 +87,7 @@ export class CommonTwoList extends React.Component<any, any>{
                                     {this.props.config[value]}
                                 </p>
                                 <p className='report-item-value'>
-                                    {this.state.data[value] || this.props.data[value]}
+                                    {_value[value] || this.state.data[value]}
                                 </p>
                             </li>
                         })

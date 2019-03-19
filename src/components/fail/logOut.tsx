@@ -2,7 +2,7 @@ import { sessionData } from "../sessionData/sessionData";
 import { overdueToken } from "./failJump";
 import { Callback } from "../request/setting";
 
-export const logOut = (func:any, state ?: string)=>{
+export const logOut = (func:(e:Callback)=>void, state ?: string)=>{
     return (e:Callback)=>{
         if(e.Value.Token === 'Failures'){
             sessionData.clear();

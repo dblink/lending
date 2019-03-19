@@ -8,11 +8,22 @@ import {AlipayReportPage} from "./alipayReport/alipayReport";
 import {MiguanReport} from "./miguanReport/miguanReport";
 import {ReportMainPage} from "./juXinLiReport/juXinLiReport";
 import { sessionData } from '../../components/sessionData/sessionData';
-import { ParameterName } from '../../components/request/setting';
+import {Callback, ParameterName} from '../../components/request/setting';
 import { ReqOption, req } from '../../components/request';
+import {PageLoading} from "../../components/progress/progress";
+import {logOut} from "../../components/fail/logOut";
+import {load} from "../../components/loading/loading";
+import {browserHistory} from "../../router";
 type ReportProps = {
-    ApplyId: string;
-    IDCardNo: string;
+    //ApplyId: string;
+    //IDCardNo: string;
+    //[index: string] : any;
+    location: {
+        state: {
+            ApplyId: any;
+            CardNo : any;
+        }
+    };
 }
 
 type ReportState = {
@@ -34,6 +45,7 @@ export class Report extends React.Component<ReportProps, ReportState> {
             RelationShip: '',
             IdCardImage: '',
             Remark: '',
+            Company: '',
             isLoading: false,
             view: false,
             reportState: 'basicReport',
@@ -43,11 +55,15 @@ export class Report extends React.Component<ReportProps, ReportState> {
             tabClass4: '',
             tabClass5: '',
             tabClass6: '',
-            tabClass7: ''
+            tabClass7: '',
+            pageLoading: false
         };
-        this.progressView = this.progressView.bind(this);
-        this.progressOff = this.progressOff.bind(this);
-        this.showBasicReport = this.showBasicReport.bind(this);
+        this.showBasicReport =  load.run.call(this, this.showBasicReport, 'pageLoading');
+        // this.showBasicReport = this.showBasicReport.bind(this);
+        this.showAlipayReport =  load.run.call(this, this.showAlipayReport, 'pageLoading');
+        this.showJXLReport =  load.run.call(this, this.showJXLReport, 'pageLoading');
+        this.showMiGuanReport =  load.run.call(this, this.showMiGuanReport, 'pageLoading');
+
         this.showPhoneReport = this.showPhoneReport.bind(this);
         this.showAlipayReport = this.showAlipayReport.bind(this);
         this.showWechatReport = this.showWechatReport.bind(this);
@@ -57,57 +73,90 @@ export class Report extends React.Component<ReportProps, ReportState> {
     }
 
     componentDidMount() {
-        this.progressView();
+        this.setState({
+            view: true
+        });
+        this.setState({
+            reportState: 'basicReport',
+            tabClass1: 'tab-on',
+            tabClass2: '',
+            tabClass3: '',
+            tabClass4: '',
+            tabClass5: '',
+            tabClass6: '',
+            tabClass7: '',
+            tabClassIn: {},
+            pageLoading: true
+        });
         let _options: ReqOption<ParameterName.getMongoApplyInfoData> = {
             data: {
-                ApplyId: this.props.ApplyId,
+                ApplyId: this.props.location.state.ApplyId,
                 Token: sessionData.getData('Token'),
             },
-            fail: (data)=>{
-                alert(data.ErrMsg);
-            },
+            fail: logOut((e: Callback)=>{
+                alert(e.ErrMsg);
+                this.setState({
+                    pageLoading: false
+                });
+            }),
             succeed: (data: any)=>{
+                let _company = JSON.parse(data.Value.BorrowerCompany);
                 let _relationShip = JSON.parse(data.Value.BorrowerRelation);
                 let _otherInfo = JSON.parse(data.Value.Remark);
                 this.setState({
                     ApplyInfoData: data.Value,
+                    Company: _company,
                     RelationShip: _relationShip,
                     Remark: _otherInfo,
-                    view: true,
+                    reportState: 'basicReport',
                     tabClass1: 'tab-on',
-                },()=>console.log(this.state.Remark))
+                    tabClass2: '',
+                    tabClass3: '',
+                    tabClass4: '',
+                    tabClass5: '',
+                    tabClass6: '',
+                    tabClass7: '',
+                    tabClassIn: {},
+                    pageLoading: false
+                })
             }
         };
         req(ParameterName.getMongoApplyInfoData, _options);
     }
 
-    progressView(){
-        this.setState({
-            isLoading: true
-        })
-    }
-
-    progressOff(){
-        this.setState({
-            isLoading: false
-        })
-    }
-
     showBasicReport(){
         if (this.state.ApplyInfoData === ''){
+            this.setState({
+                reportState: 'basicReport',
+                tabClass1: 'tab-on',
+                tabClass2: '',
+                tabClass3: '',
+                tabClass4: '',
+                tabClass5: '',
+                tabClass6: '',
+                tabClass7: '',
+                tabClassIn: {},
+                pageLoading: true
+            });
             let _options: ReqOption<ParameterName.getMongoApplyInfoData> = {
                 data: {
-                    ApplyId: this.props.ApplyId,
+                    ApplyId: this.props.location.state.ApplyId,
                     Token: sessionData.getData('Token'),
                 },
-                fail: (data)=>{
-                    alert(data.ErrMsg);
-                },
+                fail: logOut((e: Callback)=>{
+                    alert(e.ErrMsg);
+                    this.setState({
+                        pageLoading: false
+                    });
+                }),
                 succeed: (data: any)=>{
+                    console.log(data);
+                    let _company = JSON.parse(data.Value.BorrowerCompany);
                     let _relationShip = JSON.parse(data.Value.BorrowerRelation);
                     let _otherInfo = JSON.parse(data.Value.Remark);
                     this.setState({
                         ApplyInfoData: data.Value,
+                        Company: _company,
                         RelationShip: _relationShip,
                         Remark: _otherInfo,
                         reportState: 'basicReport',
@@ -118,8 +167,9 @@ export class Report extends React.Component<ReportProps, ReportState> {
                         tabClass5: '',
                         tabClass6: '',
                         tabClass7: '',
-                        tabClassIn: {}
-                    },()=>console.log(this.state.Remark))
+                        tabClassIn: {},
+                        pageLoading: false
+                    })
                 }
             };
             req(ParameterName.getMongoApplyInfoData, _options);
@@ -133,8 +183,9 @@ export class Report extends React.Component<ReportProps, ReportState> {
                 tabClass5: '',
                 tabClass6: '',
                 tabClass7: '',
-                tabClassIn: {}
-            },()=>console.log(this.state.ApplyInfoData))
+                tabClassIn: {},
+                pageLoading: false
+            })
         }
 
     }
@@ -155,15 +206,30 @@ export class Report extends React.Component<ReportProps, ReportState> {
 
     showAlipayReport(){
         if (this.state.AliInfoData === ''){
+            this.setState({
+                reportState: 'alipayReport',
+                tabClass1: '',
+                tabClass2: '',
+                tabClass3: 'tab-on',
+                tabClass4: '',
+                tabClass5: '',
+                tabClass6: '',
+                tabClass7: '',
+                tabClassIn: {},
+                pageLoading: true
+            });
             let _options: ReqOption<ParameterName.getReportInfo> = {
                 data: {
-                    ApplyId: this.props.ApplyId,
+                    ApplyId: this.props.location.state.ApplyId,
                     ReportType: 3,
                     Token: sessionData.getData('Token'),
                 },
-                fail: (data)=>{
-                    alert(data.ErrMsg);
-                },
+                fail: logOut((e: Callback)=>{
+                    alert(e.ErrMsg);
+                    this.setState({
+                        pageLoading: false
+                    });
+                }),
                 succeed: (data: any)=>{
                     this.setState({
                         AliInfoData: data.baseInfo,
@@ -175,8 +241,9 @@ export class Report extends React.Component<ReportProps, ReportState> {
                         tabClass5: '',
                         tabClass6: '',
                         tabClass7: '',
-                        tabClassIn: {}
-                    },()=>console.log(data))
+                        tabClassIn: {},
+                        pageLoading: false
+                    })
                 }
             };
             req(ParameterName.getReportInfo, _options);
@@ -190,8 +257,9 @@ export class Report extends React.Component<ReportProps, ReportState> {
                 tabClass5: '',
                 tabClass6: '',
                 tabClass7: '',
-                tabClassIn: {}
-            },()=>console.log(this.state.AliInfoData))
+                tabClassIn: {},
+                pageLoading: false
+            })
         }
 
     }
@@ -213,15 +281,30 @@ export class Report extends React.Component<ReportProps, ReportState> {
 
     showJXLReport(){
         if (this.state.MiFengInfoData === ''){
+            this.setState({
+                reportState: 'JXLReport',
+                tabClass1: '',
+                tabClass2: '',
+                tabClass3: '',
+                tabClass4: '',
+                tabClass5: 'tab-on',
+                tabClass6: '',
+                tabClass7: '',
+                tabClassIn: {},
+                pageLoading: true
+            });
             let _options: ReqOption<ParameterName.getReportInfo> = {
                 data: {
-                    ApplyId: this.props.ApplyId,
+                    ApplyId: this.props.location.state.ApplyId,
                     ReportType: 2,
                     Token: sessionData.getData('Token'),
                 },
-                fail: (data)=>{
-                    alert(data.ErrMsg);
-                },
+                fail: logOut((e: Callback)=>{
+                    alert(e.ErrMsg);
+                    this.setState({
+                        pageLoading: false
+                    });
+                }),
                 succeed: (data: any)=>{
                     this.setState({
                         MiFengInfoData: data.basic_version,
@@ -233,8 +316,9 @@ export class Report extends React.Component<ReportProps, ReportState> {
                         tabClass5: 'tab-on',
                         tabClass6: '',
                         tabClass7: '',
-                        tabClassIn: {}
-                    },()=>console.log(data))
+                        tabClassIn: {},
+                        pageLoading: false
+                    })
                 }
             };
             req(ParameterName.getReportInfo, _options);
@@ -248,23 +332,39 @@ export class Report extends React.Component<ReportProps, ReportState> {
                 tabClass5: 'tab-on',
                 tabClass6: '',
                 tabClass7: '',
-                tabClassIn: {}
-            },()=>console.log(this.state.MiFengInfoData))
+                tabClassIn: {},
+                pageLoading: false
+            })
         }
 
     }
 
     showMiGuanReport(){
         if (this.state.MiGuanInfoData === ''){
+            this.setState({
+                reportState: 'MiGuanReport',
+                tabClass1: '',
+                tabClass2: '',
+                tabClass3: '',
+                tabClass4: '',
+                tabClass5: '',
+                tabClass6: 'tab-on',
+                tabClass7: '',
+                tabClassIn: {},
+                pageLoading: true
+            });
             let _options: ReqOption<ParameterName.getReportInfo> = {
                 data: {
-                    ApplyId: this.props.ApplyId,
+                    ApplyId: this.props.location.state.ApplyId,
                     ReportType: 1,
                     Token: sessionData.getData('Token'),
                 },
-                fail: (data)=>{
-                    alert(data.ErrMsg);
-                },
+                fail: logOut((e: Callback)=>{
+                    alert(e.ErrMsg);
+                    this.setState({
+                        pageLoading: false
+                    });
+                }),
                 succeed: (data: any)=>{
                     this.setState({
                         MiGuanInfoData: data,
@@ -276,8 +376,9 @@ export class Report extends React.Component<ReportProps, ReportState> {
                         tabClass5: '',
                         tabClass6: 'tab-on',
                         tabClass7: '',
-                        tabClassIn: {}
-                    },()=>console.log(data))
+                        tabClassIn: {},
+                        pageLoading: false
+                    })
                 }
             };
             req(ParameterName.getReportInfo, _options);
@@ -291,22 +392,38 @@ export class Report extends React.Component<ReportProps, ReportState> {
                 tabClass5: '',
                 tabClass6: 'tab-on',
                 tabClass7: '',
-                tabClassIn: {}
-            },()=>console.log(this.state.MiGuanInfoData))
+                tabClassIn: {},
+                pageLoading: false
+            })
         }
 
     }
 
     showIdCardReport(){
         if (this.state.IdCardImage === ''){
+            this.setState({
+                reportState: 'IdCardReport',
+                tabClass1: '',
+                tabClass2: '',
+                tabClass3: '',
+                tabClass4: '',
+                tabClass5: '',
+                tabClass6: '',
+                tabClass7: 'tab-on',
+                tabClassIn: {},
+                pageLoading: true
+            });
             let _options: ReqOption<ParameterName.selectBorrowerImage> = {
                 data: {
-                    IDCardNo: this.props.IDCardNo,
+                    IDCardNo: this.props.location.state.CardNo,
                     Token: sessionData.getData('Token'),
                 },
-                fail: (data)=>{
-                    alert(data.ErrMsg);
-                },
+                fail: logOut((e: Callback)=>{
+                    alert(e.ErrMsg);
+                    this.setState({
+                        pageLoading: false
+                    });
+                }),
                 succeed: (data: any)=>{
                     this.setState({
                         IdCardImage: data.Value,
@@ -318,8 +435,9 @@ export class Report extends React.Component<ReportProps, ReportState> {
                         tabClass5: '',
                         tabClass6: '',
                         tabClass7: 'tab-on',
-                        tabClassIn: {}
-                    },()=>console.log(this.state.IdCardImage))
+                        tabClassIn: {},
+                        pageLoading: false
+                    })
                 }
             };
             req(ParameterName.selectBorrowerImage, _options);
@@ -333,8 +451,9 @@ export class Report extends React.Component<ReportProps, ReportState> {
                 tabClass5: '',
                 tabClass6: '',
                 tabClass7: 'tab-on',
-                tabClassIn: {}
-            },()=>console.log(this.state.IdCardImage))
+                tabClassIn: {},
+                pageLoading: false
+            })
         }
 
     }
@@ -342,6 +461,7 @@ export class Report extends React.Component<ReportProps, ReportState> {
     render() {
         let _height = window.innerHeight;
         return <div style={{overflow: 'auto', width: '100%', position: 'relative'}}>
+
             {/*<ProgressBar isLoading={this.state.isLoading}/>*/}
             {
                 this.state.view &&
@@ -371,13 +491,18 @@ export class Report extends React.Component<ReportProps, ReportState> {
                                     <li onClick={this.showIdCardReport} className={this.state.tabClass7}>
                                         身份证信息
                                     </li>
+                                    <li onClick={()=>browserHistory.goBack()}>
+                                        返回
+                                    </li>
                                 </ul>
                             </div>
-                            <div style={{height: (_height-98 + 'px'), overflow: 'auto'}}>
+                            <div style={{height: (_height-98 + 'px'), overflow: 'auto', position: 'relative'}}>
+                                <PageLoading show={this.state.pageLoading} />
                                 {
                                     this.state.reportState==='basicReport' &&
                                     <div className='basic-info-block' style={{paddingBottom: '30px'}}>
                                         <CommonTwoList config={config.reportBasicInfo} data={this.state.ApplyInfoData} title={'基础信息'}/>
+                                        <CommonTwoList config={config.reportCompanyInfo} data={this.state.Company} title={'公司信息'}/>
                                         <CommonLimitList config={config.reportRelationInfo} data={this.state.RelationShip} title={'联系人信息'} />
                                         <CommonLimitList config={{remark: '备注'}} data={this.state.Remark} title={'其他信息'} />
                                     </div>
@@ -429,7 +554,10 @@ export class Report extends React.Component<ReportProps, ReportState> {
 export class ReportPage extends React.Component{
     render(){
         return <div>
-            <Report ApplyId={'4736859888097349506'} IDCardNo={'32050219940714001X'} />
+            <Report location={{
+                state: {ApplyId: '5049194704989721290',
+                    CardNo : '32050219940714001X'}
+            }} />
         </div>
     }
 

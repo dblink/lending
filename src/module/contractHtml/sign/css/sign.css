@@ -1,0 +1,19 @@
+.masks{
+    position: fixed;
+    z-index: 1;
+    background: #FFF;
+    overflow: hidden;
+    transform-origin: 50% 50%
+}
+@media all and (orientation : portrait){}
+/* 设备横屏时调用该段css代码 */
+@media all and (orientation : landscape){}
+
+.cav{
+    height: 100%;
+    width: 100%;
+}
+
+.buttons{
+    width: 100%;
+}

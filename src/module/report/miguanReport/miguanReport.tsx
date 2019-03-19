@@ -26,7 +26,7 @@ import {
 } from "./config";
 import './css/miGuanReport.css'
 import {user_info_check_config} from "../juXinLiReport/config";
-import {Table, AbeamTable, SeemTable} from "../../table/commonTable";
+import {Table, AbeamTable, SeemTable} from "../../../components/table/commonTable";
 
 export const MiReport = (props: any) => (<MiguanReport {...props} />);
 

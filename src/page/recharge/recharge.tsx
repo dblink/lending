@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View } from '../../module/pageModule/view';
 import { Table } from '../../components/table/commonTable';
 import { PageLoading } from '../../components/progress/progress';
-import { Parameter, ParameterName, RequestCallback, Callback, CallbackSummary } from '../../components/request/setting';
+import { Parameter, ParameterName, RequestCallback, Callback, CallbackSummary, PageInfo, ParameterSummary } from '../../components/request/setting';
 import { getIntervalDate } from '../../components/calendar/dateFunction';
 import { sessionData } from '../../components/sessionData/sessionData';
 import { ReqOption, req } from '../../components/request';
@@ -23,7 +23,10 @@ interface State {
         FrozenLoanBalance: string;
         LoanBalance: string;
     };
+    isGetMoney: boolean;
+    pageInfo: PageInfo;
 }
+type FilterType = FilterList<ParameterSummary[ParameterName.selectRechargeLoanBalance]>
 
 export class RechargeList extends React.Component<Props, State> {
     constructor(props: Props) {
@@ -39,16 +42,19 @@ export class RechargeList extends React.Component<Props, State> {
                 Token: sessionData.getData('Token')
             },
             money: {
-                FrozenLoanBalance: '为获取',
-                LoanBalance: '为获取'
+                FrozenLoanBalance: '未获取',
+                LoanBalance: '未获取'
             },
             callBackData: [],
-            isPageLoading: false
+            isPageLoading: false,
+            isGetMoney: false,
+            pageInfo: {}
         };
         this.getList = load.run.call(this, this.getList, 'isPageLoading');
+        this.changePage = load.isLoading.call(this, this.changePage, 'isPageLoading');
         this.filterList = this.filterListFunction();
         this.search = this.search.bind(this);
-        this.getLendingMoney = this.getLendingMoney.bind(this);
+        this.getLendingMoney = load.run.call(this, this.getLendingMoney, 'isGetMoney');
     }
     componentDidMount(){
         this.getList();
@@ -70,14 +76,15 @@ export class RechargeList extends React.Component<Props, State> {
             succeed: (e)=>{
                 this.setState({
                     isPageLoading: false,
-                    callBackData: e.Value.PagedList
+                    callBackData: e.Value.PagedList,
+                    pageInfo: e.Value.PageInfo
                 })
             }
         };
         req(ParameterName.selectRechargeLoanBalance, _req)
     }
-    filterList: FilterList;
-    filterListFunction: ()=>FilterList =()=>{
+    filterList: FilterType;
+    filterListFunction: ()=>FilterType =()=>{
         return [{
             name: 'StartTime',
             text: '开始日',
@@ -133,44 +140,56 @@ export class RechargeList extends React.Component<Props, State> {
             succeed: (data)=>{
                 let _data = data.Value;
                 this.setState({
-                    money: _data
+                    money: _data,
+                    isGetMoney: false
                 })
             }
         };
         req(ParameterName.getMerchantBalance, _req);
+    }
+    changePage(num: any){
+        let _data = this.state.data;
+        _data.PageIndex = num;
+        this.setState({
+            data: _data
+        }, this.getList)
     }
     render() {
         return <View>
             <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
                 <div style={{minHeight: '40px', display: 'flex',marginBottom:'30px',
                     background: '#FFF', position: 'relative'}}>
-                    <PrimaryButton style={{width: '100px'}} onClick={()=>this.controller.showModal('apply')}>
-                        充值
+                    <PrimaryButton style={{width: '100px', minWidth: '100px'}} onClick={()=>this.controller.showModal('apply')}>
+                        购买
                     </PrimaryButton>
-                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                    <div style={{display: 'flex', width:'250px', minWidth: '250px' ,justifyContent: 'space-between'}}>
                         <div style={{display: 'flex', width:'100%', justifyContent:'center'
-                            , padding: '10px'
-                            , alignItems:'center' ,flexDirection: 'column'}}>
-                            <span>放款余额</span>
-                            <span>{this.state.money.LoanBalance}</span>
-                            <span>冻结金额</span>
-                            <span>{this.state.money.FrozenLoanBalance}</span>
+                            , padding: '10px', fontSize: '14px', position:'relative'
+                            , flexDirection: 'column'}}>
+                            <span>债权余额：</span>
+                            <span style={{paddingLeft: '30px'}}>{this.state.money.LoanBalance}</span>
+                            <span>购买中金额：</span>
+                            <span style={{paddingLeft: '30px'}}>{this.state.money.FrozenLoanBalance}</span>
+                            <PageLoading show={this.state.isGetMoney} />
                         </div>
                         <PrimaryButton onClick={this.getLendingMoney}
-                            style={{width: '100px', maxWidth: '100px'}}>
+                            style={{width: '100px', maxWidth: '100px', minWidth: '100px'}}>
                             查询
                         </PrimaryButton>
                     </div>
-                    <Filter filter={this.search} filterList={this.filterList}  />
-                    <Paging lastPage={'10'} changePage={()=>{}}
-                        index={this.state.data.PageIndex} totalSize={20} />
+                    <div style={{width: '100%'}}>
+                        <Filter filter={this.search} filterList={this.filterList}  />
+                    </div>
+                    
+                    <Paging lastPage={this.state.pageInfo.PageCount} changePage={this.changePage}
+                        index={this.state.data.PageIndex} totalSize={this.state.pageInfo.TotalCount} />
                 </div>
                 <div style={{flex: 'auto', position: 'relative'}}>
                     <PageLoading show={this.state.isPageLoading} />
                     <RechargeTable showModal={this.controller.showModal} data={this.state.callBackData} />
                 </div>
             </div>
-            <RechargeModal  controller={this.controller} getList={this.getList} />
+            <RechargeModal controller={this.controller} getList={this.getList} />
         </View>
     }
 }
@@ -193,10 +212,10 @@ class RechargeTable extends React.Component<RechargeTableProps, any>{
         head: '订单号',
         attr: 'TradeNo'
     },{
-        head: '充值金额',
+        head: '购买金额',
         attr: 'RechargeMoney'
     },{
-        head: '充值码',
+        head: '购买码',
         attr: 'RechargeCode'
     },{
         head: '确认时间',
@@ -215,10 +234,10 @@ class RechargeTable extends React.Component<RechargeTableProps, any>{
                     </HrefButton> 
                 }
                 case '2': {
-                    return '待确认充值'
+                    return '待确认购买'
                 }
                 case '3': {
-                    return '已确认充值'
+                    return '已确认购买'
                 }
                 case '4': {
                     return '关闭'

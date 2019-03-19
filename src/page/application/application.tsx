@@ -1,20 +1,18 @@
 import * as React from 'react';
 import { Table } from '../../components/table/commonTable';
-import { RequestCallback, ParameterName, CallbackSummary, Parameter, PageInfo, Callback } from '../../components/request/setting';
-import { HrefButton, PrimaryButton, PagingButton, CancelButton } from '../../components/button';
-import { Icon } from '../../components/icon/icon';
+import { RequestCallback, ParameterName, CallbackSummary, Parameter, PageInfo, Callback, ParameterSummary } from '../../components/request/setting';
+import { PrimaryButton, HrefButton} from '../../components/button';
 import { ReqOption, req } from '../../components/request';
 import { ApplyModal } from '../../components/modal/applyModal';
 import { Paging } from '../../components/paging/paging';
 import { View } from '../../module/pageModule/view';
 import { sessionData } from '../../components/sessionData/sessionData';
-import { PageLoading, InnerProgress } from '../../components/progress/progress';
+import { PageLoading } from '../../components/progress/progress';
 import { load } from '../../components/loading/loading';
 import { logOut } from '../../components/fail/logOut';
-import { SearchInput, CalendarInput } from '../../components/input';
-import { SearchSelect } from '../../components/select';
 import { FilterList, Filter } from '../../module/filter/filter';
 import { getIntervalDate } from '../../components/calendar/dateFunction';
+import { browserHistory } from '../../router';
 
 interface Props {
     location:any;
@@ -27,10 +25,7 @@ interface State {
     isLoading : boolean;
     isPageLoading: boolean;
 }
-class Watcher{
-    getData: any;
-    setData: any;
-}
+type FilterType = FilterList<ParameterSummary[ParameterName.getApplyItems]>;
 export class Application extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
@@ -62,12 +57,12 @@ export class Application extends React.Component<Props, State> {
         };
         this.setShowModal = this.setShowModal.bind(this);
         this.getList = load.run.call(this, this.getList, 'isPageLoading');
-        this.changePage = this.changePage.bind(this);
+        this.changePage = load.isLoading.call(this, this.changePage,'isPageLoading');
         this.inputChange = this.inputChange.bind(this);
         this.searchList = this.searchListFunc.call(this);
         this.search  = this.search.bind(this);
     }
-    searchList: FilterList;
+    searchList: FilterType;
     componentDidMount(){
         this.getList();
     }
@@ -109,9 +104,6 @@ export class Application extends React.Component<Props, State> {
     }
     changeModal: any = {}
     changePage(num: number){
-        if(this.state.isPageLoading){
-            return;
-        }
         let _data =this.state.data;
         _data.PageIndex = num;
         this.setState({
@@ -135,7 +127,7 @@ export class Application extends React.Component<Props, State> {
         '2': '拒绝',
         '3': '审核中'
     }
-    searchListFunc: ()=>FilterList = ()=>[{
+    searchListFunc: ()=>FilterType = ()=>[{
         name : 'BorrowerName',
         text : '借款人',
         type : 'input',
@@ -182,8 +174,7 @@ export class Application extends React.Component<Props, State> {
                 <div style={{position: 'relative',display: 'flex', marginBottom: '30px'}}>
                     <PrimaryButton style={{width: '150px',
                         marginRight: '20px',
-                        fontSize: '14px',
-                        borderRadius: '0'}} onClick={this.setShowModal}>
+                        fontSize: '14px'}} onClick={this.setShowModal}>
                         添加申请
                     </PrimaryButton>
                     <Filter filterList={this.searchList} filter={this.search} />
@@ -196,7 +187,7 @@ export class Application extends React.Component<Props, State> {
                 </div>
                 <div style={{flex:'auto', position: 'relative'}}>
                     <PageLoading show={this.state.isPageLoading} />
-                    <ApplicationTable data={this.state.callbackData} />
+                    <ApplicationTable data={this.state.callbackData} showModal={this.changeModal.show} />
                 </div>
             </div>
             <ApplyModal getList={this.getList} changeModal={this.changeModal} />
@@ -205,26 +196,53 @@ export class Application extends React.Component<Props, State> {
 }
 
 type ApplicationTableProps = {
-    data: RequestCallback<ParameterName.getAuditItems>[];
+    data: RequestCallback<ParameterName.getApplyItems>[];
+    showModal: any;
 }
 
 class ApplicationTable extends React.Component<ApplicationTableProps, any>{
     setting: {
         attr: CallbackSummary[ParameterName.getApplyItems],
         head: string,
-        format ?: (data: any, attr: any)=>void;
+        format ?: (data: RequestCallback<ParameterName.getApplyItems>, attr: any)=>void;
     }[] = [{
         attr: 'ApplyTime',
         head: '申请时间'
     },{
         attr: 'BorrowerRealName',
-        head: '姓名'
+        head: '姓名',
+        format: (data)=>{
+            let userInfo = sessionData.getData('UserInfo')
+            if(userInfo.RoleId.toString() === '10002'
+                || userInfo.RoleId.toString() === '10004')
+            {
+                return data.BorrowerRealName
+            }else{
+                return <HrefButton style={{width: 'auto'}} onClick={()=>browserHistory.push('/report', {
+                    ApplyId: data.ApplyId,
+                    CardNo: data.IdCardNo
+                })}>
+                    {data.BorrowerRealName}
+                </HrefButton>
+            }
+            
+        }
     },{
         attr: 'BorrowerMobile',
-        head: '手机号'
+        head: '手机号',
+        format: (data)=>{
+            let arr = data.BorrowerMobile.match(/^.{1,3}|.{4}|.{1,4}$/g);
+            arr[1] = '****'
+            return <span>{arr.join('')}</span>
+        }
     },{
         attr: 'MerchantName',
-        head: '商户'
+        head: '商户',
+        format: (data: any)=>{
+            return <div className='font-omit' style={{width: '100px',margin:'auto'}}>
+                {data.MerchantName}
+            </div>
+        }
     },{
         attr: 'ApplyMoney',
         head: '申请金额'
@@ -241,10 +259,22 @@ class ApplicationTable extends React.Component<ApplicationTableProps, any>{
         attr: 'ConfirmPersonName',
         head: '业务员'
     }, {
+        attr: 'Remark',
+        head: '备注',
+        format:(data)=>{
+            console.log(data.Remark)
+            switch(data.Status.toString()){
+                case '2': return <HrefButton style={{margin: 'auto'}} onClick={()=>{this.props.showModal(true, false, 'remark', {remark: data.Remark})}}>
+                    拒绝信息
+                </HrefButton>
+            }
+            
+        }
+    },{
         attr: 'Status',
         head: '状态',
         format: (data, attr)=>{
-            switch(data[attr]){
+            switch(data.Status){
                 case  1 :
                 case '1':{
                     return '通过'

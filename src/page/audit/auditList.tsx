@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CallbackSummary, ParameterName, RequestCallback, Parameter, PageInfo, Callback } from '../../components/request/setting';
+import { CallbackSummary, ParameterName, RequestCallback, Parameter, PageInfo, Callback, ParameterSummary } from '../../components/request/setting';
 import { HrefButton } from '../../components/button';
 import { Table } from '../../components/table/commonTable';
 import { ReqOption, req } from '../../components/request';
@@ -12,8 +12,14 @@ import { load } from '../../components/loading/loading';
 import { getIntervalDate } from '../../components/calendar/dateFunction';
 import { Filter, FilterList } from '../../module/filter/filter';
 import { logOut } from '../../components/fail/logOut';
+import { browserHistory } from '../../router';
 
-interface Props {}
+interface Props {
+    time ?: {
+        endTime: string;
+        startTime: string;
+    };
+}
 
 interface State {
     callBackData: RequestCallback<ParameterName.getAuditItems>[];
@@ -25,11 +31,12 @@ interface State {
     isLoading: boolean;
     isPageLoading: boolean;
 }
+type FilterType = FilterList<ParameterSummary[ParameterName.getAuditItems]>;
 
 export class AuditList extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        let _obj = getIntervalDate(new Date(), 1);
+        let _obj = this.props.time || getIntervalDate(new Date(), 1)
         this.state = {
             data: {
                 BorrowerName: '',
@@ -99,8 +106,8 @@ export class AuditList extends React.Component<Props, State> {
             refresh && this.getList()
         })
     }
-    filterList: FilterList;
-    filterListFunction:()=>FilterList = ()=>{
+    filterList: FilterType;
+    filterListFunction:()=>FilterType = ()=>{
         return [
             {
                 text: '借款人',
@@ -191,14 +198,14 @@ class AuditTable extends React.Component<AuditTableProps, any>{
     },{
         attr: 'Id',
         head: '审核',
-        format: (data: any)=>{
+        format: (data: RequestCallback<ParameterName.getAuditItems>)=>{
             return <div style={{display: 'flex',width: '100px', margin:'auto'}}>
                 <HrefButton style={{width: '50%'}} 
-                    onClick={()=>this.props.showModal('Approved', data.Id)}>
+                    onClick={()=>this.props.showModal('Approved', data.AuditId)}>
                     通过
                 </HrefButton>
                 <HrefButton style={{color: '#F14531', width: '50%'}}
-                    onClick={()=>this.props.showModal('Denied', data.Id)}
+                    onClick={()=>this.props.showModal('Denied', data.AuditId)}
                     >
                     拒绝
                 </HrefButton>
@@ -207,10 +214,23 @@ class AuditTable extends React.Component<AuditTableProps, any>{
     },{
         attr: 'Id',
         head: '操作',
-        format: ()=>{
-            return <HrefButton style={{margin: 'auto'}}>
-                申请信息
-            </HrefButton>
+        format: (data: RequestCallback<ParameterName.getAuditItems>)=>{
+            let cardNo = data.IdCardNo,
+                applyId = data.ApplyId,
+                _state:any = {};
+                _state.CardNo = cardNo;
+                _state.ApplyId = applyId;
+                _state.BorrowId = data.BorrowPersonBaseInfoId; 
+            return <div>
+                  <HrefButton style={{margin: 'auto'}} onClick={
+                        ()=> {
+                                browserHistory.push('/report', {
+                                    ..._state
+                                })
+                        }} >
+                    申请信息
+                </HrefButton>
+            </div>
         }
     }];
 

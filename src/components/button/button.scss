@@ -20,7 +20,7 @@ span[role=button]{
     position: relative;
     justify-content: center;
     align-items: center;
-    //border-radius: 5px;
+    border-radius: 5px;
     color: #fff;
     width: 100%;
 }
@@ -38,7 +38,7 @@ span[role=button]{
 }
 .cancel-button{
     position: relative;
-    //@at-rootborder-radius: 5px;
+    border-radius: 5px;
     border: 1px solid #{$primaryColor} !important;
     display: flex;
     justify-content: center;

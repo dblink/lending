@@ -21,28 +21,12 @@ type AddContactInfoProps = {
 export class AddContactInfo extends React.Component <AddContactInfoProps, AddContactInfoState> {
     constructor(props: AddContactInfoProps){
         super(props);
-        //let _data =  && Object.assign({}, props.data) || {};
-        console.log(props.data);
         this.state={
             data: props.data || {}
         }
         this.inputChange = this.inputChange.bind(this);
         this.confirm = this.confirm.bind(this);
-        console.log(props.data);
     }
-    list = [{
-        text: '父母',
-        value: '0'
-    },{
-        text: '配偶',
-        value: '1'
-    },{
-        text: '朋友',
-        value: '2'
-    },{
-        text: '亲戚',
-        value: '3'
-    }]
     inputChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>){
         let name = e.target.name;
         let value = e.target.value;
@@ -91,10 +75,9 @@ export class AddContactInfo extends React.Component <AddContactInfoProps, AddCon
                         value={this.state.data.contactAddress} />
                 </div>
                 <div style={{marginTop: '10px'}}>
-                    <ApplySelect text='联系人关系' 
+                    <ApplyInput text='联系人关系' 
                         name={'contactRelation'}
                         onChange = {this.inputChange}
-                        list={this.list} 
                         value={this.state.data.contactRelation} />
                 </div>
             </div>

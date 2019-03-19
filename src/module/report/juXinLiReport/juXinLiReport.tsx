@@ -1,7 +1,6 @@
 import * as React from 'react';
 import './css/juXinLiReport.css'
-import {Table, AbeamTable, SeemTable} from "../../table/commonTable";
-import {user_info_check_config} from "./config";
+import {Table, AbeamTable, SeemTable} from "../../../components/table/commonTable";
 
 export class ReportMainPage extends React.Component<any, any>{
     constructor(props: any){

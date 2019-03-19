@@ -7,6 +7,7 @@ import { ApplyContentList } from '../../module/applyContentList/applyContentList
 import { InputCard } from '../../module/inputCard/inputCard';
 import { sessionData } from '../sessionData/sessionData';
 import { PageLoading } from '../progress/progress';
+import { RemarkModal } from './remark';
 
 interface Props {
     changeModal : any;
@@ -14,11 +15,12 @@ interface Props {
 }
 
 export interface ApplyModalState {
-    step: 'inputCard' | 'applyList' | 'applyListDetail';
+    step: 'inputCard' | 'applyList' | 'applyListDetail' | 'remark';
     dataState: RequestCallback<ParameterName.getBorrowerStatus>;
     card: string;
     type: any;
     showModal: boolean;
+    data: any;
 }
 
 export class ApplyModal extends React.Component<Props, ApplyModalState> {
@@ -29,6 +31,7 @@ export class ApplyModal extends React.Component<Props, ApplyModalState> {
             dataState: {},
             card: '',
             type: '',
+            data: {},
             showModal: false,
         };
         this.changeStep = this.changeStep.bind(this);
@@ -44,13 +47,15 @@ export class ApplyModal extends React.Component<Props, ApplyModalState> {
             step: step
         })
     }
-    changeShow(status: boolean, refresh ?: boolean){
+    changeShow(status: boolean, refresh ?: boolean, 
+        step: ApplyModalState['step'] = 'inputCard', data ?: any ){
         this.setState({
             showModal: status,
-            step: 'inputCard',
+            step: step,
             dataState: {},
             card: '',
             type: '',
+            data: data || {}
         },()=>{
             if(refresh) this.props.getList()
         })
@@ -100,6 +105,9 @@ export class ApplyModal extends React.Component<Props, ApplyModalState> {
                     type={this.state.type}
                     onChangeDataState={this.onChangeDataState}
                     onChangeStep={this.changeStep} />
+            }
+            case 'remark': {
+                return <RemarkModal text={this.state.data.remark} cancelModal={()=>this.changeShow(false)} />
             }
         }
     }

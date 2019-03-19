@@ -128,7 +128,7 @@ export class AuditModal extends React.Component<Props, State> {
                     flexDirection: 'column',
                     height: '660px', background: '#FFF'}}>
                 {this.getDom()}
-                <div style={{display: 'flex', height: '40px'}}>
+                <div style={{display: 'flex', minHeight: '40px', height: '40px'}}>
                     <CancelButton onClick={this.cancelModal} style={{borderRadius: '0'}}>
                         取消
                     </CancelButton>
@@ -178,7 +178,7 @@ class Approved extends React.Component <ApprovedProps, ApprovedState>{
             <ModalTitle >
                 通过信息
             </ModalTitle>
-            <div style={{marginTop: '20px'}}>
+            <div>
                 <ApplyInput text='审批金额' 
                     name='ApplyMoney'
                     value={this.state.data.ApplyMoney}
@@ -191,6 +191,14 @@ class Approved extends React.Component <ApprovedProps, ApprovedState>{
                     value={this.state.data.Period}
                     error={this.props.error.Period}
                     onChange={this.inputChange}/>
+            </div>
+            <div style={{marginTop: '20px'}}>
+                <ApplyInput text='每期服务费' 
+                    name='ServiceMoney'
+                    value={this.state.data.ServiceMoney}
+                    error={this.props.error.ServiceMoney}
+                    onChange={this.inputChange}/>
+                
             </div>
             <div style={{marginTop: '20px'}}>
                 <ApplySelect text='周期类型' 
@@ -210,6 +218,7 @@ class Approved extends React.Component <ApprovedProps, ApprovedState>{
                     ]}
                 />
             </div>
+           
             <div style={{marginTop: '20px'}}>
                 <ApplyInput type='textarea' 
                     name='Remark'
