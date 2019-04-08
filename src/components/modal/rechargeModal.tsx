@@ -79,12 +79,13 @@ export class RechargeModal extends React.Component<Props, State> {
 
 type RechargeApplyProps = {
     cancelModal: (bool ?: boolean) =>void;
+    type ?: 'transform'
 }
 type RechargeApplyState = {
     data: Parameter<ParameterName.applyRechargeLoanBalance>;
     isLoading: boolean;
 }
-class RechargeApply extends React.Component <RechargeApplyProps, RechargeApplyState>{
+export class RechargeApply extends React.Component <RechargeApplyProps, RechargeApplyState>{
     constructor(props: any){
         super(props);
         this.state = {
@@ -108,6 +109,10 @@ class RechargeApply extends React.Component <RechargeApplyProps, RechargeApplySt
     }
     confirm(){
         let _req:ReqOption<ParameterName.applyRechargeLoanBalance>;
+        let _transform = ParameterName.applyRechargeLoanBalance;
+        if(this.props.type === 'transform'){
+            _transform = ParameterName.applyWithdrawLoanBalance
+        }
         _req = {
             data: this.state.data,
             fail: logOut((e: Callback)=>{
@@ -116,8 +121,8 @@ class RechargeApply extends React.Component <RechargeApplyProps, RechargeApplySt
             succeed: (e)=>{
                 this.props.cancelModal(true)
             }
-        }
-        req(ParameterName.applyRechargeLoanBalance, _req);
+        };
+        req(_transform, _req);
     }
     render(){
         return <div style={{background: '#fff', display: 'flex', 
@@ -165,10 +170,10 @@ class UploadCredentials extends React.Component <UploadCredentialsProps, UploadC
         this.confirm = load.run.call(this, this.confirm);
         this.getImageData = load.isLoading.call(this, this.getImageData);
     }
-    getImageData(name:ParameterSummary[ParameterName.uploadCertificateImage], value:any){
+    getImageData(name:ParameterSummary[ParameterName.uploadCertificateImage], value:any, file: any){
         let _file = getBlobFile(value),
             _data = this.state.data;
-        _data[name] = _file;
+        _data[name] = file;
         this.setState({
             data: _data
         })

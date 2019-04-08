@@ -102,12 +102,16 @@ class LocalConfirmRepay extends React.Component<LocalConfirmRepayProps, LocalCon
                 this.props.cancel(true);
             }
         }
+        
         switch(this.props.type){
             case 'repay' : {
                 this.confirmRepayOffline = req(ParameterName.confirmRepayOffline, _req);
+                break;
             }
             case 'settle': {
+                console.log(ParameterName.confirmRepayOfflineClearing);
                 this.confirmRepayOffline = req(ParameterName.confirmRepayOfflineClearing, _req);
+                break;
             }
         }
         
@@ -119,9 +123,10 @@ class LocalConfirmRepay extends React.Component<LocalConfirmRepayProps, LocalCon
         return <div style={{background: '#FFF', display: 'flex', 
             justifyContent: 'space-between',
             flexDirection: 'column',
+            width:'500px',
             height: '300px'}}>
             <ModalTitle>确认线下{this.props.type === 'repay' ? '还款' : '结清'}</ModalTitle>
-            <div>
+            <div style={{textAlign:'center'}}>
                 是否确认{this.props.type === 'repay' ? '还款' : '结清'}?
             </div>
             <div style={{height: '40px', display: 'flex'}}>

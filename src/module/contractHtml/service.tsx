@@ -16,6 +16,8 @@ interface Props {
         params: {
             idCard: any;
             name: any;
+            serviceFee: any;
+            period: any;
         }
     }
     
@@ -134,22 +136,26 @@ export default class ServiceAgreement extends React.Component <Props, any>{
                 <p className="print">1、乙方保证如实说明个人的资产负债情况，积极配合甲方对相关情况的调查，考察和核实工作。</p>
                 <p className="print">2、乙方有义务积极配合甲方，并按甲方的要求提供办理贷款所必须的所有资料，并填报甲方所需资料。</p>
                 <h3 className="print">第三条 服务费</h3>
-                <p className="print">1、乙方愿意由借款之日起每周向甲方支付服务费（信息咨询费、贷后服务及管理费）<span className="text-under-line">
-                        <input type={'text'} value={this.state.data.money || ''}
+                <p className="print">1、乙方愿意由借款之日起每期向甲方支付服务费（信息咨询费、贷后服务及管理费）<span className="text-under-line">
+                        {/*
+                            <input type={'text'} value={this.state.data.money || ''}
                                name={'money'}
                                style={{background: '#FFF',border: 'none', verticalAlign:'top'}}
                                onChange={this.serviceMoney} />
-                        <span style={{color: 'red'}} className={'print-none'}>&lowast;</span>
+                            <span style={{color: 'red'}} className={'print-none'}>&lowast;</span>
+                        */}
+                        
+                        <span>{this.props.match.params.serviceFee}</span>
                         </span>元（大写：<span className="text-under-line">
-                            {this.state.big || <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>}
+                            {lowerToUpper(parseFloat(this.props.match.params.serviceFee)).big|| <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>}
                         </span>），一共支付<span className="text-under-line">
-                            {this.props.Period || 
+                            {this.props.match.params.period || 
                                 <input type={'text'} 
                                     style={{background: '#FFF',border: 'none', fontSize: '14px',
                                      width: '30px', textAlign: 'center'}} ></input>
                             }
                                     
-                        </span>周。</p>
+                        </span>期。</p>
 
                 <p className={'print'}>支付方式
                     ：每期支付</p>

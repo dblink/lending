@@ -13,6 +13,7 @@ import { logOut } from '../../components/fail/logOut';
 import { FilterList, Filter } from '../../module/filter/filter';
 import { getIntervalDate } from '../../components/calendar/dateFunction';
 import { browserHistory } from '../../router';
+import { addMerchantItem } from '../../module/filter/addMerchantItem';
 
 interface Props {
     location:any;
@@ -127,57 +128,69 @@ export class Application extends React.Component<Props, State> {
         '2': '拒绝',
         '3': '审核中'
     }
-    searchListFunc: ()=>FilterType = ()=>[{
-        name : 'BorrowerName',
-        text : '借款人',
-        type : 'input',
-        value: this.state.data.BorrowerName
-    }, {
-        name : 'Status',
-        text : '状态',
-        type : 'select',
-        value: this.state.data.Status,
-        list : [
-            {
-                value: '-1',
-                text : '全部'
-            },
-            {
-                value: '1',
-                text : '通过'
-            },{
-                value: '2',
-                text : '拒绝'
-            },{
-                value: '3',
-                text : '审核中'
-            }]
-    }, {
-        name : 'StartTime',
-        text : '开始日',
-        type : 'date',
-        value: this.state.data.StartTime
-    }, {
-        name : 'EndTime',
-        text : '结束日',
-        type : 'date',
-        value: this.state.data.EndTime
-    }, {
-        name : 'Mobile',
-        text : '手机号',
-        type : 'input',
-        value: this.state.data.Mobile
-    }]
+    searchListFunc: ()=>FilterType = ()=>{
+        let _filter: FilterType = [{
+            name : 'StartTime',
+            text : '开始日',
+            type : 'date',
+            value: this.state.data.StartTime
+        }, {
+            name : 'EndTime',
+            text : '结束日',
+            type : 'date',
+            value: this.state.data.EndTime
+        }, {
+            name : 'BorrowerName',
+            text : '借款人',
+            type : 'input',
+            value: this.state.data.BorrowerName
+        }, {
+            name : 'Status',
+            text : '状态',
+            type : 'select',
+            value: this.state.data.Status,
+            list : [
+                {
+                    value: '-1',
+                    text : '全部'
+                },
+                {
+                    value: '1',
+                    text : '通过'
+                },{
+                    value: '2',
+                    text : '拒绝'
+                },{
+                    value: '3',
+                    text : '审核中'
+                }]
+        },{
+            name : 'Mobile',
+            text : '手机号',
+            type : 'input',
+            value: this.state.data.Mobile
+        }],
+            items = sessionData.getData('MerchantItem');
+        if(items){
+            _filter = addMerchantItem(_filter, this.state.data.MerchantNo);
+        }
+        return _filter
+    }
     render() {
         return <View>
             <div style={{display: 'flex', height: '100%', flexDirection: 'column'}}>
-                <div style={{position: 'relative',display: 'flex', marginBottom: '30px'}}>
+                <div style={{position: 'relative',display: 'flex', minHeight: '40px',marginBottom: '15px'}}>
+                    <Filter filterList={this.searchList} filter={this.search} />
+                    <PageLoading show={this.state.isLoading} hideContent={true} />
+                </div>
+                <div style={{display: 'flex', position: 'relative', background: '#FFF',
+                        marginBottom: '15px', minHeight: '40px',
+                        justifyContent: 'space-between',height: '40px'}}>
                     <PrimaryButton style={{width: '150px',
                         marginRight: '20px',
                         fontSize: '14px'}} onClick={this.setShowModal}>
                         添加申请
                     </PrimaryButton>
-                    <Filter filterList={this.searchList} filter={this.search} />
                     <Paging 
                         lastPage ={this.state.pageInfo.PageCount}
                         totalSize={this.state.pageInfo.TotalCount}
@@ -185,7 +198,7 @@ export class Application extends React.Component<Props, State> {
                         index={this.state.pageInfo.PageIndex}  />
                     <PageLoading show={this.state.isLoading} hideContent={true} />
                 </div>
-                <div style={{flex:'auto', position: 'relative'}}>
+                <div style={{flex:'auto', position: 'relative', overflow: 'auto'}}>
                     <PageLoading show={this.state.isPageLoading} />
                     <ApplicationTable data={this.state.callbackData} showModal={this.changeModal.show} />
                 </div>
@@ -235,7 +248,7 @@ class ApplicationTable extends React.Component<ApplicationTableProps, any>{
             arr[1] = '****'
             return <span>{arr.join('')}</span>
         }
-    },{
+    },/*{
         attr: 'MerchantName',
         head: '商户',
         format: (data: any)=>{
@@ -243,7 +256,7 @@ class ApplicationTable extends React.Component<ApplicationTableProps, any>{
                 {data.MerchantName}
             </div>
         }
-    },{
+    },*/{
         attr: 'ApplyMoney',
         head: '申请金额'
     }, {
@@ -262,7 +275,6 @@ class ApplicationTable extends React.Component<ApplicationTableProps, any>{
         attr: 'Remark',
         head: '备注',
         format:(data)=>{
-            console.log(data.Remark)
             switch(data.Status.toString()){
                 case '2': return <HrefButton style={{margin: 'auto'}} onClick={()=>{this.props.showModal(true, false, 'remark', {remark: data.Remark})}}>
                     拒绝信息

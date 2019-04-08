@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {ImageFileView} from "./view";
 type ImageFileProps = {
-    getData  : (name:string, data:any)=> void;
+    getData  : (name:string, data:any, file: any)=> void;
     canvasId ?: string;
     name     : string;
     loading  : boolean;

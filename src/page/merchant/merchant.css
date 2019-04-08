@@ -1,16 +1,14 @@
 .merchant-module{
-    padding: 30px 0; 
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    max-width: 300px;
-    min-width: 300px;
-    border-bottom: 1px solid #DDD;
+    overflow: hidden;
+    border-radius: 5px 5px 2px 2px;
+    border : 1px solid #D6E8F6;
 }
 .merchant-items{
     height: 40px;
+    line-height: 40px;
     display: flex;
-    justify-content: space-between;
-    line-height: 40px; 
+    justify-content: space-between; 
+    padding: 0 20px;
+    font-size: 14px;
     width: 300px;
 }

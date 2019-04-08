@@ -15,6 +15,7 @@ import { BankCardInput, ApplyInput } from '../input';
 import { Table } from '../table/commonTable';
 import { Switch } from 'react-router';
 import { Paging } from '../paging/paging';
+import { RechargeModal, RechargeApply } from './rechargeModal';
 
 interface Props {
     modal: {
@@ -26,7 +27,7 @@ interface Props {
 
 interface State {
     data: Parameter<ParameterName.applyWithdraw>;
-    type: 'bankList' | 'withdrawal' | 'detail';
+    type: 'bankList' | 'withdrawal' | 'detail' | 'transform';
     isOpen: boolean;
     isLoading: boolean;
 }
@@ -71,7 +72,7 @@ export class Withdrawal extends React.Component<Props, State> {
             type: 'withdrawal'
         });
     }
-    showModal(page: 'bankList' | 'withdrawal' | 'detail' = 'bankList'){
+    showModal(page: 'bankList' | 'transform' | 'withdrawal' | 'detail' = 'bankList'){
         this.setState({
             type: page,
             isOpen: true
@@ -108,6 +109,7 @@ export class Withdrawal extends React.Component<Props, State> {
         switch(this.state.type){
             case 'detail': return <Detail cancel={this.cancel} />
             case 'bankList': return <CardList confirm={this.getId} cancel={this.cancel}  />;
+            case 'transform': return <RechargeApply cancelModal={this.cancel} type='transform' /> ;
             case 'withdrawal': return <div style={{width: '300px', height: '500px',
                 display: 'flex', flexDirection: 'column',justifyContent:'space-between',
                 background: '#FFF'}}>

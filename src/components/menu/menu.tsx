@@ -10,12 +10,18 @@ interface Props {
     location ?:any;
 }
 
-interface State {}
+interface State {
+    showId: string;
+}
 
 export class Menu extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        this.state = {};
+        this.state = {
+            showId: ''
+        };
+        this.showChildren = this.showChildren.bind(this);
+        this.closeChildren = this.closeChildren.bind(this);
     }
     list: {
         "Id": string,
@@ -33,7 +39,18 @@ export class Menu extends React.Component<Props, State> {
     }[] = sessionData.getData('UserMenuItems') || [];
     modal:ShowModal = {
         closeModal: ()=>{},
-        showModal: ()=>{}
+        showModal: ()=>{},
+    }
+    showChildren(id: string){
+        console.log(id);
+        this.setState({
+            showId: id.toString()
+        })
+    }
+    closeChildren(){
+        this.setState({
+            showId: ''
+        })
     }
     render() {
         return <div style={{width: '260px', display:'flex', flexDirection: 'column'}}>
@@ -58,15 +75,15 @@ export class Menu extends React.Component<Props, State> {
                 {
                     this.list.map((value, key)=>{
                         return <div key={key}>
-                            <MenuItem text={value.MenuName} 
-                                url={value.Url}
-                                className={location.pathname === value.Url ? 'click' : ''}
-                                iconName={value.Icon}>
+                            <MenuItem text={value.MenuName} url={value.Url} iconName={value.Icon}
+                                showId={this.state.showId} id={value.Id} show={this.showChildren}
+                                close={this.closeChildren}
+                                className={location.pathname === value.Url ? 'click' : ''}>
                                 {
                                     value.Items.length > 0 
                                     && value.Items.map((value,key)=>{
                                         return <MenuItem key={key+1} text={value.MenuName} 
-                                        url={value.Url}
+                                        url={value.Url} showId={this.state.showId} id={value.Id}
                                         className={location.pathname === value.Url ? 'click' : ''}
                                         style={{paddingLeft: '50px'}}
                                         iconName={value.Icon} />
@@ -94,6 +111,11 @@ type MenuItemProps = {
     text : string;
     iconName: string;
     className ?: string;
+    showId ?: string;
+    id ?: string;
+    close?: ()=>void;
+    show ?: (id:string)=>void;
+    //showList ?: boolean;
     style ?: React.CSSProperties;
 }
 class MenuItem extends React.Component<MenuItemProps, MenuItemState>{
@@ -106,9 +128,7 @@ class MenuItem extends React.Component<MenuItemProps, MenuItemState>{
     }
     clickTrigger(){
         if(this.props.children){
-            this.setState({
-                show: !this.state.show
-            })
+            this.props.show(this.props.id);
         }else{
             browserHistory.push(this.props.url)
         }
@@ -119,9 +139,9 @@ class MenuItem extends React.Component<MenuItemProps, MenuItemState>{
             className={this.props.className}
             iconName={this.props.iconName}
             style= {this.props.style}
-            onClick={this.clickTrigger} >  
+            onClick={this.clickTrigger} >
         </Vertical>,
-        (this.state.show && this.props.children)
+        ((this.props.id.toString() === this.props.showId.toString()) && this.props.children)
          ? this.props.children : '']
     }
 }

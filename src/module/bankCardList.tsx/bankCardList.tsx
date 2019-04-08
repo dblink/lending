@@ -10,7 +10,8 @@ type CardProperty =  {
 }
 interface Props {
     list: CardProperty[];
-    choiceCard: (value: CardProperty)=>any
+    choiceCard: (value: CardProperty)=>any;
+    editorCard ?: (value: CardProperty)=>any;
 }
 
 interface State {}
@@ -20,9 +21,7 @@ export class BankCardList extends React.Component<Props, State> {
         super(props);
         this.state = {};
     }
-
     render() {
-        console.log(this.props.list, 'list');
         return this.props.list.map((value, key)=>{
             return <div key={key} onClick={()=>this.props.choiceCard(value)} style={{display: 'flex', alignItems:'center', margin: '15px'}}>
                 <input type='radio' name='card' id={`card${key}`} 
@@ -31,6 +30,10 @@ export class BankCardList extends React.Component<Props, State> {
                     <BankCard mobile={value.Mobile} 
                         bankCode={value.BankCode} cardNo={value.BankCardNo} />
                 </label>
+                {this.props.editorCard ? <span style={{color: '#1B8DEF', cursor: 'pointer'}} onClick={(e)=>{
+                    e.stopPropagation();
+                    this.props.editorCard(value)
+                }}>编辑</span> : ''}
             </div>
         })
     }

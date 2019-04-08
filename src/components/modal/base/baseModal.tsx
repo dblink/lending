@@ -1,5 +1,5 @@
 import * as React from 'react';
-import './baseModal.scss';
+import './baseModal.css';
 interface Props {
     children:any;
     isOpen :boolean;

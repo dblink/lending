@@ -7,6 +7,7 @@ import { ParameterName, ParameterSummary, Parameter } from '../../../components/
 import { load } from '../../../components/loading/loading';
 import { ModalTitle } from '../../../components/modal/title';
 import { sessionData } from '../../../components/sessionData/sessionData';
+import { logOut } from '../../../components/fail/logOut';
 type BorrowerInfoProps = {
     card: string;
     userId:string;
@@ -89,12 +90,13 @@ export class BorrowerInfo extends React.Component <BorrowerInfoProps, BorrowerIn
         _data.Id = this.props.userId;
         let _options: ReqOption<ParameterName.updateBorrowPersonInfo> = {
             data: _data,
-            fail: (e)=>{
+            fail: logOut((e)=>{
+                alert(e.ErrMsg);
                 this.setState({
                     isLoading: false,
                     error: e.ErrMsg
                 })
-            },
+            }),
             succeed: ()=>{
                 this.props.onChangeStep('applyList', '');
                 this.props.onChangeDataState(this.props.name, true)

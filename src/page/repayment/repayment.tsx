@@ -12,6 +12,7 @@ import { getIntervalDate } from '../../components/calendar/dateFunction';
 import { Filter, FilterList } from '../../module/filter/filter';
 import { RepaymentModal, RepaymentModalFunc } from '../../components/modal/repayment';
 import { HrefButton } from '../../components/button';
+import { addMerchantItem } from '../../module/filter/addMerchantItem';
 
 interface Props {
     location ?: any;
@@ -152,6 +153,9 @@ class RepaymentTable extends React.Component <RepaymentTableProps, any>{
         head: '还款金额',
         attr: 'RepayMoney'
     }, {
+        head: '已还金额',
+        attr: 'Money'
+    },{
         head: '期数',
         attr: 'Period'
     },{
@@ -178,8 +182,12 @@ class RepaymentTable extends React.Component <RepaymentTableProps, any>{
         head: '操作',
         attr: 'State',
         format: (data)=>{
-            if(data.State.toString() !== '2'
-                && data.State.toString() !== '3'){
+            if(
+                data.State.toString() !== '2'
+                && data.State.toString() !== '3'
+                && data.State.toString () !== '6' 
+                //data.Money < data.RepayMoney || data.State.toString() === '6'
+                ){
                return <div style={{display: 'flex', justifyContent: 'space-around'}}>
                <HrefButton style={{width: 'auto'}} onClick={()=>this.props.showModal('online', {RepayPlanDetailId: data.Id})}> 
                     线上
@@ -206,60 +214,64 @@ type RepaymentFilterState = {
 class RepaymentFilter extends React.Component <RepaymentFilterProps, RepaymentFilterState>{
     constructor(props: any){
         super(props);
-        this.state = {
-            data: [
-                {
-                    name: 'Mobile',
-                    type: 'input',
-                    text: '手机号',
-                    value: this.props.data.Mobile
-                },
-                {
-                    name: 'BorrowerName',
-                    type: 'input',
-                    text: '借款人',
-                    value: this.props.data.BorrowerName
-                },
-                {
-                    name: 'StartTime',
-                    type: 'date',
-                    text: '开始日',
-                    value: this.props.data.StartTime
-                },
-                {
-                    name: 'EndTime',
-                    type: 'date',
-                    text: '结束日',
-                    value: this.props.data.EndTime
+        let _data:any = [
+            {
+                name: 'Mobile',
+                type: 'input',
+                text: '手机号',
+                value: this.props.data.Mobile
+            },
+            {
+                name: 'BorrowerName',
+                type: 'input',
+                text: '借款人',
+                value: this.props.data.BorrowerName
+            },
+            {
+                name: 'StartTime',
+                type: 'date',
+                text: '开始日',
+                value: this.props.data.StartTime
+            },
+            {
+                name: 'EndTime',
+                type: 'date',
+                text: '结束日',
+                value: this.props.data.EndTime
+            },{
+                name: 'State',
+                type: 'select',
+                text: '状态',
+                value: this.props.data.State,
+                list: [{
+                    text: '全部',
+                    value: '-1'
                 },{
-                    name: 'State',
-                    type: 'select',
-                    text: '状态',
-                    value: this.props.data.State,
-                    list: [{
-                        text: '全部',
-                        value: '-1'
-                    },{
-                        text: '待还款',
-                        value: '1'
-                    },{
-                        text: '还款中',
-                        value: '2'
-                    },{
-                        text: '还款成功',
-                        value: '3'
-                    },{
-                        text: '还款失败',
-                        value: '4'
-                    },{
-                        text: '逾期',
-                        value: '5'
-                    },{
-                        text: '待入账',
-                        value: '6'
-                    }]
-                }
-            ]
+                    text: '待还款',
+                    value: '1'
+                },{
+                    text: '还款中',
+                    value: '2'
+                },{
+                    text: '还款成功',
+                    value: '3'
+                },{
+                    text: '还款失败',
+                    value: '4'
+                },{
+                    text: '逾期',
+                    value: '5'
+                },{
+                    text: '待入账',
+                    value: '6'
+                }]
+            }
+        ];
+        if(sessionData.getData('MerchantItem')){
+            _data = addMerchantItem(_data, this.props.data.MerchantNo)
+        }
+        this.state = {
+            data: _data
         }
     }
     render(){

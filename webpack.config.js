@@ -1,7 +1,8 @@
 const path = require('path');
 const targetPath = path.resolve(__dirname, 'dist');
+const {deleteFolderFile: deleteFolderFile} = require('./deleteFile')
 
-
+deleteFolderFile(targetPath)
 module.exports = {
     mode: "production", //production|development
     entry: {

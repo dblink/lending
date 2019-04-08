@@ -4,7 +4,8 @@ import { Callback } from "../request/setting";
 
 export const logOut = (func:(e:Callback)=>void, state ?: string)=>{
     return (e:Callback)=>{
-        if(e.Value.Token === 'Failures'){
+        console.log(typeof e.Value)
+        if(typeof e.Value === 'object' && e.Value.Token === 'Failures'){
             sessionData.clear();
             overdueToken.skip(state || location.pathname);
             alert('登录失效！');

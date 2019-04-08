@@ -67,14 +67,15 @@ export class Filter extends React.Component <FilterProps, FilterState>{
     render(){
         let props = this.props,
             _style = {maxWidth: '150px', 
-            marginTop: '10px',
+            //marginTop: '10px',
             flex: '1 1 150px', height: '30px'};
 
         return <div style={{display: 'flex',
-                width: '100%',
+                width: '100%', //height:'100%', overflow: 'auto',
                 justifyContent:'space-between',
                 alignItems: 'center', background: '#fff'}}>
-            <div style={{display: 'flex', justifyContent:'space-between', flexWrap: 'wrap',padding: '0 10px'}}>
+            <div style={{display: 'flex', height:'100%', overflow: 'auto',flex: 'auto',
+                justifyContent: 'space-between',alignItems: 'center',flexWrap: 'wrap',padding: '0 10px'}}>
                 {
                     props.filterList.map((_value, key)=>{
                         let {name, value, text, type, list=[]} = _value;

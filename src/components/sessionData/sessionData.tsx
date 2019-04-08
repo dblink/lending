@@ -25,14 +25,15 @@ class SessionData{
         _data[key] = data;
         this.setData(_data)
     }
-    getData(str: 'Token' | 'UserInfo' | 'UserMenuItems'){
+    getData(str: 'Token' | 'UserInfo' | 'UserMenuItems' | 'MerchantItem'){
         let _data = sessionStorage.getItem(this.data),
             session: {
                 Token ?: any;
                 UserInfo ?: UserInfo;
                 UserMenuItems ?: any;
+                MerchantItem ?: any;
             } = {};
-        if(_data){
+        if(_data && _data !== 'undefined'){
             session = JSON.parse(_data);
         }
         return session[str] || '';

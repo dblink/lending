@@ -10,6 +10,8 @@ import { getIntervalDate } from '../../components/calendar/dateFunction';
 import { PageLoading } from '../../components/progress/progress';
 import { load } from '../../components/loading/loading';
 import { Filter, FilterList } from '../../module/filter/filter';
+import { HrefButton, PrimaryButton } from '../../components/button';
+import { addMerchantItem } from '../../module/filter/addMerchantItem';
 
 interface Props {}
 
@@ -90,36 +92,37 @@ export class LendingList extends React.Component<Props, State> {
     render() {
         return <View>
             <div style={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-                <div style={{display: 'flex',position: 'relative', marginBottom: '30px'}}>
-                    <div style={{width: '200px', padding: '0 10px', 
-                        background: '#FFF', position: 'relative',
-                        fontSize: '14px'}}>
-                        <p>
-                            总放款金额
-                        </p>
-                        <p style={{textAlign: 'center'}}>
-                            {this.state.fee.TotalLoanMoney}
-                        </p>
-                        <p>
-                            总其他费用
-                        </p>
-                        <p style={{textAlign: 'center'}}>
-                            {this.state.fee.TotalOtherCharge}
-                        </p>
-                        <p>
-                            总查询费用
-                        </p>
-                        <p style={{textAlign: 'center'}}>
-                            {this.state.fee.TotalQueryCharge}
-                        </p>
-                        <PageLoading show={this.state.isPageLoading} />
-                    </div>
+                <div style={{display: 'flex',position: 'relative', 
+                    minHeight: '40px',marginBottom: '15px'}}>
+                    <PrimaryButton style={{width: '150px', fontSize: '14px'}}
+                        onClick={()=>{
+                            location.href = `http://loutsloanapi.hehuadata.com/api/LoanDetail/ExportLoanDetail?StartTime=${this.state.data.StartTime}&EndTime=${this.state.data.EndTime}&Token=${sessionData.getData('Token')}`
+                    }}>导出放款</PrimaryButton>
                     <LendingFilter data={this.state.data} search={this.search} />
-                    <Paging index={this.state.pageInfo.PageIndex} lastPage={this.state.pageInfo.PageCount}
-                        totalSize={this.state.pageInfo.TotalCount} changePage={this.changePage} />
                     <PageLoading show={this.state.isLoading} />
                 </div>
-                <div style={{flex: 'auto',position: 'relative'}}>
+                <div style={{width: '100%',marginBottom: '15px', padding: '0 10px', display: 'flex',background: '#FFF', 
+                        fontSize: '14px', justifyContent:'space-between'}}>
+                        <div style={{display: 'flex', position: 'relative',height:'40px', alignItems: 'center'}}>
+                            <p style={{marginLeft: '10px'}}>
+                                总放款金额：{this.state.fee.TotalLoanMoney}元，
+                            </p>
+                            <p style={{marginLeft: '10px'}}>
+                                总其他费用：{this.state.fee.TotalOtherCharge}元，
+
+                            </p>
+                            <p style={{marginLeft: '10px'}}>
+                                总查询费用：{this.state.fee.TotalQueryCharge}元
+                            </p>
+                            {<PageLoading show={this.state.isPageLoading} />}
+                        </div>
+                        <div style={{display: 'flex', position: 'relative',height:'40px', alignItems: 'center'}}>
+                            <Paging index={this.state.pageInfo.PageIndex} lastPage={this.state.pageInfo.PageCount}
+                                totalSize={this.state.pageInfo.TotalCount} changePage={this.changePage} />
+                            {<PageLoading show={this.state.isLoading} />}
+                        </div>
+                    </div>
+                <div style={{flex: 'auto',position: 'relative',overflow: 'auto'}}>
                     <PageLoading show={this.state.isPageLoading} />
                     <LendingTable data={this.state.callbackData} />
                 </div>
@@ -144,13 +147,18 @@ class LendingTable extends React.Component<LendingTableProps, any>{
     }, {
         head: '借款人手机号',
         attr: 'BorrowerMobile'
-    },{
+    },/*{
         head: '商户号',
         attr: 'MerchantNo'
     },{
         head: '商户名',
-        attr: 'MerchantName'
-    },{
+        attr: 'MerchantName',
+        format: (data: any) => {
+            return <div className='font-omit' style={{width: '100px',margin:'auto'}}>
+                {data.MerchantName}
+            </div>
+        }
+    },*/{
         head: '借款金额',
         attr: 'LoanMoney'
     }, {
@@ -181,28 +189,32 @@ type LendingFilterProps = {
 export class LendingFilter extends React.Component<LendingFilterProps, LendingFilterState>{
     constructor(props: any){
         super(props);
+        let _data:any = [{
+            name: 'StartTime',
+            text: '开始日',
+            type: 'date',
+            value: this.props.data.StartTime
+        },{
+            name: 'EndTime',
+            text: '结束日',
+            type: 'date',
+            value: this.props.data.EndTime
+        },{
+            name: 'BorrowerName',
+            text: '借款人',
+            type: 'input',
+            value: this.props.data.BorrowerName
+        },{
+            name: 'Mobile',
+            text: '手机号',
+            type: 'input',
+            value: this.props.data.Mobile
+        }];
+        if(sessionData.getData('MerchantItem')){
+            _data = addMerchantItem(_data, this.props.data.MerchantNo)
+        }
         this.state = {
-            data: [{
-                name: 'BorrowerName',
-                text: '借款人',
-                type: 'input',
-                value: this.props.data.BorrowerName
-            },{
-                name: 'Mobile',
-                text: '手机号',
-                type: 'input',
-                value: this.props.data.Mobile
-            },{
-                name: 'StartTime',
-                text: '开始日',
-                type: 'date',
-                value: this.props.data.StartTime
-            },{
-                name: 'EndTime',
-                text: '结束日',
-                type: 'date',
-                value: this.props.data.EndTime
-            }]
+            data: _data
         }
     }
     render(){

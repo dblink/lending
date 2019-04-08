@@ -44,7 +44,7 @@ export class OnChangeImage extends React.Component <any, any>{
                 //let dataUrl = canvas.toDataURL('image/jpeg', 0.92);// 0.92为压缩比，可根据需要设置，设置过小会影响图片质量
                                                                    // dataUrl 为压缩后的图片资源，可将其上传到服务器
                 //_this.props.getData(_this.props.name, file);
-                _this.props.getData(_this.props.name, canvas);
+                _this.props.getData(_this.props.name, canvas, file);
             }
         }
     }

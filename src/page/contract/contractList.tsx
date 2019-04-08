@@ -5,7 +5,7 @@ import { CallbackSummary, ParameterName, Parameter, RequestCallback, Callback, P
 import { HrefButton, PrimaryButton, CancelButton } from '../../components/button';
 import { ReqOption, req } from '../../components/request';
 import { Paging } from '../../components/paging/paging';
-import { ModalContract, ContractModal } from '../../components/modal/contract';
+import { ModalContract, ContractModal } from './modal/contract';
 import { sessionData } from '../../components/sessionData/sessionData';
 import { overdueToken } from '../../components/fail/failJump';
 import { PageLoading, InnerProgress } from '../../components/progress/progress';
@@ -14,14 +14,16 @@ import { logOut } from '../../components/fail/logOut';
 import { getIntervalDate } from '../../components/calendar/dateFunction';
 import { Filter, FilterList } from '../../module/filter/filter';
 import { browserHistory } from '../../router';
+import { addMerchantItem } from '../../module/filter/addMerchantItem';
 
 interface Props {
-    Status: -1 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
-    location: any;
+    Status: -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+    //location: any;
+    Time ?: 'weekIn' | 'weekOut'
 }
-
+type ContractParameter = Parameter<ParameterName.getContractItems>;
 interface State {
-    data: Parameter<ParameterName.getContractItems>;
+    data: ContractParameter;
     callbackData: RequestCallback<ParameterName.getContractItems>[];
     borrowId: string;
     contractId: string;
@@ -36,19 +38,24 @@ type FilterType = FilterList<ParameterSummary[ParameterName.getContractItems]>;
 export class ContractList extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        let _obj = getIntervalDate(new Date(), 1);
-        this.state = {
-            data: {
+        let _obj = getIntervalDate(new Date(), 1),
+            _data: ContractParameter = {
                 Token: sessionData.getData('Token'),
                 Status: props.Status,
-                StartTime: _obj.startTime,
+                //StartTime: _obj.startTime,
                 PageIndex: '1',
                 PageSize: '10',
                 BorrowerName: '',
                 EmployeeId: '',
-                EndTime: _obj.endTime,
+                //EndTime: _obj.endTime,
                 Mobile: ''
-            },
+            };
+        if(!props.Time){
+            _data.StartTime = _obj.startTime;
+            _data.EndTime = _obj.endTime;
+        }
+        this.state = {
+            data: _data,
             callbackData: [],
             borrowId: '',
             contractId: '',
@@ -66,22 +73,29 @@ export class ContractList extends React.Component<Props, State> {
     componentDidMount(){
         this.getList();
     }
+    getListFail = (e:Callback) =>{
+        alert(e.ErrMsg)
+    }
+    getListSuccess = (e:Callback)=>{
+        this.setState({
+            isLoading: false,
+            isPageLoading: false,
+            callbackData: e.Value.PagedList,
+            pageInfo : e.Value.PageInfo
+        })
+    }
     getList(){
         let _option: ReqOption<ParameterName.getContractItems> = {
             data: this.state.data,
-            fail: logOut((e: Callback)=>{
-                alert(e.ErrMsg);
-            }),
-            succeed: (e)=>{
-                this.setState({
-                    isLoading: false,
-                    isPageLoading: false,
-                    callbackData: e.Value.PagedList,
-                    pageInfo : e.Value.PageInfo
-                })
-            }
+            fail: logOut(this.getListFail),
+            succeed: this.getListSuccess
         }
-        req(ParameterName.getContractItems, _option);
+        if(this.props.Time){
+            req(ParameterName.getOverdueContractItems, _option);
+        }else{
+            req(ParameterName.getContractItems, _option);
+        }
+        
     }
     
     changePage(num: number){
@@ -93,7 +107,22 @@ export class ContractList extends React.Component<Props, State> {
     }
     selectList:FilterType;
     selectListFunction:()=>FilterType = ()=>{
-        let filterSetting: FilterType = [{
+        let filterSetting: FilterType = [];
+        if(!this.props.Time){
+            filterSetting.push({
+                    name: 'StartTime',
+                    text: '开始日',
+                    value: this.state.data.StartTime,
+                    type: 'date'
+                },{
+                    name: 'EndTime',
+                    text: '结束日',
+                    value: this.state.data.EndTime,
+                    type: 'date'
+            })
+        }
+        filterSetting.push(
+            {
                 name: 'BorrowerName',
                 text: '借款人',
                 value: this.state.data.BorrowerName,
@@ -103,18 +132,8 @@ export class ContractList extends React.Component<Props, State> {
                 text: '手机号',
                 value: this.state.data.Mobile,
                 type: 'input'
-            },{
-                name: 'StartTime',
-                text: '开始日',
-                value: this.state.data.StartTime,
-                type: 'date'
-            },{
-                name: 'EndTime',
-                text: '结束日',
-                value: this.state.data.EndTime,
-                type: 'date'
             }
-        ];
+        );
         if(this.props.Status.toString() === '-1'){
             filterSetting.push({
                 name: 'Status',
@@ -159,6 +178,9 @@ export class ContractList extends React.Component<Props, State> {
                 ]
             })
         }
+        if(sessionData.getData('MerchantItem')){
+            filterSetting = addMerchantItem(filterSetting, this.state.data.MerchantNo)
+        }
         return filterSetting
     }
     search(data: Parameter<ParameterName.getContractItems>){
@@ -193,9 +215,11 @@ export class ContractList extends React.Component<Props, State> {
                     />
                     <PageLoading show={this.state.isLoading} hideContent={true}/>
                 </div>
-                <div style={{flex:'auto',position:'relative'}}>
+                <div style={{flex:'auto',position:'relative',overflow: 'auto'}}>
                     <PageLoading show={this.state.isPageLoading} />
-                    <ContractTable showModal={this.modalOperate.showModal} data={this.state.callbackData} />
+                    <ContractTable showModal={this.modalOperate.showModal} 
+                        parameterData={this.state.data}
+                        data={this.state.callbackData} />
                 </div>   
             </div>
             <ModalContract getList={()=>this.changePage(1)} contractModal={this.modalOperate} />
@@ -205,12 +229,21 @@ export class ContractList extends React.Component<Props, State> {
 
 type ContractTableProps = {
     data: any;
+    parameterData: any;
     showModal: ContractModal.ObjectShowModal['showModal']
 }
 class ContractTable extends React.Component<ContractTableProps , any> {
     constructor(props: any){
         super(props);
         this.state = {}
+        //console.log(this.props.parameterData);
+        if(this.props.parameterData.Status.toString() === '4'){
+            this.setting.splice(8, 0, {
+                attr: 'OverdueDate',
+                head: '逾期天数',
+            });
+            //console.log(this.setting)
+        }
     }
     setting: {
         attr: CallbackSummary[ParameterName.getContractItems],
@@ -255,9 +288,12 @@ class ContractTable extends React.Component<ContractTableProps , any> {
         head: '备注',
         format: (data: any)=>{
             let _data: ContractModal.dataState = {
-                remark: data.Remark
+                remark: data.Remark,
+                contractId: data.Id
             }
-            return <HrefButton style={{width: 'auto'}} onClick={()=>this.props.showModal('remark', _data)}>点击查看</HrefButton>
+            return <HrefButton style={{width: 'auto'}} 
+                onClick={()=>this.props.showModal('remark', _data)}>
+                点击查看</HrefButton>
         }
     },{
         attr: 'State',
@@ -270,6 +306,8 @@ class ContractTable extends React.Component<ContractTableProps , any> {
                     _data.contractId = data.Id;
                     _data.name = data.BorrowerName;
                     _data.cardNo = data.IdCardNo;
+                    _data.period = data.Period;
+                    _data.serviceMoney = data.ServiceMoney;
                     return <HrefButton style={{width: 'auto'}} onClick={()=>{this.props.showModal('list', _data)}}>等待签约</HrefButton>;
                 case '10':
                 case '2':
@@ -281,7 +319,8 @@ class ContractTable extends React.Component<ContractTableProps , any> {
                     }else{
                         word = '等待购买'
                     }
-                    return sessionData.getData('UserInfo').RoleId.toString() === '10001' ?
+                    return (sessionData.getData('UserInfo').RoleId.toString() === '10001' 
+                            || sessionData.getData('UserInfo').RoleId.toString() === '10005') ?
                             <HrefButton style={{width: 'auto'}} onClick={()=>{this.props.showModal('lending', _lending)}}>
                                 {word}
                             </HrefButton>
@@ -306,30 +345,32 @@ class ContractTable extends React.Component<ContractTableProps , any> {
         attr: 'State',
         head: '操作',
         format: (data: any) =>{
-            let _dom = [
-                <HrefButton style={{width: 'auto'}} onClick={()=>browserHistory.push('/report', {
+            let _dom = []
+            if(data.State.toString() !== '5'){
+                _dom.push(<HrefButton key={1}
+                    style={{width: 'auto'}} onClick={()=>browserHistory.push('/report', {
                     ApplyId: data.ApplyId,
                     CardNo: data.IdCardNo
-                })}>报告</HrefButton>
-            ]
+                })}>报告</HrefButton>)
+            }
             if(data.State.toString() < '3' || data.State.toString() === '10'){
                 _dom.push(
-                    <HrefButton style={{width: 'auto'}} onClick={
+                    <HrefButton style={{width: 'auto'}} key={2} onClick={
                         ()=>this.props.showModal('cancel', {contractId: data.Id})
                     }>取消合同</HrefButton>
                 )
             }else if(data.State >= 3 && data.State <= 5){
                 _dom.push(
-                    <HrefButton style={{width: 'auto'}} onClick={
+                    <HrefButton style={{width: 'auto'}} key={3} onClick={
                         ()=>this.props.showModal('repayment', {contractId: data.Id})
                     }>还款表</HrefButton>
                 )
                 if(data.State >=3 && data.State < 5 ){
                     _dom.push(
-                        <HrefButton style={{width: 'auto'}} onClick={
+                        <HrefButton style={{width: 'auto'}} key={4} onClick={
                             ()=>this.props.showModal('localSettle', {contractId: data.Id})
                         }>线下结清</HrefButton>,
-                        <HrefButton style={{width: 'auto'}} onClick={
+                        <HrefButton style={{width: 'auto'}} key={5} onClick={
                             ()=>this.props.showModal('onlineSettle', {contractId: data.Id})
                         }>线上结清</HrefButton>
                     )

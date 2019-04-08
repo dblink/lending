@@ -29,9 +29,3 @@ app.get(/.*/, (req, res)=>{
 let server = http.createServer(app);
 server.listen(3000);
 console.log('Test Demo listening at http://localhost:%s', '3000')
-/*let server = app.listen(3000, function () {
-    let host = server.address().address;
-    let port = server.address().port;
-
-    console.log('Example app listening at http://%s:%s', host, port);
-});*/

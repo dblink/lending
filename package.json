@@ -21,8 +21,10 @@
   },
   "homepage": "https://github.com/dblink/wtf#readme",
   "dependencies": {
+    "@types/echarts": "^4.1.8",
     "@types/react": "^16.7.17",
     "@types/react-dom": "^16.0.11",
+    "echarts": "^4.2.1",
     "mime": "^2.4.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0"

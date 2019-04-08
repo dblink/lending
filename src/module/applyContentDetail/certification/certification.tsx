@@ -19,7 +19,7 @@ type CertificationState = {
     error: string;
 }
 export function getBlobFile(_canvas: HTMLCanvasElement) {
-    let _url = _canvas.toDataURL("image/jpeg", 1);
+    let _url = _canvas.toDataURL("image/jpeg");
     _url = _url.replace('data:image/jpeg;base64,','');
     let byteString = atob(_url);
     let ia = new Uint8Array(byteString.length);

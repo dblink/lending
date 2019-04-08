@@ -128,7 +128,9 @@ export class CalendarInput extends React.Component<SearchInputProps, any> {
             <span style={{flex: 1,fontSize: '14px'}}>{text}:</span>
             <div  style={{flex: 2}}>
                 <BaseInput type='text' readOnly
-                    style={{width: '100%', fontSize: '14px', height: '100%',border: 'none'}} {...other} onClick={this.showModal} value={value} />
+                    style={{width: '100%', fontSize: '14px', 
+                    background: 'none',
+                    height: '100%',border: 'none'}} {...other} onClick={this.showModal} value={value} />
                 {this.state.show && <CalendarScreen name={name} 
                     date={value} close={this.closeModal}
                     getCalendar={this.getCalendar} />}

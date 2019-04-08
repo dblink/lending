@@ -117,7 +117,10 @@ namespace RepayConfirmSpace {
                 head: '期数'
             },{
                 attr: 'Type',
-                head: '还款类型'
+                head: '还款类型',
+                format: (data)=>{
+                    return data.Type.toString() === '2' ? '申请划扣' : '申请结清';
+                }
             },{
                 attr: 'RepayMoney',
                 head: '还款金额'

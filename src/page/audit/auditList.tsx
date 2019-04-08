@@ -13,6 +13,7 @@ import { getIntervalDate } from '../../components/calendar/dateFunction';
 import { Filter, FilterList } from '../../module/filter/filter';
 import { logOut } from '../../components/fail/logOut';
 import { browserHistory } from '../../router';
+import { addMerchantItem } from '../../module/filter/addMerchantItem';
 
 interface Props {
     time ?: {
@@ -108,18 +109,8 @@ export class AuditList extends React.Component<Props, State> {
     }
     filterList: FilterType;
     filterListFunction:()=>FilterType = ()=>{
-        return [
+        let _filter:FilterType = [
             {
-                text: '借款人',
-                name: 'BorrowerName',
-                type: 'input',
-                value: this.state.data.BorrowerName
-            },{
-                text: '手机号',
-                name: 'Mobile',
-                type: 'input',
-                value: this.state.data.Mobile
-            },{
                 text: '开始日',
                 name: 'StartTime',
                 type: 'date',
@@ -129,8 +120,23 @@ export class AuditList extends React.Component<Props, State> {
                 name: 'EndTime',
                 type: 'date',
                 value: this.state.data.EndTime
+            },{
+                text: '借款人',
+                name: 'BorrowerName',
+                type: 'input',
+                value: this.state.data.BorrowerName
+            },{
+                text: '手机号',
+                name: 'Mobile',
+                type: 'input',
+                value: this.state.data.Mobile
             }
         ]
+        if(sessionData.getData('MerchantItem')){
+            _filter = addMerchantItem(_filter, this.state.data.MerchantNo);
+        }
+        console.log(_filter);
+        return _filter
     }
     search(data: Parameter<ParameterName.getAuditItems>){
         let _data = Object.assign({}, this.state.data, data);
@@ -151,7 +157,7 @@ export class AuditList extends React.Component<Props, State> {
                     />
                     <PageLoading show={this.state.isLoading} hideContent={true} />
                 </div>
-                <div style={{flex:'auto', position: 'relative'}}>
+                <div style={{flex:'auto', position: 'relative', overflow: 'auto'}}>
                     <PageLoading show={this.state.isPageLoading} />
                     <AuditTable showModal={this.showModal} data={this.state.callBackData} />
                 </div>                
@@ -220,17 +226,14 @@ class AuditTable extends React.Component<AuditTableProps, any>{
                 _state:any = {};
                 _state.CardNo = cardNo;
                 _state.ApplyId = applyId;
-                _state.BorrowId = data.BorrowPersonBaseInfoId; 
-            return <div>
-                  <HrefButton style={{margin: 'auto'}} onClick={
-                        ()=> {
-                                browserHistory.push('/report', {
-                                    ..._state
-                                })
-                        }} >
-                    申请信息
-                </HrefButton>
-            </div>
+            return <HrefButton style={{margin: 'auto'}} onClick={
+                ()=> {
+                        browserHistory.push('/report', {
+                            ..._state
+                        })
+                }} >
+            申请信息
+        </HrefButton>
         }
     }];
 

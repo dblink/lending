@@ -15,19 +15,21 @@ interface Props extends React.InputHTMLAttributes<any> {
 }
 
 interface State {
-    bankcard: ''
+    bankcard: '',
+    info: any
 }
 
 export class BankInput extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            bankcard: ''
+            bankcard: '',
+            info: ''
         };
         let _req:any = require;
         _req.ensure([], ()=>{
-            this.BIN = require(/* webpackChunkName: 'bankcardinfo' */ '../bankInfo/index')
-        });
+            this.BIN = require('../bankInfo/index')
+        }, ()=>{}, 'bankcardinfo');
         this.inputChange = this.inputChange.call(this);
         this.getBankInfo = this.getBankInfo.bind(this);
     }
@@ -42,6 +44,7 @@ export class BankInput extends React.Component<Props, State> {
             _value = _value ? _value.join(' ') : '';
             this.setState({
                 bankcard: _value,
+                info: ''
             },()=>{
                 timer && clearTimeout(timer);
                 timer = setTimeout(this.getBankInfo, 1000);
@@ -51,30 +54,43 @@ export class BankInput extends React.Component<Props, State> {
     getBankInfo(){
         let _bankcard = this.state.bankcard.replace(/\s/g, '');
         if(this.BIN && _bankcard.length >= 15 && _bankcard.length <= 19){
-            this.BIN.getBankBin(_bankcard,(err: any,data:any)=>{
-                if(data){
-                    if(!cardList[data.bankCode] || data.cardType === 'CC'){
-                        err = '不支持该银行卡！';
+            this.setState({
+                info: <span style={{color: 'blue'}}>正在验证</span>
+            }, ()=>{
+                this.BIN.getBankBin(_bankcard,(err: any,data:any)=>{
+                    if(data){
+                        if(!cardList[data.bankCode] || data.cardType === 'CC'){
+                            err = '不支持该银行卡！';
+                        }
                     }
-                }
-                if(!err){
-                    this.props.onSuccess({
-                        BankCardNo:_bankcard,
-                        BankCode: data.bankCode,
-                        BankName: cardList[data.bankCode]
-                    });
-                }else{
-                    this.props.onWaring(err.replace(/^\d*:|,.*/g,''))
-                }
+                    if(!err){
+                        this.setState({
+                            info: <span style={{color: 'green'}}>验证成功！</span>
+                        }, ()=>{
+                            this.props.onSuccess({
+                                BankCardNo:_bankcard,
+                                BankCode: data.bankCode,
+                                BankName: cardList[data.bankCode]
+                            });
+                        })
+                        
+                    }else{
+                        this.setState({
+                            info: err.replace(/^\d*:|,.*/g,'')
+                        })
+                        //this.props.onWaring(err.replace(/^\d*:|,.*/g,''))
+                    }
+                })
             })
+            
         }
     }
     // timer: any;
     BIN: any;
     render() {
-        let {onSuccess, isLoading, onWaring, ...other} = this.props;
+        let {onSuccess, isLoading, onWaring, error, ...other} = this.props;
         return <ApplyInput text='银行卡：' name={'bankcard'}
-            value={this.state.bankcard}
+            value={this.state.bankcard} error={this.state.info || error}
             {...other} onChange={this.inputChange} />
     }
 }

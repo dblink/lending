@@ -126,11 +126,11 @@ class  OperateEmployee extends React.Component<AddEmployeeProps, AddEmployeeStat
         
         
         if(this.props.type === 'add'){
-            if(!_data.LoginPass){
+            if(!_data.LoginPassword){
                 this.fail({ErrMsg: '密码不能为空',Status: 'FAILURE'})
                 return;
             }
-            _data.LoginPass = md5(_data.LoginPass);
+            _data.LoginPassword = md5(_data.LoginPassword);
             _data.UserStatus = '1';
             _req = {
                 data: _data,
@@ -222,7 +222,7 @@ class CommonEmployee extends React.Component<CommonEmployeeProps, CommonEmployee
         super(props);
         let _data: CommonEmployeeState['data'] = {
             LoginName: '',
-            LoginPass: '',
+            LoginPassword: '',
             RealName: '',
             RoleId: '',
             SecureMobile: '',
@@ -366,7 +366,7 @@ class CommonEmployee extends React.Component<CommonEmployeeProps, CommonEmployee
                 for(k in _data){
                     _data[k] = e.Value[k];
                 }
-                console.log(_data);
+                //console.log(_data);
                 this.setState({
                     data: _data,
                     isLoading: false
@@ -432,9 +432,9 @@ class CommonEmployee extends React.Component<CommonEmployeeProps, CommonEmployee
                 value={this.state.data.LoginName}
                 />,
             <ApplyInput text='登陆密码' 
-                name  = {'LoginPass'}
+                name  = {'LoginPassword'}
                 key = {2} onChange={this.inputChange}
-                value = {this.state.data.LoginPass}
+                value = {this.state.data.LoginPassword}
                 />,
             <ApplyInput text='手机号'
                 name  = 'SecureMobile'

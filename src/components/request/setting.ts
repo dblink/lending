@@ -3,7 +3,7 @@ import { Parameter } from './setting';
 import {OptionType} from "./main";
 
 export const requestUrl = {
-    type: 'development',
+    type: 'production',
     development: '',
     production: 'http://loutsloanapi.hehuadata.com',
     //production|development
@@ -11,6 +11,7 @@ export const requestUrl = {
 
 export enum ParameterName {
     login = 'login',
+    regionalManagerLogin = '区域总登录',
     getBorrowerStatus = '获取用户状态',
     addLoanApplyRecord = '添加借款信息',
     uploadBorrowerImage = 'uploadBorrowerImage',
@@ -23,8 +24,10 @@ export enum ParameterName {
     confirmApply = '确认申请',
     getUserAllInfo = '员工列表',
     getContractItems = '合同列表',
+    getOverdueContractItems = '获取逾期合同表',
     auditLoanApply = '提交审核',
     bindBankCard = '绑定银行卡',
+    changeBankCard = '编辑银行卡',
     getBankCardInfo = '银行卡列表',
     getGxbToken = '获取公信宝',
     getJxlUrl = '获取聚信立',
@@ -39,6 +42,7 @@ export enum ParameterName {
     getContractState = '获取合同状态',
     selectRechargeLoanBalance = '商户查询充值放款金额记录',
     applyRechargeLoanBalance  = '商户申请充值放款金额',
+    applyWithdrawLoanBalance = '提现余额转债券',
     applyLoan = '放款',
     uploadCertificateImage = '上传凭证',
     getMerchantBalance = '商户查看放款金额',
@@ -67,7 +71,14 @@ export enum ParameterName {
     getBankCardItems = '获取绑卡列表',
     withdrawBindCard = '提现绑卡',
     applyWithdraw = '申请提现',
-    getWithdrawItems = '提现明细'
+    getWithdrawItems = '提现明细',
+    getHomePageApplyCount = '一月内每天申请/通过总数',
+    getOverdueCount = '7日内每天逾期合同数量',
+    getOverdueAmount = '7日内每天逾期金额',
+    getPostLoanRecordItems = '获取贷后记录列表',
+    uploadPostLoanImage = '上传贷后图片',
+    addPostLoanRecord = '新增贷后记录',
+    selectRecordBorrowerImage = '查看贷后上传图片'
 }
 type PagingParamter = 'PageIndex' | 'PageSize';
 type TimeSelectParamter = 'StartTime' | 'EndTime';
@@ -97,10 +108,13 @@ export interface ParameterSummary{
     [ParameterName.getUserAllInfo] : PagingParamter | 'MerchantNo' | 'Mobile'
         | 'Status' | 'Token' | 'EmpName' | 'StoreId';
     [ParameterName.getContractItems] : RequestListParameter;
+    [ParameterName.getOverdueContractItems]: RequestListParameter;
     [ParameterName.auditLoanApply] : 'AuditApplyId' | 'Status' | 'ApplyMoney' 
         | 'Period' | 'ApplyType' | 'Remark' | 'Token' | 'ServiceMoney';
     [ParameterName.bindBankCard] : 'BankCardNo' | 'Mobile' | 'BankCode'
         | 'BankName' | 'BorrowerBaseInfoId' | 'ReturnUrl' | 'Token';
+    [ParameterName.changeBankCard]: 'Id' | 'BankCardNo' | 'Mobile' | 'BankCode'
+    | 'BankName' | 'BorrowerBaseInfoId' | 'ReturnUrl' | 'Token';
     [ParameterName.getBankCardInfo] : 'BorrowerId' | 'Token'; 
     [ParameterName.getGxbToken] : 'ApplyId' | 'IdCardNo' | 'Token';
     [ParameterName.getJxlUrl] : 'ApplyId' | 'IdCardNo' | 'Token';
@@ -120,7 +134,7 @@ export interface ParameterSummary{
         | 'Token';
     [ParameterName.getContractState] : 'ContractId' | 'Token',
     [ParameterName.selectRechargeLoanBalance] : PagingParamter | TimeSelectParamter
-        | 'Status' | 'Token',
+        | 'Status' | 'Token' | 'MerchantNo',
     [ParameterName.applyRechargeLoanBalance] : 'Money' | 'Token',
     [ParameterName.applyLoan] : 'LoanContractId' | 'Token',
     [ParameterName.uploadCertificateImage] : 'RechargeId' | 'Token' | 'certificate.jpg'
@@ -131,7 +145,7 @@ export interface ParameterSummary{
     [ParameterName.getReportInfo] : 'ApplyId' | 'ReportType' | 'Token';
     [ParameterName.selectBorrowerImage] : 'IDCardNo' | 'Token';
     [ParameterName.getSignatureState] : 'ContractId' | 'Token';
-    [ParameterName.applyAccount] : 'LoginName' | 'ParentId' | 'LoginPass' | 'SecureMobile'
+    [ParameterName.applyAccount] : 'LoginName' | 'ParentId' | 'LoginPassword' | 'SecureMobile'
     | 'UserStatus' | 'RealName' | 'StoreId' | 'RoleId' | 'Token'
     [ParameterName.modifyUserInfo] : ParameterSummary[ParameterName.applyAccount] | 'Id';
     [ParameterName.getStore] : 'Token';
@@ -156,6 +170,15 @@ export interface ParameterSummary{
         | 'Remark' | 'Token';
     [ParameterName.applyRepayOffline] : 'RepayPlanDetailId' | 'Token';
     [ParameterName.getWithdrawItems] : 'Status' | 'PageIndex' | 'PageSize' | 'Token'
+    [ParameterName.getHomePageApplyCount] : 'Token' | 'Time';
+    [ParameterName.getOverdueCount]: 'Token';
+    [ParameterName.getOverdueAmount]: 'Token';
+    [ParameterName.regionalManagerLogin]: 'LoginName' | 'Password';
+    [ParameterName.getPostLoanRecordItems]: 'ContractId' | 'PageSize' | 'PageIndex' | 'Token';
+    [ParameterName.uploadPostLoanImage]: 'ContractId' | 'PostLoanRecordId' | 'Token' | any
+    [ParameterName.addPostLoanRecord] : 'ContractId' | 'Remark' | 'Token'
+    [ParameterName.selectRecordBorrowerImage]: 'ContractId' | 'PostLoanRecordId' | 'Token'
+    [ParameterName.applyWithdrawLoanBalance]: 'Money' | 'Token'
 }
 export type Parameter<T extends ParameterName> = {
     [i in ParameterSummary[T]] ?: any;
@@ -173,12 +196,12 @@ export interface CallbackSummary{
         | 'BorrowerDetailInfoId' | 'ISExsitBorrower' | 'ISApply'
         | 'ISExsitBorrowerDetail' | 'ISUploadPersonCardState'
         | 'HoneypotStatus' | 'HoneyBeeStatus' | 'Alipay' ;
-    [ParameterName.getAuditItems] : CallbackListParameter | 'AuditId' | 'ApplyId' | 'IdCardNo' | 'BorrowPersonBaseInfoId';
+    [ParameterName.getAuditItems] : CallbackListParameter | 'AuditId' | 'ApplyId' | 'IdCardNo' ;
     [ParameterName.getApplyItems] : CallbackListParameter | 'AuditMoney' | 'AuditPeriod' | 'IdCardNo' | 'ApplyId';
     [ParameterName.getContractItems] : 'Id' | 'BorrowerBankCardId' | 'BorrowPersonBaseInfoId'
         | 'LoanApplyRecordId' | 'Mobile' | 'Purpose' | 'Money' | 'PeriodType' | 'Period'
         | 'State' | 'MerchantNo' | 'StoreId' | 'OrderNo' | 'CreateTime' 
-        | 'Remark' | 'BorrowerName';
+        | 'Remark' | 'BorrowerName' | 'OverdueDate';
     [ParameterName.getBankCardInfo] : 'Id' | 'BankCardNo' | 'Mobile'
         | 'BankCode' | 'BankName' | 'BorrowerBaseInfoId' | 'Status' 
         | 'ErrorMessage' | 'MoneymoremoreId';
@@ -221,9 +244,9 @@ export interface PageInfo {
     TotalCount ?: number;
 }
 
-export interface Callback {
+export interface Callback <i = any>{
     Status : 'FAILURE' | 'SUCCESS';
-    Value ?: any;
+    Value ?: i;
     ErrMsg ?: string;
 }
 
@@ -244,6 +267,15 @@ export const interfaceSetting: interfaceSettingType = {
         //data: '',
         error: {
             MerchantNo: '商户号不能为空',
+            LoginName: "用户名不能为空",
+            Password: "密码不能为空"
+        },
+        dataType: "json",
+    },
+    [ParameterName.regionalManagerLogin]: {
+        url: '/api/Login/RegionalManagerLogin',
+        type: 'post',
+        error: {
             LoginName: "用户名不能为空",
             Password: "密码不能为空"
         },
@@ -328,7 +360,7 @@ export const interfaceSetting: interfaceSettingType = {
         url: '/api/BindBankCard/BindBankCard',
         type: 'post',
         error: {
-            BankCardNo: '银行卡号不能为空！',
+            BankCardNo: '银行卡正在验证！',
             Mobile: '手机号不能为空'
         }
     },
@@ -389,6 +421,10 @@ export const interfaceSetting: interfaceSettingType = {
     },
     [ParameterName.applyRechargeLoanBalance]: {
         url: '/api/Merchant/ApplyRechargeLoanBalance',
+        type: 'post'
+    },
+    [ParameterName.applyWithdrawLoanBalance]: {
+        url: '/api/ Withdraw/ApplyRechargeLoanBalance',
         type: 'post'
     },
     [ParameterName.applyLoan]: {
@@ -512,6 +548,46 @@ export const interfaceSetting: interfaceSettingType = {
     },
     [ParameterName.getWithdrawItems]: {
         url: '/api/Withdraw/GetWithdrawItems',
+        type: 'get'
+    },
+    [ParameterName.changeBankCard]: {
+        url: '/api/BindBankCard/ChangeBankCard',
+        type: 'post'
+    },
+    [ParameterName.getHomePageApplyCount]: {
+        url: '/api/Apply/GetHomePageApplyCount',
+        type: 'get'
+    },
+    [ParameterName.getOverdueCount]: {
+        url: '/api/LoanContract/GetOverdueCount',
+        type: 'get'
+    },
+    [ParameterName.getOverdueAmount]: {
+        url: '/api/LoanContract/GetOverdueAmount',
+        type: 'get'
+    },
+    [ParameterName.getOverdueContractItems]: {
+        url: '/api/LoanContract/GetOverdueContractItems',
+        type: 'get'
+    },
+    [ParameterName.getPostLoanRecordItems]: {
+        url: '/api/PostLoanRecord/GetPostLoanRecordItems',
+        type: 'get'
+    },
+    [ParameterName.uploadPostLoanImage]: {
+        url: '/api/PostLoanRecord/UploadPostLoanImage',
+        type: 'post',
+        contentType: 'multipart/form-data'
+    },
+    [ParameterName.addPostLoanRecord]: {
+        url: '/api/PostLoanRecord/AddPostLoanRecord',
+        type: 'post',
+        error: {
+            Remark: '内容不能为空'
+        }
+    },
+    [ParameterName.selectRecordBorrowerImage]: {
+        url: '/api/PostLoanRecord/SelectBorrowerImage',
         type: 'get'
     }
 };
