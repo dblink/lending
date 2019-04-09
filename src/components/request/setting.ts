@@ -424,7 +424,7 @@ export const interfaceSetting: interfaceSettingType = {
         type: 'post'
     },
     [ParameterName.applyWithdrawLoanBalance]: {
-        url: '/api/ Withdraw/ApplyRechargeLoanBalance',
+        url: '/api/Withdraw/ApplyRechargeLoanBalance',
         type: 'post'
     },
     [ParameterName.applyLoan]: {

@@ -4,7 +4,7 @@ interface Props {
     getList: (isRefresh?: boolean) => any;
 }
 export declare namespace ContractModal {
-    type pageState = '' | 'add' | 'list' | 'sign' | 'lending' | 'remark' | 'onlineSettle' | 'localSettle' | 'cancel' | 'repayment' | 'edit';
+    type pageState = '' | 'add' | 'list' | 'sign' | 'lending' | 'remark' | 'onlineSettle' | 'localSettle' | 'postLoan' | 'cancel' | 'repayment' | 'edit';
     type dataState = {
         name?: string;
         cardNo?: string;

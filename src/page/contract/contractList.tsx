@@ -296,6 +296,18 @@ class ContractTable extends React.Component<ContractTableProps , any> {
                 点击查看</HrefButton>
         }
     },{
+        attr: 'Remark',
+        head: '贷后',
+        format: (data: any)=>{
+            let _data: ContractModal.dataState = {
+                remark: data.Remark,
+                contractId: data.Id
+            }
+            return <HrefButton style={{width: 'auto'}} 
+                onClick={()=>this.props.showModal('postLoan', _data)}>
+                填写贷后</HrefButton>
+        }
+    },{
         attr: 'State',
         head: '状态',
         format: (data: any, attr: any) =>{

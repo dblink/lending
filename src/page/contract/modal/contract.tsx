@@ -16,7 +16,8 @@ interface Props {
 }
 export namespace ContractModal{
     export type pageState = '' | 'add' | 'list' | 'sign'| 'lending' | 'remark'
-        | 'onlineSettle' | 'localSettle' | 'cancel' | 'repayment' | 'edit';
+        | 'onlineSettle' | 'localSettle' | 
+        'postLoan' | 'cancel' | 'repayment' | 'edit';
     export type dataState = {
         name ?: string,
         cardNo ?: string,
@@ -107,7 +108,9 @@ export class ModalContract extends React.Component<Props, State> {
                 return <Settle type='online' contractId={this.state.data.contractId} cancel={this.closeModal} />
             }
             case 'remark': {
-                //return <RemarkModal text={this.state.data.remark} cancelModal={this.closeModal} />
+                return <RemarkModal text={this.state.data.remark} cancelModal={this.closeModal} />
+            }
+            case 'postLoan': {
                 return <PostLoan closeModal={this.closeModal} ContractId={this.state.data.contractId} />
             }
         }
