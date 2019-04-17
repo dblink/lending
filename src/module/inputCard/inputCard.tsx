@@ -7,6 +7,7 @@ import { PrimaryButton, CancelButton } from '../../components/button';
 import { InnerProgress } from '../../components/progress/progress';
 import { sessionData } from '../../components/sessionData/sessionData';
 import { ErrorMessage } from '../../components/error/errorMessage';
+import { logOut } from '../../components/fail/logOut';
 interface InputCardProps {
     onChangeStep: (str: string)=>void;
     setDataState: (data: any) =>void;
@@ -49,12 +50,12 @@ export class InputCard extends React.Component<InputCardProps, InputCardState> {
                 IDCardNo: this.state.data.card,
                 Token: sessionData.getData('Token')
             },
-            fail: (error)=>{
+            fail: logOut((error)=>{
                 this.setState({
                     error: error.ErrMsg,
                     isLoading: false
                 })
-            },
+            }),
             succeed: (callBack)=>{
                 console.log(callBack.Value);
                 this.setState({

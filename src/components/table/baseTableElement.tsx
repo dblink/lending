@@ -52,27 +52,45 @@ export class TableComponent implements TableComponentStyle{
         }
     }
 }
-export const  FlexTable = (props: {style?: React.CSSProperties, [index: string]: any})=>{
+interface BaseTableProps extends React.HTMLAttributes<HTMLDivElement> {
+    flex ?: number | null;
+    componentname ?: string;
+    isFlex ?: boolean;
+}
+
+export const BaseTable = (props: BaseTableProps)=>{
     let {
         style: _style = {},
         children: _children,
         flex: _flex,
+        isFlex: isFlex = true,
+        componentname: componentname = 'FlexTable',
         ...other
     } = props;
     _flex ? _style.flex = _flex : '';
-    return <div {...other} style={{display: 'flex', alignItems:'center',..._style}}>
+    return <div {...other} data-component-name={componentname} 
+        style={{display: isFlex ? 'flex' : 'auto', alignItems:'center',..._style}}>
         {_children}
     </div>
 }
-export const FlexTableRow = (props: any)=>{
-    let {
-        style: _style,
-        children: _children,
-        ...other
-    } = props;
 
-    return <FlexTable {...other} style={{width: '100%', ..._style}}>
-        {_children}
+export const FlexTable = (props: BaseTableProps)=>{
+    let {children, ...other} = props;
+    return <BaseTable {...props}>
+        {children}
+    </BaseTable>
+}
+
+export const FlexTableRow = (props: BaseTableProps)=>{
+    let {
+            style,
+            children,
+            componentname = 'FlexTableRow',
+            ...other
+        } = props;
+
+    return <FlexTable {...other} componentname={componentname} style={{width: '100%', ...style}}>
+        {children}
     </FlexTable>
 }
 const TableCell = (props: any) => {
@@ -129,7 +147,8 @@ export const TableShadow = (props: any)=>{
 
 export const SeemTableTd = (props: any) =>{
     return <FlexTable flex={props.flex || 1} className='seemTableTd' style={{
-        minWidth:'100px', padding: '0 10px' ,wordBreak: 'break-all' , minHeight: `${height}px`, justifyContent: 'center'}}>
+            minHeight: `${height}px`
+        }}>
         {props.children}
     </FlexTable>
 };

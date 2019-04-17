@@ -11,7 +11,7 @@ import { load } from '../../components/loading/loading';
 import { getIntervalDate } from '../../components/calendar/dateFunction';
 import { Filter, FilterList } from '../../module/filter/filter';
 import { RepaymentModal, RepaymentModalFunc } from '../../components/modal/repayment';
-import { HrefButton } from '../../components/button';
+import { HrefButton, PrimaryButton } from '../../components/button';
 import { addMerchantItem } from '../../module/filter/addMerchantItem';
 
 interface Props {
@@ -115,6 +115,10 @@ export class Repayment extends React.Component<Props, State> {
                 <div style={{marginBottom: '30px', position: 'relative',
                     display: 'flex', justifyContent: 'space-between',
                     background: '#FFF'}}>
+                    <PrimaryButton style={{width: '200px'}}
+                        onClick={()=>{this.modal.show('IsFormRepayAll', {RepayPlanDetailId: this.state.data.EndTime})}}>
+                        一键还款
+                    </PrimaryButton>
                     <RepaymentFilter filter={this.search} data={this.state.data} />
                     <Paging changePage={this.changePage}
                             index={this.state.data.PageIndex}
@@ -176,6 +180,7 @@ class RepaymentTable extends React.Component <RepaymentTableProps, any>{
                 case '4': return <span>还款失败</span>
                 case '5': return <span>逾期</span>
                 case '6': return <span>待入账</span>
+                case '7': return <span>一键还款处理中</span>
             }
         }
     },{
@@ -185,7 +190,8 @@ class RepaymentTable extends React.Component <RepaymentTableProps, any>{
             if(
                 data.State.toString() !== '2'
                 && data.State.toString() !== '3'
-                && data.State.toString () !== '6' 
+                && data.State.toString () !== '6'
+                && data.State.toString () !== '7' 
                 //data.Money < data.RepayMoney || data.State.toString() === '6'
                 ){
                return <div style={{display: 'flex', justifyContent: 'space-around'}}>

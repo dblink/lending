@@ -148,7 +148,7 @@ export class ContractList extends React.Component<Props, State> {
                         text: '等待签约',
                         value: '1'
                     },{
-                        text: '等待放款',
+                        text: '等待购买',
                         value: '2',
                     },{
                         text: '履约中',
@@ -164,10 +164,10 @@ export class ContractList extends React.Component<Props, State> {
                         text: '取消'
                     },{
                         value: '8',
-                        text:'放款中'
+                        text:'购买中'
                     },{
                         value: '10',
-                        text: '放款失败'
+                        text: '购买失败'
                     },{
                         value: '13',
                         text: '还款失败'

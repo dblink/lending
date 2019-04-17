@@ -4,7 +4,7 @@ const {deleteFolderFile: deleteFolderFile} = require('./deleteFile')
 
 deleteFolderFile(targetPath)
 module.exports = {
-    mode: "production", //production|development
+    mode: "development", //production|development
     entry: {
         index:"./enter.tsx"
     },

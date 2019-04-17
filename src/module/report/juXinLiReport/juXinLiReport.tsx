@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './css/juXinLiReport.css'
-import {Table, AbeamTable, SeemTable} from "../../../components/table/commonTable";
+import {Table, AbeamTable, SeemTable, SplitTable} from "../../../components/table/commonTable";
 
 export class ReportMainPage extends React.Component<any, any>{
     constructor(props: any){
@@ -472,7 +472,7 @@ export class ReportMainPage extends React.Component<any, any>{
     render(){
         let Tab = Table.CommonTable;
         // console.log(Object.keys(this.state.data).length);
-        return <div style={{margin: 'auto', minWidth: '640px', width: '100%', backgroundColor: '#fefefe', minHeight: '969px', padding: '0 40px'}}>
+        return <div style={{margin: 'auto', maxWidth: '1024px',  backgroundColor: '#fefefe', minHeight: '969px'}}>
             {/*title*/}
 
             {
@@ -503,26 +503,30 @@ export class ReportMainPage extends React.Component<any, any>{
                         }
 
                         {
-                            this.state.data.application_check && this.state.data.application_check[1] && <div className='display-flex-start font-14' style={{padding: '16px 0', borderBottom: '1px solid #eeeeee'}}>
-                                <div className='flex-3 display-flex-start'>
+                            this.state.data.application_check && this.state.data.application_check[1] 
+                                && <div className='display-flex-start font-14' style={{padding: '16px 0', borderBottom: '1px solid #eeeeee', flexWrap: 'wrap'}}>
+                                <div className='flex-3 display-flex-start' style={{width: '100%'}}>
                                     <p className='display-flex-end color-666' style={{backgroundColor: '#eeeeee', padding: '10px', width: '100px'}}>
                                         身份证
                                     </p>
-                                    <p style={{marginLeft: '18px'}}>{this.state.data.application_check[1].check_points.key_value}</p>
-                                    {
-                                        (this.state.data.application_check[1].check_points.court_blacklist.arised) ? <p className='font-12 color-fff' style={{padding: '5px 8px', backgroundColor: '#db3951', borderRadius: '4px', marginLeft: '8px'}}>
-                                            在法院黑名单
-                                        </p> : <p className='font-12 color-fff' style={{padding: '5px 8px', backgroundColor: '#0e9577', borderRadius: '4px', marginLeft: '8px'}}>
-                                            不在法院黑名单
-                                        </p>
-                                    }
-                                    {
-                                        (this.state.data.application_check[1].check_points.financial_blacklist.arised)  ? <p className='font-12 color-fff' style={{padding: '5px 8px', backgroundColor: '#db3951', borderRadius: '4px', marginLeft: '8px'}}>
-                                            在金融机构黑名单
-                                        </p> : <p className='font-12 color-fff' style={{padding: '5px 8px', backgroundColor: '#0e9577', borderRadius: '4px', marginLeft: '8px'}}>
-                                            不在金融机构黑名单
-                                        </p>
-                                    }
+                                    <p style={{marginLeft: '18px'}}>
+                                        {this.state.data.application_check[1].check_points.key_value}</p>
+                                        {
+                                            (this.state.data.application_check[1].check_points.court_blacklist.arised) 
+                                            ? <p className='font-12 color-fff' 
+                                                style={{padding: '5px 8px', backgroundColor: '#db3951', borderRadius: '4px', marginLeft: '8px'}}>
+                                                在法院黑名单
+                                            </p> : <p className='font-12 color-fff' style={{padding: '5px 8px', backgroundColor: '#0e9577', borderRadius: '4px', marginLeft: '8px'}}>
+                                                不在法院黑名单
+                                            </p>
+                                        }
+                                        {
+                                            (this.state.data.application_check[1].check_points.financial_blacklist.arised)  ? <p className='font-12 color-fff' style={{padding: '5px 8px', backgroundColor: '#db3951', borderRadius: '4px', marginLeft: '8px'}}>
+                                                在金融机构黑名单
+                                            </p> : <p className='font-12 color-fff' style={{padding: '5px 8px', backgroundColor: '#0e9577', borderRadius: '4px', marginLeft: '8px'}}>
+                                                不在金融机构黑名单
+                                            </p>
+                                        }
 
                                 </div>
                                 <div className='flex-2 display-flex-start'>
@@ -532,7 +536,7 @@ export class ReportMainPage extends React.Component<any, any>{
                         }
 
                         {
-                            this.state.data.application_check && this.state.data.application_check[2] && <div><div className='display-flex-start font-14' style={{padding: '16px 0'}}>
+                            this.state.data.application_check && this.state.data.application_check[2] && <div><div className='display-flex-start font-14' style={{padding: '16px 0', flexWrap: 'wrap'}}>
                                 <div className='flex-3 display-flex-start'>
                                     <p className='display-flex-end color-666' style={{backgroundColor: '#eeeeee', padding: '10px', width: '100px'}}>
                                         手机号
@@ -558,7 +562,7 @@ export class ReportMainPage extends React.Component<any, any>{
                                     }
                                 </div>
                             </div>
-                            <div className='display-flex-start font-14' style={{padding: '0 0 16px 0', borderBottom: '1px solid #eeeeee', alignItems: 'flex-start'}}>
+                            <div className='display-flex-start font-14' style={{padding: '0 0 16px 0', borderBottom: '1px solid #eeeeee', alignItems: 'flex-start', flexWrap: 'wrap'}}>
                             <p className='display-flex-end color-666' style={{backgroundColor: '#eeeeee', padding: '10px', width: '100px'}}>
                             手机匹配
                             </p>
@@ -706,7 +710,7 @@ export class ReportMainPage extends React.Component<any, any>{
                             <p className='color-fff font-16'>运营商数据</p>
                         </div>
                         {
-                            this.state.data.cell_behavior && <SeemTable list={this.state.data.cell_behavior[0].behavior} setting={this.cell_behavior_config} title={'运营商数据'} style={{border: '1px solid #ddd'}}/>
+                            this.state.data.cell_behavior && <SplitTable mainAttr='cell_phone_num' list={this.state.data.cell_behavior[0].behavior} setting={this.cell_behavior_config} title={'运营商数据'} style={{border: '1px solid #ddd'}}/>
                         }
                     </div>
 

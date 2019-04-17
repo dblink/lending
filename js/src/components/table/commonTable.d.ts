@@ -1,4 +1,5 @@
 import * as React from 'react';
+import './css/table.css';
 export declare namespace Table {
     type settingProps<T = string, d = any> = {
         head: string;
@@ -43,6 +44,11 @@ interface TableProps {
     style?: React.CSSProperties;
     className?: string;
     func?: TablePropsFunc[];
+    mainAttr?: string;
+}
+export declare class SplitTable extends React.Component<TableProps, any> {
+    constructor(props: TableProps);
+    render(): JSX.Element;
 }
 export declare class SeemTable extends React.Component<TableProps, any> {
     constructor(props: any);

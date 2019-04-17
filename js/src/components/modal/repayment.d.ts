@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Parameter, ParameterName } from '../request/setting';
-export declare type RepaymentModalPage = 'online' | 'local' | '';
+export declare type RepaymentModalPage = 'online' | 'local' | 'IsFormRepayAll' | '';
 export declare type RepaymentModalFunc = {
     show: (page: RepaymentModalPage, data: {
         RepayPlanDetailId: '';
@@ -13,7 +13,7 @@ interface Props {
 }
 interface State {
     show: boolean;
-    page: 'online' | 'local' | '';
+    page: RepaymentModalPage;
     data: Parameter<ParameterName.applyRepayOnline>;
 }
 export declare class RepaymentModal extends React.Component<Props, State> {

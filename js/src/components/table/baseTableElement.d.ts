@@ -14,11 +14,14 @@ export declare class TableComponent implements TableComponentStyle {
     height: number;
     constructor(type: any);
 }
-export declare const FlexTable: (props: {
-    [index: string]: any;
-    style?: React.CSSProperties;
-}) => JSX.Element;
-export declare const FlexTableRow: (props: any) => JSX.Element;
+interface BaseTableProps extends React.HTMLAttributes<HTMLDivElement> {
+    flex?: number | null;
+    componentname?: string;
+    isFlex?: boolean;
+}
+export declare const BaseTable: (props: BaseTableProps) => JSX.Element;
+export declare const FlexTable: (props: BaseTableProps) => JSX.Element;
+export declare const FlexTableRow: (props: BaseTableProps) => JSX.Element;
 declare const TableCell: (props: any) => JSX.Element;
 declare const TableMain: (props: any) => JSX.Element;
 declare const TableRow: (props: any) => JSX.Element;

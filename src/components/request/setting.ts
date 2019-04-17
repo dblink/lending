@@ -78,7 +78,8 @@ export enum ParameterName {
     getPostLoanRecordItems = '获取贷后记录列表',
     uploadPostLoanImage = '上传贷后图片',
     addPostLoanRecord = '新增贷后记录',
-    selectRecordBorrowerImage = '查看贷后上传图片'
+    selectRecordBorrowerImage = '查看贷后上传图片',
+    oneKeyRepayment = '一键还款'
 }
 type PagingParamter = 'PageIndex' | 'PageSize';
 type TimeSelectParamter = 'StartTime' | 'EndTime';
@@ -178,7 +179,8 @@ export interface ParameterSummary{
     [ParameterName.uploadPostLoanImage]: 'ContractId' | 'PostLoanRecordId' | 'Token' | any
     [ParameterName.addPostLoanRecord] : 'ContractId' | 'Remark' | 'Token'
     [ParameterName.selectRecordBorrowerImage]: 'ContractId' | 'PostLoanRecordId' | 'Token'
-    [ParameterName.applyWithdrawLoanBalance]: 'Money' | 'Token'
+    [ParameterName.applyWithdrawLoanBalance]: 'Money' | 'Token';
+    [ParameterName.oneKeyRepayment] : 'Token' | 'RepayTime';
 }
 export type Parameter<T extends ParameterName> = {
     [i in ParameterSummary[T]] ?: any;
@@ -589,5 +591,9 @@ export const interfaceSetting: interfaceSettingType = {
     [ParameterName.selectRecordBorrowerImage]: {
         url: '/api/PostLoanRecord/SelectBorrowerImage',
         type: 'get'
+    },
+    [ParameterName.oneKeyRepayment]: {
+        url: '/api/Repay/OneKeyRepayment',
+        type: 'post'
     }
 };

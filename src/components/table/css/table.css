@@ -1,0 +1,22 @@
+.secondary-title{
+    background: #eee; 
+    height: 48px;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    flex-basis: 20%;
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: center
+}
+.table-content{
+    height: 48px;
+    border-top: 1px solid #ccc;
+    justify-Content: center;
+    border-left: 1px solid #ccc;
+}
+.seemTableTd{
+    min-width:100px; 
+    padding: 0 10px;
+    word-break: break-all;
+    justify-content: center;
+}

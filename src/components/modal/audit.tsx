@@ -193,7 +193,7 @@ class Approved extends React.Component <ApprovedProps, ApprovedState>{
                     onChange={this.inputChange}/>
             </div>
             <div style={{marginTop: '20px'}}>
-                <ApplyInput text='每期服务费' 
+                <ApplyInput text='服务费' 
                     name='ServiceMoney'
                     value={this.state.data.ServiceMoney}
                     error={this.props.error.ServiceMoney}

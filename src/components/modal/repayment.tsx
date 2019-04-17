@@ -9,7 +9,7 @@ import { logOut } from '../fail/logOut';
 import { load } from '../loading/loading';
 import { InnerProgress } from '../progress/progress';
 
-export type RepaymentModalPage = 'online' | 'local' | '';
+export type RepaymentModalPage = 'online' | 'local' | 'IsFormRepayAll' | '';
 export type RepaymentModalFunc = {
     show:(page: RepaymentModalPage, data: {RepayPlanDetailId:''})=>any;
     cancel: (isRefresh ?: boolean)=>any;
@@ -21,7 +21,7 @@ interface Props {
 
 interface State {
     show: boolean;
-    page: 'online' | 'local' | '';
+    page: RepaymentModalPage;
     data: Parameter<ParameterName.applyRepayOnline>;
 }
 
@@ -65,7 +65,9 @@ export class RepaymentModal extends React.Component<Props, State> {
             case 'online': return <PayWay type='online' cancel={this.cancelModal}
                 id={this.state.data.RepayPlanDetailId} />;
             case 'local' : return <PayWay type='local' cancel={this.cancelModal}
-            id={this.state.data.RepayPlanDetailId} />
+            id={this.state.data.RepayPlanDetailId} />;
+            case 'IsFormRepayAll': return <IsFormRepayAll 
+                cancel={this.cancelModal} time={this.state.data.RepayPlanDetailId} /> 
         }
     }
 
@@ -78,7 +80,7 @@ export class RepaymentModal extends React.Component<Props, State> {
 
 type PayWayProps = {
     id: string;
-    type: 'online' | 'local';
+    type: 'online' | 'local' | '';
     cancel: (bool ?: any) => void;
 }
 type PayWayState = {
@@ -135,6 +137,67 @@ class PayWay extends React.Component<PayWayProps, PayWayState>{
             </ModalTitle>
             <div style={{textAlign: 'center'}}>
                 是否确认{this.props.type === 'online' ?  '线上还款' : '线下还款' }
+            </div>
+            <div style={{height: '40px', display: 'flex'}}>
+                <CancelButton onClick={this.props.cancel}>取消</CancelButton>
+                <PrimaryButton onClick={this.confirm} >
+                    {this.state.isLoading ? <InnerProgress height='32px' /> : '确认'}    
+                </PrimaryButton>
+            </div>
+        </div>
+    }
+}
+
+type IsFormRepayAllProps = {
+    time ?: any;
+    cancel ?: any;
+}
+
+type IsFormRepayAllState = {
+    data: Parameter<ParameterName.oneKeyRepayment>;
+    isLoading: boolean;
+}
+
+class IsFormRepayAll extends React.Component<IsFormRepayAllProps, IsFormRepayAllState>{
+    constructor(props:any){
+        super(props);
+        this.state = {
+            data: {
+                RepayTime: props.time,
+                Token: sessionData.getData('Token')
+            },
+            isLoading: false
+        };
+        this.confirm = load.run.call(this, this.confirm);
+    }
+    confirm(){
+        let _req: ReqOption<ParameterName.oneKeyRepayment>;
+        _req = {
+            data: this.state.data,
+            succeed: ()=>{
+                this.props.cancel(true);
+                alert('申请成功！')
+            },
+            fail: logOut((e)=>{
+                this.setState({
+                    isLoading: false
+                },()=>{
+                    alert(e.ErrMsg)
+                })
+            })
+        }
+        req(ParameterName.oneKeyRepayment, _req);
+    }
+    render(){
+        return <div style={{height: '500px', width: '600px', 
+                    background: '#FFF', display: 'flex', flexDirection: 'column',
+                    justifyContent: 'space-between'
+                }}>
+            <ModalTitle>
+                一键还款
+            </ModalTitle>
+            <div style={{textAlign: 'center'}}>
+                是否确认‘{this.props.time}’日，一键还款？
             </div>
             <div style={{height: '40px', display: 'flex'}}>
                 <CancelButton onClick={this.props.cancel}>取消</CancelButton>

@@ -73,7 +73,8 @@ export declare enum ParameterName {
     getPostLoanRecordItems = "\u83B7\u53D6\u8D37\u540E\u8BB0\u5F55\u5217\u8868",
     uploadPostLoanImage = "\u4E0A\u4F20\u8D37\u540E\u56FE\u7247",
     addPostLoanRecord = "\u65B0\u589E\u8D37\u540E\u8BB0\u5F55",
-    selectRecordBorrowerImage = "\u67E5\u770B\u8D37\u540E\u4E0A\u4F20\u56FE\u7247"
+    selectRecordBorrowerImage = "\u67E5\u770B\u8D37\u540E\u4E0A\u4F20\u56FE\u7247",
+    oneKeyRepayment = "\u4E00\u952E\u8FD8\u6B3E"
 }
 declare type PagingParamter = 'PageIndex' | 'PageSize';
 declare type TimeSelectParamter = 'StartTime' | 'EndTime';
@@ -151,6 +152,7 @@ export interface ParameterSummary {
     [ParameterName.addPostLoanRecord]: 'ContractId' | 'Remark' | 'Token';
     [ParameterName.selectRecordBorrowerImage]: 'ContractId' | 'PostLoanRecordId' | 'Token';
     [ParameterName.applyWithdrawLoanBalance]: 'Money' | 'Token';
+    [ParameterName.oneKeyRepayment]: 'Token' | 'RepayTime';
 }
 export declare type Parameter<T extends ParameterName> = {
     [i in ParameterSummary[T]]?: any;
