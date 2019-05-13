@@ -50,7 +50,9 @@ export class Gongxinbao extends React.Component<Props, State> {
                 Token: sessionData.getData('Token')
             },
             fail: (e)=>{
-                console.log(e.ErrMsg);
+                //console.log(e.ErrMsg);
+                alert(e.ErrMsg);
+                this.props.changePage('applyList');
             },
             succeed: (e)=>{
                 this.setState({
@@ -75,6 +77,7 @@ export class Gongxinbao extends React.Component<Props, State> {
             fail:(e)=>{
                 if(e.Value && e.Value.toString() !== '1'){
                     alert(e.ErrMsg);
+                    this.props.changePage('applyList');
                 }else{
                     this.setState({
                         isLoading: false,
@@ -119,7 +122,6 @@ export class Gongxinbao extends React.Component<Props, State> {
                             error: <span style={{color: 'red'}}>获取失败，正在为您重新加载。。。</span>
                         }, this.getGXBToken)
                     }
-                    
                 }
             }
         }

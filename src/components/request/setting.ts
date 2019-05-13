@@ -3,9 +3,10 @@ import { Parameter } from './setting';
 import {OptionType} from "./main";
 
 export const requestUrl = {
-    type: 'production',
+    type: 'development',
     development: '',
     production: 'http://loutsloanapi.hehuadata.com',
+    //production: 'http://loutsloantest.hehuadata.com'
     //production|development
 }
 
@@ -79,7 +80,11 @@ export enum ParameterName {
     uploadPostLoanImage = '上传贷后图片',
     addPostLoanRecord = '新增贷后记录',
     selectRecordBorrowerImage = '查看贷后上传图片',
-    oneKeyRepayment = '一键还款'
+    oneKeyRepayment = '一键还款',
+    deductBindBankCard = '汇付绑卡',
+    getWaitSignContractInfo = '获取汇付待签约合同信息',
+    signatureWidthHF = '汇付签名',
+    getContractWithHF = '获取汇付合同链接'
 }
 type PagingParamter = 'PageIndex' | 'PageSize';
 type TimeSelectParamter = 'StartTime' | 'EndTime';
@@ -126,13 +131,13 @@ export interface ParameterSummary{
     [ParameterName.signature] : 'ContractId' | 'ReturnUrl' | 'Token';
     [ParameterName.selectLoanRecord] : PagingParamter | TimeSelectParamter 
         | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile'
-        | 'Token';
+        | 'Token' ;
     [ParameterName.selectRepayPlanDetail] : PagingParamter | TimeSelectParamter
         | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile' | 'State'
         | 'Token';
     [ParameterName.selectRepayRecord] : PagingParamter | TimeSelectParamter
         | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile'
-        | 'Token';
+        | 'Token' | 'RepayType';
     [ParameterName.getContractState] : 'ContractId' | 'Token',
     [ParameterName.selectRechargeLoanBalance] : PagingParamter | TimeSelectParamter
         | 'Status' | 'Token' | 'MerchantNo',
@@ -168,7 +173,7 @@ export interface ParameterSummary{
     [ParameterName.withdrawBindCard] : 'BankCardNo' | 'IdCardNo' | 'Mobile' | 'BankCode'
         | 'BankName' | 'Remark' | 'RealName' | 'Token';
     [ParameterName.applyWithdraw] : 'WithdrawBankCardId' | 'WithdrawAmount' 
-        | 'Remark' | 'Token';
+        | 'Remark' | 'Token' | 'ProductType';
     [ParameterName.applyRepayOffline] : 'RepayPlanDetailId' | 'Token';
     [ParameterName.getWithdrawItems] : 'Status' | 'PageIndex' | 'PageSize' | 'Token'
     [ParameterName.getHomePageApplyCount] : 'Token' | 'Time';
@@ -181,6 +186,10 @@ export interface ParameterSummary{
     [ParameterName.selectRecordBorrowerImage]: 'ContractId' | 'PostLoanRecordId' | 'Token'
     [ParameterName.applyWithdrawLoanBalance]: 'Money' | 'Token';
     [ParameterName.oneKeyRepayment] : 'Token' | 'RepayTime';
+    [ParameterName.deductBindBankCard]: 'Token' | 'BorrowerId' | 'BankCardNo' | 'ValidCode' | 'BindTransId';
+    [ParameterName.getWaitSignContractInfo]: 'Token' | 'ContractId';
+    [ParameterName.signatureWidthHF]: 'Token' | 'ContractId' | 'BigAmount' | 'img.jpg';
+    [ParameterName.getContractWithHF]: 'ContractId' | 'Token';
 }
 export type Parameter<T extends ParameterName> = {
     [i in ParameterSummary[T]] ?: any;
@@ -595,5 +604,22 @@ export const interfaceSetting: interfaceSettingType = {
     [ParameterName.oneKeyRepayment]: {
         url: '/api/Repay/OneKeyRepayment',
         type: 'post'
+    },
+    [ParameterName.deductBindBankCard]: {
+        url: '/api/BindBankCard/DeductBindBankCard',
+        type: 'post'
+    },
+    [ParameterName.getWaitSignContractInfo]: {
+        url: '/api/LoanContract/GetWaitSignContractInfo',
+        type: 'get'
+    },
+    [ParameterName.signatureWidthHF]: {
+        url: '/api/LoanContract/SignatureWithHF',
+        type: 'post',
+        contentType: 'multipart/form-data'
+    },
+    [ParameterName.getContractWithHF]: {
+        url: '/api/LoanContract/GetContractWithHF',
+        type: 'get'
     }
 };

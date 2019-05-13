@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Parameter, ParameterName } from '../../../components/request/setting';
+import { Parameter, ParameterName, Callback } from '../../../components/request/setting';
 import { ContractModal } from './contract';
 import { BankMessage } from '../../../components/bankCard/bankInput';
 declare type AddBankCardState = {
@@ -7,6 +7,9 @@ declare type AddBankCardState = {
     error: any;
     data: Parameter<ParameterName.bindBankCard | ParameterName.changeBankCard>;
     type: 'shuangQian' | 'local';
+    sendMessageId: string;
+    code: string;
+    userType: '1' | '2' | '3';
     isLoading: boolean;
 };
 declare type AddBankCardProps = {
@@ -22,6 +25,12 @@ export declare class AddEditorBankCard extends React.Component<AddBankCardProps,
     timer: any;
     BIN: any;
     form: HTMLFormElement;
+    fail: (e: Callback<any>) => void;
+    success: (e: any) => void;
+    sendMessageSuccess: (e: any) => void;
+    doubleMoney(): void;
+    sendMessage(): void;
+    collectPay(): void;
     confirm(): void;
     onWaring: (name: string, err: string) => void;
     onSuccess: (data: BankMessage) => void;

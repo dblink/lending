@@ -69,7 +69,7 @@ export class Sign extends React.Component <{success?: any, [index:string]: any},
                 inputState: false,
                 imageState: true
             });
-            this.props.success && this.props.success();
+            this.props.success && this.props.success(res);
         })
     }
     touch(e:TouchEvent){

@@ -47,7 +47,7 @@ export class BankInput extends React.Component<Props, State> {
                 info: ''
             },()=>{
                 timer && clearTimeout(timer);
-                timer = setTimeout(this.getBankInfo, 1000);
+                timer = setTimeout(this.getBankInfo, 500);
             });
         }
     }
@@ -58,6 +58,7 @@ export class BankInput extends React.Component<Props, State> {
                 info: <span style={{color: 'blue'}}>正在验证</span>
             }, ()=>{
                 this.BIN.getBankBin(_bankcard,(err: any,data:any)=>{
+                    console.log(data);
                     if(data){
                         if(!cardList[data.bankCode] || data.cardType === 'CC'){
                             err = '不支持该银行卡！';

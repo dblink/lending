@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Parameter, ParameterName } from '../../../components/request/setting';
+import { Parameter, ParameterName, Callback } from '../../../components/request/setting';
 import { ContractModal } from './contract';
 import { sessionData } from '../../../components/sessionData/sessionData';
 import { Input } from '../../../components/modal/audit';
 import { load } from '../../../components/loading/loading';
-import { cardList } from '../../../components/bankCard/card';
+import { cardList, cardNumber } from '../../../components/bankCard/card';
 import { ReqOption, req } from '../../../components/request';
 import { BankMessage, BankInput } from '../../../components/bankCard/bankInput';
 import { ModalTitle } from '../../../components/modal/title';
@@ -17,6 +17,9 @@ type AddBankCardState = {
     error : any;
     data : Parameter<ParameterName.bindBankCard | ParameterName.changeBankCard>;
     type : 'shuangQian' | 'local';
+    sendMessageId: string;
+    code: string;
+    userType: '1' | '2' | '3'; //1 = 双乾 2 = 汇付
     isLoading: boolean;
 }
 type AddBankCardProps = {
@@ -38,6 +41,9 @@ export class AddEditorBankCard extends React.Component<AddBankCardProps, AddBank
                 ReturnUrl: 'http://lotus.hehuadata.com/contract/success',
                 Token: sessionData.getData('Token')
             },
+            userType: sessionData.getData('UserInfo').ProductType.toString(),
+            code: '',
+            sendMessageId: '',
             bankcard: '',
             error: {},
             type: 'local',
@@ -50,8 +56,12 @@ export class AddEditorBankCard extends React.Component<AddBankCardProps, AddBank
         this.getBankInfo = this.getBankInfo.bind(this);
         this.inputChange = this.inputChange.bind(this);
         this.inputMobileChange = new Input().inputChange.bind(this);
-        this.confirm = load.run.call(this, this.confirm)
+        this.confirm = load.run.call(this, this.confirm);
+        this.doubleMoney = this.doubleMoney.bind(this);
+        this.collectPay = this.collectPay.bind(this);
+        this.sendMessage = this.sendMessage.bind(this);
     }
+
     getBankInfo(){
         let _bankcard = this.state.bankcard.replace(/\s/g, '');
         if(this.BIN && _bankcard.length >= 15 && _bankcard.length <= 19){
@@ -99,27 +109,78 @@ export class AddEditorBankCard extends React.Component<AddBankCardProps, AddBank
     timer: any;
     BIN: any;
     form: HTMLFormElement;
-    confirm(){
+    fail = (e: Callback)=>{
+        alert(e.ErrMsg);
+        this.setState({
+            isLoading: false
+        })
+    }
+    success = (e: any)=>{
+        alert('操作成功！');
+        this.props.pageChange('list');
+    }
+    sendMessageSuccess = (e: any)=>{
+        alert('发送成功！');
+        this.setState({
+            sendMessageId: e.Value,
+            isLoading: false
+        })
+    }
+    //双乾
+    doubleMoney(){
         let _options: ReqOption<ParameterName.bindBankCard | ParameterName.changeBankCard>;
         _options = {
             data: this.state.data,
-            fail: (e)=>{
-                alert(e.ErrMsg);
-                this.setState({
-                    isLoading: false
-                })
-            },
-            succeed: (e)=>{
-                alert('操作成功！');
-                this.props.pageChange('list');
-            }
+            fail: this.fail,
+            succeed: this.success
         }
         if(this.props.data.Id){
             req(ParameterName.changeBankCard, _options);
         }else{
             req(ParameterName.bindBankCard, _options);
         }
-        
+    }
+    //汇付发送验证码
+    sendMessage(){
+        let _options: ReqOption<ParameterName.bindBankCard | ParameterName.changeBankCard>;
+        let _data = this.state.data;
+        _data.BankCode = cardNumber[_data.BankCode as 'ICBC'];
+        _options = {
+            data: _data,
+            fail: this.fail,
+            succeed: this.sendMessageSuccess
+        }
+        req(ParameterName.bindBankCard, _options);
+    }
+    //汇付
+    collectPay(){
+        let _options: ReqOption<ParameterName.deductBindBankCard>;
+        _options = {
+            data: {
+                BankCardNo: this.state.data.BankCardNo,
+                BindTransId: this.state.sendMessageId,
+                BorrowerId: this.state.data.BorrowerBaseInfoId,
+                ValidCode: this.state.code,
+                Token: sessionData.getData('Token')
+            },
+            fail: this.fail,
+            succeed: this.success
+        }
+        req(ParameterName.deductBindBankCard, _options);
+    }
+    confirm(){
+        switch(this.state.userType){
+            case '1': {
+                this.doubleMoney();
+                break;
+            };
+            case '3':
+            case '2': {
+                this.collectPay()
+                break;
+            }
+        }
+
     }
     onWaring=(name: string, err: string)=>{
         let _error = this.state.error;
@@ -178,8 +239,22 @@ export class AddEditorBankCard extends React.Component<AddBankCardProps, AddBank
                                 error={this.state.error['mobile']}
                             />
                         </div>
-                    } 
-                    
+                    }
+                    {
+                        this.state.userType !== '1' ? <div style={{marginTop: '30px'}}>
+                            <ApplyInput text='验证码'
+                                name={'code'}
+                                value={this.state.code}
+                                sendMessage={this.sendMessage}
+                                onChange={(e)=>{
+                                    this.setState({
+                                        code: e.target.value
+                                    })
+                                }}
+                                error={this.state.error['code']}
+                            />
+                        </div> : ''
+                    }
                 </div>
                 
                 <div style={{height: '40px', display: 'flex'}}>

@@ -41,7 +41,7 @@ export class LendingList extends React.Component<Props, State> {
                 MerchantNo: '',
                 Mobile: '',
                 PageIndex: '1',
-                PageSize: '10'
+                PageSize: '10',
             },
             isPageLoading: false,
             isLoading: true,
@@ -183,7 +183,7 @@ type LendingFilterState = {
     data: FilterList<ParameterSummary[ParameterName.selectLoanRecord]>
 }
 type LendingFilterProps = {
-    data: Parameter<ParameterName.selectLoanRecord>;
+    data: Parameter<ParameterName.selectRepayRecord>;
     search: (data: Parameter<ParameterName.selectLoanRecord>)=> void;
 }
 export class LendingFilter extends React.Component<LendingFilterProps, LendingFilterState>{
@@ -210,6 +210,31 @@ export class LendingFilter extends React.Component<LendingFilterProps, LendingFi
             type: 'input',
             value: this.props.data.Mobile
         }];
+        
+        if(this.props.data.RepayType){
+            _data.push({
+                name: 'RepayType',
+                text: '划扣类型',
+                list: [{
+                    value: '-1',
+                    text: '全部'
+                },{
+                    value: '1',
+                    text: '线上'
+                },{
+                    value: '2',
+                    text: '线下'
+                },{
+                    value: '3',
+                    text:'线上结清',
+                },{
+                    value: '4',
+                    text: '线下结清'
+                }],
+                type: 'select',
+                value: this.props.data.RepayType
+            })
+        }
         if(sessionData.getData('MerchantItem')){
             _data = addMerchantItem(_data, this.props.data.MerchantNo)
         }

@@ -19,8 +19,9 @@ interface Props {}
 
 interface State {
     data: MerchantParameter;
-    callbackData: MerchantCallback; 
+    callbackData: MerchantCallback[]; 
     isLoading: boolean;
+    type: '1' | '2'
 }
 
 export class MerchantDetail extends React.Component<Props, State> {
@@ -30,7 +31,8 @@ export class MerchantDetail extends React.Component<Props, State> {
             data: {
                 Token: sessionData.getData('Token')
             },
-            callbackData: {},
+            type: sessionData.getData('UserInfo').ProductType.toString(),
+            callbackData: [{},{}],
             isLoading: false
         };
         this.getList = load.run.call(this, this.getList);
@@ -62,13 +64,27 @@ export class MerchantDetail extends React.Component<Props, State> {
     }
     list:{text: string, value: MerchantCallbackSummary}[];
     render() {
+        let callbackData = this.state.callbackData[this.state.type === '1' ? 0 : 1];
         return <View>
+            <div style={{display: 'flex'}}>
+                <HrefButton
+                    style={{fontSize: '20px'}}
+                    onClick={()=>{this.setState({type: '1'})}}>
+                        双乾
+                </HrefButton>
+                <HrefButton 
+                    style={{fontSize: '20px'}}
+                    onClick={()=>{this.setState({type: '2'})}}>汇付</HrefButton>
+                <span style={{fontSize: '20px'}}>
+                    当前： {this.state.type === '1' ? '双乾' : '汇付'}
+                </span>
+            </div>
             <div style={{position: 'relative', height: '100%'}}>
                 <div style={{color: '#333', fontSize: '20px'}}>
-                    {this.state.callbackData.MerchantName}
+                    {callbackData.MerchantName}
                 </div>
                 <div style={{color: '#333', fontSize: '14px'}}>
-                    商户号：{this.state.callbackData.MerchantNo}
+                    商户号：{callbackData.MerchantNo}
                 </div>
                 <div style={{width: '100%', display: 'flex',
                     marginTop: '50px',
@@ -77,18 +93,26 @@ export class MerchantDetail extends React.Component<Props, State> {
                         <MerchantModule title='提现'>
                             <div className='merchant-items'>
                                 <span >提现余额 <HrefButton  style={{display:'inline'}} onClick={()=>this.modal.show('detail')}>明细</HrefButton></span>
-                                <span>{this.state.callbackData.BalanceAmount}</span>
+                                <span>{callbackData.BalanceAmount}</span>
                             </div>
                             <div className='merchant-items'>
                                 <span >冻结提现余额</span>
-                                <span>{this.state.callbackData.FrozenAmount}</span>
+                                <span>{callbackData.FrozenAmount}</span>
                             </div>
-                            <div className='merchant-items'>
-                                <PrimaryButton onClick={()=>this.modal.show() } 
-                                    style={{height:'32px'}}>提现</PrimaryButton>
-                                <PrimaryButton onClick={()=>this.modal.show('transform') } 
-                                style={{height:'32px', marginLeft: '20px'}}>余额转债权</PrimaryButton>
-                            </div>
+                            {
+                               
+                                    <div className='merchant-items'>
+                                        <PrimaryButton onClick={()=>this.modal.show('bankList', this.state.type) } 
+                                            style={{height:'32px'}}>提现</PrimaryButton>
+                                        {this.state.type === sessionData.getData('UserInfo').ProductType.toString() 
+                                            ? <PrimaryButton onClick={()=>this.modal.show('transform') } 
+                                                style={{height:'32px', marginLeft: '20px'}}>余额转债权</PrimaryButton>
+                                            : ''
+                                        }
+                                    </div>
+                                
+                            }
+                            
                         </MerchantModule>
                     </div>
                     {/* 提现 */}
@@ -96,15 +120,15 @@ export class MerchantDetail extends React.Component<Props, State> {
                         <MerchantModule title='查询费用'>
                         <div className='merchant-items'>
                             <span >蜜罐费用</span>
-                            <span>{this.state.callbackData.Honeypot}</span>
+                            <span>{callbackData.Honeypot}</span>
                         </div>
                         <div className='merchant-items'>
                             <span >蜜蜂费用</span>
-                            <span>{this.state.callbackData.HoneyBee}</span>
+                            <span>{callbackData.HoneyBee}</span>
                         </div>
                         <div className='merchant-items'>
                             <span >阿里费用</span>
-                            <span>{this.state.callbackData.Alipay}</span>
+                            <span>{callbackData.Alipay}</span>
                         </div>
                     </MerchantModule>
                     </div>
@@ -115,22 +139,22 @@ export class MerchantDetail extends React.Component<Props, State> {
                     <MerchantModule title='费率'>
                         <div className='merchant-items'>
                             <span >小贷费率</span>
-                            <span>{this.state.callbackData.TinyLoanChannelRate}</span>
+                            <span>{callbackData.TinyLoanChannelRate}</span>
                         </div>
                         <div className='merchant-items'>
                             <span >划扣费率</span>
-                            <span>{this.state.callbackData.DeductionChannelRate}</span>
+                            <span>{callbackData.DeductionChannelRate}</span>
                         </div>
                     </MerchantModule>
                     <div style={{marginLeft: '30px'}}>
                         <MerchantModule title='债权'>
                             <div className='merchant-items'>
                                 <span >债权余额</span>
-                                <span>{this.state.callbackData.LoanBalance}</span>
+                                <span>{callbackData.LoanBalance}</span>
                             </div>
                             <div className='merchant-items'>
                                 <span >冻结债权余额</span>
-                                <span>{this.state.callbackData.FrozenLoanBalance}</span>
+                                <span>{callbackData.FrozenLoanBalance}</span>
                             </div>
                         </MerchantModule>
                     </div>
@@ -138,11 +162,11 @@ export class MerchantDetail extends React.Component<Props, State> {
                         <MerchantModule title='服务费'>
                             <div className='merchant-items'>
                                 <span >服务费余额</span>
-                                <span>{this.state.callbackData.ServiceCharge}</span>
+                                <span>{callbackData.ServiceCharge}</span>
                             </div>
                             <div className='merchant-items'>
                                 <span >冻结服务费余额</span>
-                                <span>{this.state.callbackData.FrozenServiceCharge}</span>
+                                <span>{callbackData.FrozenServiceCharge}</span>
                             </div>
                         </MerchantModule>
                     </div>

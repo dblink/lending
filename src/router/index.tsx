@@ -9,7 +9,7 @@ import { AuditList } from '../page/audit/auditList';
 import { ContractList } from '../page/contract/contractList';
 import { EmployeesList } from '../page/employees/employeesLIst';
 import { GongXinBaoSuccess } from '../page/success/gongXinBaoSuccess';
-import { LoggedRoute } from './logged';
+import { LoggedRoute, TestMobile, TestPC } from './logged';
 import { LendingList } from '../page/detail/lendingList';
 import { ReceivableList } from '../page/detail/receivableList';
 import { RechargeList } from '../page/recharge/recharge';
@@ -20,6 +20,9 @@ import { Welcome } from '../page';
 import { getIntervalDate } from '../components/calendar/dateFunction';
 import { MerchantDetail } from '../page/merchant/merchant';
 import { LocalRepayConfirm } from '../page/repayment/localRepayConfirm';
+import { LoanAgreement } from '../module/contractHtml/loanAgreement1';
+import { LoginMobile } from '../page/login/loginMobile';
+import { MobileApplication } from '../page/application/mobileApplication';
 
 
 export const browserHistory = createBrowserHistory();
@@ -37,12 +40,14 @@ export class IndexRoute extends React.Component<Props, State> {
         return <StaticRouter >
             <Router history={browserHistory}>
                 <Switch>
-                    <Route exact path={'/'} component={Login} />
+                    <TestMobile exact path={'/'} component={Login} />
                     <Route path={'/success/:token'} component={GongXinBaoSuccess} />
+                    <TestPC exact path='/Mobile/' component={LoginMobile} />
+                    <LoggedRoute path={'/Mobile/application'} component={MobileApplication} />
                     <Route path={'/logged/*'} >
-                        <div className='layout-curtain'>
+                        <div className='layout-curtain' >
                             <Menu {...this.props} />
-                            <div style={{width: '100%', position: 'relative'}}>
+                            <div style={{width: '100%', position: 'relative'}} >
                                 <Switch>
                                     {
                                         //<LoggedRoute path='/logged/welcome' component={()=><div><img src='img/welcome.jpg' style={{width: '100%'}} /></div>}/>
@@ -74,7 +79,7 @@ export class IndexRoute extends React.Component<Props, State> {
                     </Route>
                     <LoggedRoute path='/service/:name/:idCard/:period/:serviceFee' component={ServiceAgreement} />
                     <LoggedRoute path='/report' component={Report} />
-                    
+                    <LoggedRoute path='/service/LoanAgreement' component={LoanAgreement} />
                 </Switch>
             </Router>
         </StaticRouter> 

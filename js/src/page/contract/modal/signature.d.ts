@@ -21,4 +21,15 @@ export declare class Signature extends React.Component<SignatureProps, Signature
     confirm(): void;
     render(): JSX.Element;
 }
+export declare class SignatureCT extends React.Component<SignatureProps, any> {
+    constructor(props: any);
+    form: FormData;
+    num: number;
+    cancel(): void;
+    componentDidMount(): void;
+    createSign(img: any): void;
+    confirm(): void;
+    getServiceInfo(): void;
+    render(): JSX.Element;
+}
 export {};

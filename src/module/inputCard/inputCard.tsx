@@ -8,11 +8,13 @@ import { InnerProgress } from '../../components/progress/progress';
 import { sessionData } from '../../components/sessionData/sessionData';
 import { ErrorMessage } from '../../components/error/errorMessage';
 import { logOut } from '../../components/fail/logOut';
+import { isPhone } from '../../router/logged';
 interface InputCardProps {
     onChangeStep: (str: string)=>void;
     setDataState: (data: any) =>void;
     setCard: (str: string) => void;
-    close: ()=>void;
+    close ?: ()=>void;
+    style?: React.CSSProperties;
 }
 interface InputCardState {
     data: {
@@ -72,10 +74,16 @@ export class InputCard extends React.Component<InputCardProps, InputCardState> {
         req(ParameterName.getBorrowerStatus, _options);
     }
     render() {
+        let _style = Object.assign({
+            background: '#fff', padding: '35px', width: '330px'
+        }, this.props.style || {})
+        let PrimaryEvent = !isPhone() ? {
+            onClick: this.searchCard
+        } : {
+            onTouchEnd: this.searchCard
+        }
         return <div
-            style={{
-                background: '#fff', padding: '35px', width: '330px'
-            }}>           
+            style={_style}>           
             <ErrorMessage > 
                 {this.state.error}    
             </ErrorMessage>
@@ -85,15 +93,15 @@ export class InputCard extends React.Component<InputCardProps, InputCardState> {
                 onChange={(e)=>this.changeInput('card', e.target.value)} />
             <PrimaryButton 
                 style={{height: '48px',marginTop: '20px'}}
-                onClick={this.searchCard}>
+                {...PrimaryEvent}>
                 {!this.state.isLoading ? '查询身份证' :  
                 <InnerProgress hidden={false} height={'32px'} />} 
             </PrimaryButton>
-            <CancelButton
+            {this.props.close ? <CancelButton
                 onClick={this.props.close}
                 style={{height: '48px',marginTop: '20px'}}>
                 关闭
-            </CancelButton>
+            </CancelButton> : ''}
         </div>
     }
 }

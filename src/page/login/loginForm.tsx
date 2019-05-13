@@ -5,14 +5,15 @@ import { Parameter, ParameterName } from '../../components/request/setting';
 interface Props {
     inputChange: (...props: any)=>void;
     error: Parameter<ParameterName.login>
-    data: Parameter<ParameterName.login>
+    data: Parameter<ParameterName.login>;
+    style ?: React.CSSProperties;
 }
 
 interface State {}
 
 
 export const NormalLogin = (props:Props) =>{
-    return <div>
+    return <div style={props.style}>
         <ApplyInput text={'商户号'}
             name='MerchantNo'
             onChange={props.inputChange}
@@ -33,7 +34,7 @@ export const NormalLogin = (props:Props) =>{
 }
 
 export const AreaLogin = (props: Props) => {
-    return <div>
+    return <div style={props.style}>
         <ApplyInput text={'账号'}  
             name='LoginName'
             onChange={props.inputChange}

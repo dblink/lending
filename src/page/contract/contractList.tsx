@@ -236,14 +236,32 @@ class ContractTable extends React.Component<ContractTableProps , any> {
     constructor(props: any){
         super(props);
         this.state = {}
-        //console.log(this.props.parameterData);
         if(this.props.parameterData.Status.toString() === '4'){
             this.setting.splice(8, 0, {
                 attr: 'OverdueDate',
                 head: '逾期天数',
             });
-            //console.log(this.setting)
         }
+        this.download = this.download.bind(this);
+    }
+    download(contractId: any){
+        let _req: ReqOption<ParameterName.getContractWithHF>;
+        // console.log(contractId)
+        _req = {
+            data: {
+                ContractId: contractId,
+                Token: sessionData.getData('Token')
+            },
+            succeed:(e)=>{
+                let tempwindow=window.open('_blank'); // 先打开页面
+                tempwindow.location=e.Value; // 后更改页面地址
+                // window.open(, '_blank');
+            },
+            fail:(e)=>{
+                alert(e.ErrMsg)
+            }
+        }
+        req(ParameterName.getContractWithHF, _req);
     }
     setting: {
         attr: CallbackSummary[ParameterName.getContractItems],
@@ -251,7 +269,20 @@ class ContractTable extends React.Component<ContractTableProps , any> {
         format ?: any;
     }[] = [{
         attr: 'CreateTime',
-        head: '申请时间'
+        head: '申请时间',
+        format: (data: any)=>{
+            if(data.State.toString() === '1'
+                || data.State.toString() === '5'){
+                return data.CreateTime;
+            }
+            if(data.ProductType.toString() === '2'
+                || data.ProductType.toString() === '3' ){
+                return <HrefButton title='点击查看合同' style={{width: 'auto'}} onClick={
+                    ()=>this.download(data.Id)}>{data.CreateTime}</HrefButton>
+            }else{
+                return data.CreateTime
+            }            
+        }
     },{
         attr: 'BorrowerName',
         head: '姓名'

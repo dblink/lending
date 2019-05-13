@@ -3,12 +3,13 @@ import { BaseModal } from '../../../components/modal/base/baseModal';
 import { RemarkModal } from '../../../components/modal/remark';
 import { CardList } from './BankCardList';
 import { AddEditorBankCard } from './addBankCard';
-import { Signature } from './signature';
+import { Signature, SignatureCT } from './signature';
 import { Lending } from './lending';
 import { Repayment } from './repayment';
 import { Cancel } from './cancel';
 import { Settle } from './settle';
 import { PostLoan } from './remarkList';
+import { sessionData } from '../../../components/sessionData/sessionData';
 
 interface Props {
     contractModal: ContractModal.ObjectShowModal;
@@ -91,8 +92,15 @@ export class ModalContract extends React.Component<Props, State> {
             }
             case 'sign': {
                 let _data = this.state.data;
-                return <Signature cardNo={_data.cardNo} name={_data.name} period={_data.period} serviceMoney={_data.serviceMoney}
-                    cancel={this.closeModal} contractId={this.state.data.contractId} />
+                if(sessionData.getData('UserInfo').ProductType.toString() === '1'){
+                    return <Signature cardNo={_data.cardNo} name={_data.name} period={_data.period} serviceMoney={_data.serviceMoney}
+                        cancel={this.closeModal} contractId={this.state.data.contractId} />
+                }else if(sessionData.getData('UserInfo').ProductType.toString() === '2'
+                        || sessionData.getData('UserInfo').ProductType.toString() === '3'
+                    ){
+                    return <SignatureCT cardNo={_data.cardNo} name={_data.name} period={_data.period} serviceMoney={_data.serviceMoney}
+                        cancel={this.closeModal} contractId={this.state.data.contractId} />
+                }
             }
             case 'lending': {
                 return <Lending contractId={this.state.data.contractId} closeModal={this.closeModal} />

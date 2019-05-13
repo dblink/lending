@@ -27,7 +27,7 @@ declare type LendingFilterState = {
     data: FilterList<ParameterSummary[ParameterName.selectLoanRecord]>;
 };
 declare type LendingFilterProps = {
-    data: Parameter<ParameterName.selectLoanRecord>;
+    data: Parameter<ParameterName.selectRepayRecord>;
     search: (data: Parameter<ParameterName.selectLoanRecord>) => void;
 };
 export declare class LendingFilter extends React.Component<LendingFilterProps, LendingFilterState> {

@@ -115,10 +115,13 @@ export class Repayment extends React.Component<Props, State> {
                 <div style={{marginBottom: '30px', position: 'relative',
                     display: 'flex', justifyContent: 'space-between',
                     background: '#FFF'}}>
-                    <PrimaryButton style={{width: '200px'}}
-                        onClick={()=>{this.modal.show('IsFormRepayAll', {RepayPlanDetailId: this.state.data.EndTime})}}>
-                        一键还款
-                    </PrimaryButton>
+                    {
+                        <PrimaryButton style={{width: '200px'}}
+                            onClick={()=>{this.modal.show('IsFormRepayAll', {RepayPlanDetailId: this.state.data.EndTime})}}>
+                            一键还款
+                        </PrimaryButton>
+                    }
+                   
                     <RepaymentFilter filter={this.search} data={this.state.data} />
                     <Paging changePage={this.changePage}
                             index={this.state.data.PageIndex}

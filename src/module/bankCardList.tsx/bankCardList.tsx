@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { BankCard } from '../../components/bankCard/bankCard';
+import { cardNumberToCode } from '../../components/bankCard/card';
 
 type CardProperty =  {
     Id ?: string;
@@ -23,12 +24,14 @@ export class BankCardList extends React.Component<Props, State> {
     }
     render() {
         return this.props.list.map((value, key)=>{
+            let bankCode = value.BankCode;
+            bankCode = /^\d*$/.test(bankCode) ? cardNumberToCode[bankCode as '01020000'] : bankCode;
             return <div key={key} onClick={()=>this.props.choiceCard(value)} style={{display: 'flex', alignItems:'center', margin: '15px'}}>
                 <input type='radio' name='card' id={`card${key}`} 
                     style={{width: '24px', height: '24px'}} />
                 <label htmlFor={`card${key}`}>
                     <BankCard mobile={value.Mobile} 
-                        bankCode={value.BankCode} cardNo={value.BankCardNo} />
+                        bankCode={bankCode} cardNo={value.BankCardNo} />
                 </label>
                 {this.props.editorCard ? <span style={{color: '#1B8DEF', cursor: 'pointer'}} onClick={(e)=>{
                     e.stopPropagation();

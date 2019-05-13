@@ -4,8 +4,9 @@ import { sessionData } from '../../../components/sessionData/sessionData';
 import { load } from '../../../components/loading/loading';
 import { ReqOption, req } from '../../../components/request';
 import { logOut } from '../../../components/fail/logOut';
-import { PageLoading } from '../../../components/progress/progress';
+import { PageLoading, InnerProgress } from '../../../components/progress/progress';
 import { CancelButton, PrimaryButton } from '../../../components/button';
+import { LoanAgreement } from '../../../module/contractHtml/loanAgreement1';
 
 type SignatureProps = {
     contractId: string;
@@ -29,7 +30,7 @@ export class Signature extends React.Component<SignatureProps, SignatureState> {
                 Token: sessionData.getData('Token'),
                 ContractId: this.props.contractId,
             },
-            isPageLoading: false,
+            isPageLoading: true,
         }
         this.getInfo = load.run.call(this, this.getInfo, 'isPageLoading');
         this.confirm = load.run.call(this, this.confirm, 'isPageLoading');
@@ -123,5 +124,131 @@ export class Signature extends React.Component<SignatureProps, SignatureState> {
                 <PrimaryButton onClick={this.confirm}>确认</PrimaryButton>
             </div>
         </div>
+    }
+}
+
+function getBlobFile(base64: string) {
+    let _url = base64.replace('data:image/png;base64,','');
+    let byteString = atob(_url);
+    let ia = new Uint8Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ia],{type: "image/png"});
+}
+
+//汇付签章
+export class SignatureCT extends React.Component<SignatureProps, any>{
+    constructor(props: any){
+        super(props);
+        this.state = {
+            backInfo: {},
+            isPageLoading: true,
+            isLoading: false,
+            file: ''
+        }
+        this.getServiceInfo = load.run.call(this, this.getServiceInfo);
+        this.form = new FormData();
+        this.createSign = this.createSign.bind(this);
+        this.confirm = load.run.call(this, this.confirm);
+        this.cancel = load.isLoading.call(this, this.props.cancel);
+    }
+    form: FormData;
+    num = 0;
+    cancel(){};
+    componentDidMount(){
+        this.getServiceInfo()
+    }
+    createSign(img: any){
+        this.setState({
+            file: getBlobFile(img)
+        })
+    }
+    confirm(){
+        /*
+        if(localStorage.getItem('isServiceSign') !== 'true'){
+            alert('请签署双方服务协议！');
+            this.setState({
+                isLoading: false
+            })
+            return;
+        }*/
+        //localStorage.setItem('isServiceSign', '');
+        if(!this.state.file){
+            alert('请签名！');
+            this.setState({
+                isLoading: false
+            })
+        }
+        let _req: ReqOption<ParameterName.signatureWidthHF | any>;
+        let _form = this.form;
+        _form.append('Token', sessionData.getData('Token'));
+        _form.append('ContractId', this.props.contractId);
+        _form.append('BigAmount', document.getElementById('bigAmount').innerHTML);
+        _form.append('img.png', this.state.file, 'img.png')
+        _req = {
+            data: _form,
+            fail: (e)=>{
+                alert(e.ErrMsg);
+                this.form = new FormData();
+                this.setState({
+                    isLoading: false
+                })
+            },
+            succeed: (e)=>{
+                alert('签名成功！');
+                this.props.cancel(true);
+            }
+        }
+        req(ParameterName.signatureWidthHF, _req);
+    }
+    getServiceInfo(){
+        let _req: ReqOption<ParameterName.getWaitSignContractInfo>;
+        _req = {
+            data: {
+                ContractId:this.props.contractId,
+                Token: sessionData.getData('Token')
+            },
+            fail: (e)=>{
+                alert(e.ErrMsg);
+                this.setState({
+                    isLoading: false,
+                    isPageLoading: false
+                })
+            },
+            succeed: (e)=>{
+                this.setState({
+                    backInfo: e.Value,
+                    isLoading: false,
+                    isPageLoading: false
+                })
+            }
+        }
+        req(ParameterName.getWaitSignContractInfo, _req);
+    }
+    render(){
+        return <div style={{background: '#FFF', height:'90%',
+            width: '90%',
+            position:'relative',
+            flexDirection: 'column', display:'flex'}}>
+        <PageLoading show={this.state.isPageLoading} />
+        <div>
+            <a href={`/service/${this.props.name}/${this.props.cardNo}/${this.props.period}/${this.props.serviceMoney}`} target='_blank'>
+                点击签署双方服务协议
+            </a>
+        </div>
+        {this.state.backInfo.RealName
+            ? <LoanAgreement data={this.state.backInfo} success={this.createSign} />
+            :  ''
+        }
+        <div style={{display: 'flex', minHeight: '40px'}}>
+            <CancelButton onClick={this.cancel}>取消</CancelButton>
+            <PrimaryButton onClick={this.confirm}>{
+                this.state.isLoading 
+                    ? <InnerProgress height='32px' />
+                    : '确认'
+            }</PrimaryButton>
+        </div>
+    </div>
     }
 }

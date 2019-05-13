@@ -11,9 +11,40 @@ export declare enum cardList {
     SPDB = "\u6D66\u4E1C\u53D1\u5C55\u94F6\u884C",
     CMBC = "\u6C11\u751F\u94F6\u884C",
     CMB = "\u62DB\u5546\u94F6\u884C",
-    GDB = "\u5E7F\u53D1\u94F6\u884C",
     HXB = "\u534E\u590F\u94F6\u884C",
     BOB = "\u5317\u4EAC\u94F6\u884C"
+}
+export declare enum cardNumber {
+    ICBC = "01020000",
+    CCB = "01050000",
+    BOC = "01040000",
+    COMM = "03010000",
+    CIB = "03090000",
+    CITIC = "03020000",
+    CEB = "03030000",
+    PAB = "03134402",
+    SHB = "03130031",
+    SPDB = "03100000",
+    CMBC = "03050000",
+    CMB = "03080000",
+    HXB = "03040000",
+    BOB = "03130011"
+}
+export declare enum cardNumberToCode {
+    '01020000' = "ICBC",
+    '01050000' = "CCB",
+    '01040000' = "BOC",
+    '03010000' = "COMM",
+    '03090000' = "CIB",
+    '03020000' = "CITIC",
+    '03030000' = "CEB",
+    '03134402' = "PAB",
+    '03130031' = "SHB",
+    '03100000' = "SPDB",
+    '03050000' = "CMBC",
+    '03080000' = "CMB",
+    '03040000' = "HXB",
+    '03130011' = "BOB"
 }
 export declare enum cardColor {
     ICBC = "#dd2c30",

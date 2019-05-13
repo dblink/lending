@@ -10,6 +10,7 @@ interface Props {
 interface State {
     data: Parameter<ParameterName.applyWithdraw>;
     type: 'bankList' | 'withdrawal' | 'detail' | 'transform';
+    productType?: any;
     isOpen: boolean;
     isLoading: boolean;
 }
@@ -17,7 +18,7 @@ export declare class Withdrawal extends React.Component<Props, State> {
     constructor(props: Props);
     cancel(bool?: boolean): void;
     getId(id: string): void;
-    showModal(page?: 'bankList' | 'transform' | 'withdrawal' | 'detail'): void;
+    showModal(page?: 'bankList' | 'transform' | 'withdrawal' | 'detail', productType?: '1' | '2'): void;
     inputChange(e: React.ChangeEvent<HTMLInputElement>): void;
     confirm(): void;
     getDom(): JSX.Element;

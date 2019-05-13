@@ -82,7 +82,8 @@ export class ApplyInfo extends React.Component <ApplyInfoProps, ApplyInfoState>{
             data: this.state.data,
             fail: (error)=>{
                 this.setState({
-                    error: error.ErrMsg
+                    error: error.ErrMsg,
+                    isLoading: false
                 })
             },
             succeed: (e)=>{

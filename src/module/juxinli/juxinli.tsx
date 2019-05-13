@@ -65,6 +65,7 @@ export class Juxinli extends React.Component<Props, State> {
             },
             fail: (e)=>{
                 alert(e.ErrMsg);
+                this.props.changePage('applyList')
             },
             succeed: (e)=>{
                 let _value = e.Value;
@@ -86,6 +87,7 @@ export class Juxinli extends React.Component<Props, State> {
             },
             fail: (e)=>{
                 alert(e.ErrMsg);
+                this.props.changePage('applyList')
             },
             succeed:(e)=>{
                 if(e.Value){
@@ -125,6 +127,7 @@ export class Juxinli extends React.Component<Props, State> {
             },
             fail: (e) =>{
                 alert(e.ErrMsg);
+                this.props.changePage('applyList')
             },
             succeed: (e)=>{
                 let k :string;
@@ -204,6 +207,7 @@ export class Juxinli extends React.Component<Props, State> {
                     }, this.getInfo)
                 }else{
                     alert(e.ErrMsg);
+                    this.props.changePage('applyList')
                 }
                 
             }

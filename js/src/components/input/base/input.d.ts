@@ -19,6 +19,7 @@ export declare class BaseInput extends OperateTemp<BaseInputProps, State> {
     shouldComponentUpdate(nextProps: any, nextState: State): boolean;
     componentDidUpdate(): void;
     componentWillUnmount(): void;
+    showKeyboard(e: any): void;
     render(): JSX.Element;
 }
 export {};

@@ -8,6 +8,7 @@ interface BankCardInput extends React.InputHTMLAttributes<any> {
 interface ApplyInputProps extends React.InputHTMLAttributes<any> {
     text: string;
     error?: string;
+    sendMessage?: any;
 }
 export declare const BankCardInput: (props: BankCardInput) => JSX.Element;
 export declare class ApplyInput extends React.Component<ApplyInputProps, any> {

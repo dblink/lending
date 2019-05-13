@@ -100,11 +100,11 @@ export default class ServiceAgreement extends React.Component <Props, any>{
                 <p className="print"></p>
                 <p className="print text-right">编号：
                     <span className="text-under-line">
-                            {this.props.ContractNo 
-                                || <input placeholder='请填写编号' 
-                                    value={(Math.random()).toString().replace('.','').substring(0,12)}
-                                style={{background: '#FFF',border: 'none', width: '260px'}} />}
-                        </span>
+                        {this.props.ContractNo 
+                            || <input placeholder='请填写编号' 
+                                value={(Math.random()).toString().replace('.','').substring(0,12)}
+                            style={{background: '#FFF',border: 'none', width: '260px'}} />}
+                    </span>
                 </p>
                 <p className="print"></p>
                 <div className="print">

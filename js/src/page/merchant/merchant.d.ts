@@ -9,8 +9,9 @@ interface Props {
 }
 interface State {
     data: MerchantParameter;
-    callbackData: MerchantCallback;
+    callbackData: MerchantCallback[];
     isLoading: boolean;
+    type: '1' | '2';
 }
 export declare class MerchantDetail extends React.Component<Props, State> {
     constructor(props: Props);

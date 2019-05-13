@@ -10,6 +10,9 @@
     flex-basis: content;
     flex-direction: column;
 }
+.input:disabled {
+    background-color: #FFF
+}
 .intro-ul{
     margin: 10px;
     width: 90%;

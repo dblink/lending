@@ -44,7 +44,8 @@ export class ReceivableList extends React.Component<Props, State> {
                 MerchantNo: '',
                 Mobile: '',
                 PageIndex: '1',
-                PageSize: '10'
+                PageSize: '10',
+                RepayType: '-1'
             },
             detail: {},
             isLoading: true,

@@ -11,6 +11,7 @@ import { InnerProgress } from '../../components/progress/progress';
 import { ErrorMessage } from '../../components/error/errorMessage';
 import { Redirect } from 'react-router';
 import { NormalLogin, AreaLogin } from './loginForm';
+import { LoginLogo } from './logo';
 
 interface Props {
     location: any;
@@ -130,12 +131,11 @@ export class Login extends React.Component<Props, State> {
                 textAlign: 'center', position: 'relative',
                 padding: '0 59px 79px', background: '#fff', 
                 height: '60%', width: '500px'}}>
-                <div style={{display: 'inline-block', 
+                <LoginLogo style={{display: 'inline-block', 
                     width: '100px',
                     marginTop: '-50px',
-                    padding: '20px', borderRadius: '50%', background: '#Fff'}}>
-                    <img src='img/logo.png' style={{width: '100%'}} />
-                </div>
+                    padding: '20px', borderRadius: '50%', background: '#Fff'}} />
+                    
                 <ErrorMessage>
                     {this.state.serverError}
                 </ErrorMessage>

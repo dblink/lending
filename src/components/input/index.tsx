@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { BaseInput } from "./base/input";
-import { config } from "./config";
 import './input.scss';
 import { Icon } from '../icon/icon';
 import { CalendarScreen } from '../calendar/calendarScreen';
+import { PrimaryButton, TimerButton } from '../button';
 
 interface Props extends React.InputHTMLAttributes<any>{
     
@@ -14,6 +14,7 @@ interface BankCardInput extends React.InputHTMLAttributes<any>{
 interface ApplyInputProps extends React.InputHTMLAttributes<any>{
     text: string;
     error ?: string;
+    sendMessage ?: any;
 }
 
 export const BankCardInput = (props: BankCardInput) =>{
@@ -56,12 +57,20 @@ export class ApplyInput extends React.Component <ApplyInputProps, any>{
             <div style={{fontSize: '14px', marginBottom: '10px', color: '#777'}}>
                 {text}
             </div>
+            <div style={{display: 'flex'}}>
             {
                 type === 'textarea' 
                 ? <textarea className='apply-input textarea' {...other} style={style}>
                   </textarea>
                 : <BaseInput type={type} updatestyle={this.updatestyle} className='apply-input' {...other} />
             }
+            {
+                this.props.sendMessage
+                ? <TimerButton onClick={this.props.sendMessage}>发送验证码</TimerButton>
+                : ''
+            }
+            </div>
+            
             {
                 error && <div style={{color: 'red'}}>
                     {error}

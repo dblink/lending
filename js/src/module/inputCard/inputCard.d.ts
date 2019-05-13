@@ -3,7 +3,8 @@ interface InputCardProps {
     onChangeStep: (str: string) => void;
     setDataState: (data: any) => void;
     setCard: (str: string) => void;
-    close: () => void;
+    close?: () => void;
+    style?: React.CSSProperties;
 }
 interface InputCardState {
     data: {

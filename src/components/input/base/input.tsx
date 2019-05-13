@@ -54,6 +54,7 @@ export class BaseInput extends OperateTemp<BaseInputProps, State> {
             this.updateStyle(this.props.mouseFocus);
         }
     }
+    
     shouldComponentUpdate(nextProps: any, nextState: State){
         return nextState.shouldUpdate 
             || this.props.value !== nextProps.value
@@ -68,7 +69,9 @@ export class BaseInput extends OperateTemp<BaseInputProps, State> {
             this.props.updateStyle.run = null;
         }   
     }
-    
+    showKeyboard(e: any){
+        
+    }
     render() {
         let {
             className: className,
@@ -78,9 +81,11 @@ export class BaseInput extends OperateTemp<BaseInputProps, State> {
             style: style,
             type: type,
             value: value,
+            updatestyle,
             ...other
         } = this.props;
-        return <input style={this.state.style} {...this.mouseEvent} 
+        return <input style={this.state.style} 
+            onTouchEnd={this.showKeyboard}
             value={value || this.state.data}
             className={this.state.className} type={this.props.type || 'text'}  
         {...other} />

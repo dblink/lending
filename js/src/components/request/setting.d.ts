@@ -74,7 +74,11 @@ export declare enum ParameterName {
     uploadPostLoanImage = "\u4E0A\u4F20\u8D37\u540E\u56FE\u7247",
     addPostLoanRecord = "\u65B0\u589E\u8D37\u540E\u8BB0\u5F55",
     selectRecordBorrowerImage = "\u67E5\u770B\u8D37\u540E\u4E0A\u4F20\u56FE\u7247",
-    oneKeyRepayment = "\u4E00\u952E\u8FD8\u6B3E"
+    oneKeyRepayment = "\u4E00\u952E\u8FD8\u6B3E",
+    deductBindBankCard = "\u6C47\u4ED8\u7ED1\u5361",
+    getWaitSignContractInfo = "\u83B7\u53D6\u6C47\u4ED8\u5F85\u7B7E\u7EA6\u5408\u540C\u4FE1\u606F",
+    signatureWidthHF = "\u6C47\u4ED8\u7B7E\u540D",
+    getContractWithHF = "\u83B7\u53D6\u6C47\u4ED8\u5408\u540C\u94FE\u63A5"
 }
 declare type PagingParamter = 'PageIndex' | 'PageSize';
 declare type TimeSelectParamter = 'StartTime' | 'EndTime';
@@ -110,7 +114,7 @@ export interface ParameterSummary {
     [ParameterName.signature]: 'ContractId' | 'ReturnUrl' | 'Token';
     [ParameterName.selectLoanRecord]: PagingParamter | TimeSelectParamter | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile' | 'Token';
     [ParameterName.selectRepayPlanDetail]: PagingParamter | TimeSelectParamter | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile' | 'State' | 'Token';
-    [ParameterName.selectRepayRecord]: PagingParamter | TimeSelectParamter | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile' | 'Token';
+    [ParameterName.selectRepayRecord]: PagingParamter | TimeSelectParamter | 'MerchantNo' | 'EmployeeId' | 'BorrowerName' | 'Mobile' | 'Token' | 'RepayType';
     [ParameterName.getContractState]: 'ContractId' | 'Token';
     [ParameterName.selectRechargeLoanBalance]: PagingParamter | TimeSelectParamter | 'Status' | 'Token' | 'MerchantNo';
     [ParameterName.applyRechargeLoanBalance]: 'Money' | 'Token';
@@ -140,7 +144,7 @@ export interface ParameterSummary {
     [ParameterName.confirmRepayOfflineClearing]: 'RepayPlanDetailId' | 'State' | 'Token';
     [ParameterName.getBankCardItems]: 'Token';
     [ParameterName.withdrawBindCard]: 'BankCardNo' | 'IdCardNo' | 'Mobile' | 'BankCode' | 'BankName' | 'Remark' | 'RealName' | 'Token';
-    [ParameterName.applyWithdraw]: 'WithdrawBankCardId' | 'WithdrawAmount' | 'Remark' | 'Token';
+    [ParameterName.applyWithdraw]: 'WithdrawBankCardId' | 'WithdrawAmount' | 'Remark' | 'Token' | 'ProductType';
     [ParameterName.applyRepayOffline]: 'RepayPlanDetailId' | 'Token';
     [ParameterName.getWithdrawItems]: 'Status' | 'PageIndex' | 'PageSize' | 'Token';
     [ParameterName.getHomePageApplyCount]: 'Token' | 'Time';
@@ -153,6 +157,10 @@ export interface ParameterSummary {
     [ParameterName.selectRecordBorrowerImage]: 'ContractId' | 'PostLoanRecordId' | 'Token';
     [ParameterName.applyWithdrawLoanBalance]: 'Money' | 'Token';
     [ParameterName.oneKeyRepayment]: 'Token' | 'RepayTime';
+    [ParameterName.deductBindBankCard]: 'Token' | 'BorrowerId' | 'BankCardNo' | 'ValidCode' | 'BindTransId';
+    [ParameterName.getWaitSignContractInfo]: 'Token' | 'ContractId';
+    [ParameterName.signatureWidthHF]: 'Token' | 'ContractId' | 'BigAmount' | 'img.jpg';
+    [ParameterName.getContractWithHF]: 'ContractId' | 'Token';
 }
 export declare type Parameter<T extends ParameterName> = {
     [i in ParameterSummary[T]]?: any;

@@ -5,8 +5,6 @@ import { ParameterName, RequestCallback, CallbackSummary } from '../request/sett
 import { ApplyContentDetail } from '../../module/applyContentDetail/applyContenctDatail';
 import { ApplyContentList } from '../../module/applyContentList/applyContentList';
 import { InputCard } from '../../module/inputCard/inputCard';
-import { sessionData } from '../sessionData/sessionData';
-import { PageLoading } from '../progress/progress';
 import { RemarkModal } from './remark';
 
 interface Props {

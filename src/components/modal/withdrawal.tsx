@@ -28,6 +28,7 @@ interface Props {
 interface State {
     data: Parameter<ParameterName.applyWithdraw>;
     type: 'bankList' | 'withdrawal' | 'detail' | 'transform';
+    productType ?: any;
     isOpen: boolean;
     isLoading: boolean;
 }
@@ -72,9 +73,10 @@ export class Withdrawal extends React.Component<Props, State> {
             type: 'withdrawal'
         });
     }
-    showModal(page: 'bankList' | 'transform' | 'withdrawal' | 'detail' = 'bankList'){
+    showModal(page: 'bankList' | 'transform' | 'withdrawal' | 'detail' = 'bankList', productType?: '1' | '2'){
         this.setState({
             type: page,
+            productType: productType,
             isOpen: true
         })
     }
@@ -87,8 +89,10 @@ export class Withdrawal extends React.Component<Props, State> {
     } 
     confirm(){
         let _req: ReqOption<ParameterName.applyWithdraw>;
+        let _data = this.state.data;
+        _data.ProductType = this.state.productType;
         _req  ={
-            data:this.state.data,
+            data:_data,
             fail: logOut((e)=>{
                 alert(e.ErrMsg);
                 this.setState({

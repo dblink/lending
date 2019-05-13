@@ -1,0 +1,62 @@
+.topTitle {
+	color: black;
+    padding: 10px 30px;
+    overflow: auto;
+    margin: 0 auto;
+}
+.loan {
+	text-align: center;
+	margin: 35px 0;
+	letter-spacing: 5px;
+}
+.floatR {
+	float: right;
+}
+.textIndent {
+	text-indent: 20px;
+}
+.marginTop80 {
+	margin-top: 80px;
+}
+.marginTop40 {
+	margin-top: 40px;
+}
+.xiahua {
+	letter-spacing: 1px;
+	font-weight: 600;
+	text-decoration: underline;
+}
+.margin20 {
+	margin: 20px 0;
+}
+.fontWeight600 {
+	font-weight: 600;
+}
+.textIndentFW {
+	text-indent: 20px;
+	font-weight: 600;
+}
+.tft {
+	text-indent: 20px;
+	font-weight: 600;
+	text-decoration: underline;
+}
+.tableSty {
+	width: 100%;
+	text-align: center;
+}
+.height30 {
+	height: 30px;
+}
+.height30 td:nth-child(1) {
+	width: 30%;
+}
+.textCenter {
+	text-align: center;
+}
+.flex {
+	display: flex
+}
+.flex > p {
+	flex: 1;
+}

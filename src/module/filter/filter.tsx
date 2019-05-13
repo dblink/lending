@@ -66,9 +66,9 @@ export class Filter extends React.Component <FilterProps, FilterState>{
     }
     render(){
         let props = this.props,
-            _style = {maxWidth: '150px', 
+            _style = {maxWidth: '250px', 
             //marginTop: '10px',
-            flex: '1 1 150px', height: '30px'};
+            flex: '1 1 250px', height: '30px'};
 
         return <div style={{display: 'flex',
                 width: '100%', //height:'100%', overflow: 'auto',
