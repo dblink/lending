@@ -11,7 +11,7 @@
     flex-direction: column;
 }
 .input:disabled {
-    background-color: #FFF
+    background-color: #FFF;
 }
 .intro-ul{
     margin: 10px;

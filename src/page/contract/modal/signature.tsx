@@ -6,7 +6,7 @@ import { ReqOption, req } from '../../../components/request';
 import { logOut } from '../../../components/fail/logOut';
 import { PageLoading, InnerProgress } from '../../../components/progress/progress';
 import { CancelButton, PrimaryButton } from '../../../components/button';
-import { LoanAgreement } from '../../../module/contractHtml/loanAgreement1';
+import { LoanAgreement } from '../../../module/contractHtml/loanAgreement';
 
 type SignatureProps = {
     contractId: string;
@@ -165,15 +165,14 @@ export class SignatureCT extends React.Component<SignatureProps, any>{
         })
     }
     confirm(){
-        /*
         if(localStorage.getItem('isServiceSign') !== 'true'){
             alert('请签署双方服务协议！');
             this.setState({
-                isLoading: false
+                isPageLoading: false
             })
             return;
-        }*/
-        //localStorage.setItem('isServiceSign', '');
+        }
+        localStorage.setItem('isServiceSign', '');
         if(!this.state.file){
             alert('请签名！');
             this.setState({

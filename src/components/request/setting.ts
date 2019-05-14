@@ -3,7 +3,7 @@ import { Parameter } from './setting';
 import {OptionType} from "./main";
 
 export const requestUrl = {
-    type: 'development',
+    type: 'production',
     development: '',
     production: 'http://loutsloanapi.hehuadata.com',
     //production: 'http://loutsloantest.hehuadata.com'

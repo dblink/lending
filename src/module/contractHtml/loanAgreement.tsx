@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Sign } from './sign';
 import './css/loanAgreement.css';
 import { lowerToUpper } from './lowerToUpper';
+import { sessionData } from '../../components/sessionData/sessionData';
 
 interface Props {
     data ?: {
@@ -31,37 +32,32 @@ export class LoanAgreement extends React.Component<Props, State> {
         super(props);
         this.state = {};
     }
-
+    data = {
+        '2': {
+            name: '海南易联普惠互联网小额贷款有限公司',
+            addr: '海南省海口市龙华区滨海大道117号滨海国际金融中心A栋22层整层' 
+        },
+        '3': {
+            name: '农信互联网小额贷款股份有限公司',
+            addr: '海南省海口市美兰区国兴大道5号海南大厦农信楼812室'
+        }
+    }
     render() {
-        let data = this.props.data || {
-            "RealName": "朱杰",
-            "IDCardNo": "511113199302280714",
-            "Mobile": "15852905952",
-            "Email": "396301792@qq.com",
-            "BankName": "中国工商银行",
-            "BankCardNo": "6215581105007046206",
-            "Amount": "3.00",
-            "StartTime": "2019-04-16",
-            "Rate": "36%",
-            "Purpose": "家庭消费",
-            "RepayDate": "星期二",
-            "RepayWay": "银行代扣",
-            'OutTradeNo': '12312312312',
-            'lender': '贷款人测试',
-            'address': '地址测试'
-        };
+        let data = this.props.data;
+        let a = sessionData.getData('UserInfo').ProductType.toString();
+        let company = this.data[a as '2'];
         return (<div className="topTitle">
         <h1 className="loan">借款协议</h1>
         <div className="floatR">协议编号：<span id=''>{data.OutTradeNo}</span></div>
-        <p className="marginTop80">贷款人：<span>{data.lender}</span></p>
-        <p>地址：<span>{data.address}</span></p>
+        <p className="marginTop80">贷款人：<span>{company.name}</span></p>
+        <p>地址：<span>{company.addr}</span></p>
         <p className="marginTop40">借款人：{data.RealName}</p>
         <p>身份证号：{data.IDCardNo}</p>
         <p>联系电话：{data.Mobile}</p>
         <p>电子邮箱：{data.Email}</p>
         <p className="fontWeight600 marginTop40">特别提醒：</p>
         <p className="textIndent xiahua">
-            在借款人确认同意本协议之前，借款人应已清楚知悉并充分理解本产品的所有信息，同意向{data.lender}（以下简称“贷款人”）申请贷款（以下简称“本贷款”或“贷款”）。一旦借款人在贷款人贷款网站或其他贷款人合作方的平台（以下简称“贷款网络平台”）点击接受本协议，即意味着借款人已阅读本协议所有条款，并对本协议条款的含义及相应的法律后果已全部通晓并充分理解，同意接受本协议约束。
+            在借款人确认同意本协议之前，借款人应已清楚知悉并充分理解本产品的所有信息，同意向{company.name}（以下简称“贷款人”）申请贷款（以下简称“本贷款”或“贷款”）。一旦借款人在贷款人贷款网站或其他贷款人合作方的平台（以下简称“贷款网络平台”）点击接受本协议，即意味着借款人已阅读本协议所有条款，并对本协议条款的含义及相应的法律后果已全部通晓并充分理解，同意接受本协议约束。
         </p>
         <p className="textIndent xiahua">
             为充分维护借款人的合法权益，贷款人特提醒借款人特别关注本协议条款中的黑体及/或加下划线部分（包括但不限于第三条、第六条、第九条至第十五条），请借款人务必仔细阅读。
@@ -507,7 +503,7 @@ export class LoanAgreement extends React.Component<Props, State> {
         </p>
         <p className="textCenter">（以下无正文）</p>
         <div className="flex">
-            <p>贷款人：<span>{data.lender}</span></p>
+            <p>贷款人：<span>{company.name}</span></p>
             <p>借款人：
                 <Sign success={(data:any)=>{this.props.success && this.props.success(data)}} />
             </p>

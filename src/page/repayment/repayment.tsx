@@ -116,7 +116,7 @@ export class Repayment extends React.Component<Props, State> {
                     display: 'flex', justifyContent: 'space-between',
                     background: '#FFF'}}>
                     {
-                        <PrimaryButton style={{width: '200px'}}
+                        <PrimaryButton style={{width: '120px'}}
                             onClick={()=>{this.modal.show('IsFormRepayAll', {RepayPlanDetailId: this.state.data.EndTime})}}>
                             一键还款
                         </PrimaryButton>
